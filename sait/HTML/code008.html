@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI FitFabrica - Кабинет</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Manrope:wght@400;700;900&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#e6e1df",
+                        "on-secondary-fixed": "#1d0061",
+                        "on-secondary-fixed-variant": "#4a2ea9",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#000000",
+                        "outline-variant": "#c4c7c7",
+                        "tertiary-fixed-dim": "#cac6c4",
+                        "on-primary-fixed-variant": "#474646",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed-dim": "#cbbeff",
+                        "on-tertiary": "#ffffff",
+                        "text-secondary": "#5F5F63",
+                        "surface-bright": "#fdf8f8",
+                        "ai-soft": "#EFEAFD",
+                        "inverse-surface": "#313030",
+                        "surface-tint": "#5f5e5e",
+                        "tertiary-container": "#1c1b1a",
+                        "secondary-container": "#9a83ff",
+                        "surface-dim": "#ddd9d8",
+                        "primary-container": "#1c1b1b",
+                        "text-primary": "#141414",
+                        "border": "#E8E1D6",
+                        "on-primary-fixed": "#1c1b1b",
+                        "inverse-primary": "#c8c6c5",
+                        "on-tertiary-fixed": "#1c1b1a",
+                        "outline": "#747878",
+                        "success": "#2F8F6B",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#1c1b1b",
+                        "warning": "#D96C5F",
+                        "primary-fixed-dim": "#c8c6c5",
+                        "on-background": "#1c1b1b",
+                        "on-tertiary-container": "#868381",
+                        "secondary": "#6249c2",
+                        "surface-alt": "#F1EAE0",
+                        "error-container": "#ffdad6",
+                        "background": "#F7F3EC",
+                        "champagne-accent": "#D8C3A5",
+                        "surface-container-low": "#f7f3f2",
+                        "inverse-on-surface": "#f4f0ef",
+                        "ai-violet": "#6E56CF",
+                        "on-primary-container": "#858383",
+                        "error": "#D93025",
+                        "text-muted": "#8B8580",
+                        "surface-variant": "#e5e2e1",
+                        "on-tertiary-fixed-variant": "#484645",
+                        "surface": "#FFFDF8",
+                        "surface-container-highest": "#e5e2e1",
+                        "surface-container": "#f1edec",
+                        "primary-fixed": "#e5e2e1",
+                        "secondary-fixed": "#e6deff",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#ebe7e6",
+                        "on-secondary-container": "#300491",
+                        "tertiary": "#000000",
+                        "on-surface-variant": "#444748",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "page-padding-desktop": "72px",
+                        "section-md": "96px",
+                        "md": "16px",
+                        "base": "8px",
+                        "content-max": "1280px",
+                        "lg": "24px",
+                        "section-lg": "128px",
+                        "xl": "32px",
+                        "xs": "8px",
+                        "sm": "12px",
+                        "xxl": "48px"
+                    },
+                    "fontFamily": {
+                        "h3": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "h2": ["Manrope"],
+                        "h1": ["Manrope"],
+                        "display": ["Manrope"],
+                        "overline": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h3": ["32px", { "lineHeight": "1.15", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body": ["16px", { "lineHeight": "1.55", "fontWeight": "400" }],
+                        "label": ["14px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "body-lg": ["20px", { "lineHeight": "1.5", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+                        "h2": ["44px", { "lineHeight": "1.08", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+                        "h1": ["56px", { "lineHeight": "1.05", "letterSpacing": "-0.035em", "fontWeight": "700" }],
+                        "display": ["72px", { "lineHeight": "1.02", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+                        "overline": ["12px", { "lineHeight": "1.15", "letterSpacing": "0.08em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-text-primary min-h-screen flex antialiased">
+<!-- SideNavBar (Shared Component) -->
+<nav class="fixed left-0 top-0 h-screen w-72 flex flex-col py-6 bg-surface border-r border-border z-50">
+<!-- Brand Header -->
+<div class="px-6 mb-8">
+<h1 class="font-h2 text-h2 font-black text-primary tracking-tight">FitFabrica</h1>
+<p class="font-label text-label text-text-secondary mt-1">Premium Fashion AI</p>
+</div>
+<!-- Navigation Links -->
+<ul class="flex-1 flex flex-col gap-1 overflow-y-auto px-4">
+<!-- Active Item: Кабинет -->
+<li>
+<a class="bg-secondary-container text-on-secondary-container rounded-DEFAULT px-4 py-3 flex items-center gap-3 font-label text-label translate-x-1 transition-transform" href="/workspace">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+                    Кабинет
+                </a>
+</li>
+<!-- Inactive Items -->
+<li>
+<a class="text-text-secondary hover:bg-surface-variant hover:text-primary rounded-DEFAULT px-4 py-3 flex items-center gap-3 font-label text-label transition-colors" href="/workspace/try-on/new">
+<span class="material-symbols-outlined">add_a_photo</span>
+                    Новая примерка
+                </a>
+</li>
+<li>
+<a class="text-text-secondary hover:bg-surface-variant hover:text-primary rounded-DEFAULT px-4 py-3 flex items-center gap-3 font-label text-label transition-colors" href="#">
+<span class="material-symbols-outlined">auto_fix_high</span>
+                    Подбор образа
+                </a>
+</li>
+<li>
+<a class="text-text-secondary hover:bg-surface-variant hover:text-primary rounded-DEFAULT px-4 py-3 flex items-center gap-3 font-label text-label transition-colors" href="#">
+<span class="material-symbols-outlined">search_check</span>
+                    Найти похожее
+                </a>
+</li>
+<li>
+<a class="text-text-secondary hover:bg-surface-variant hover:text-primary rounded-DEFAULT px-4 py-3 flex items-center gap-3 font-label text-label transition-colors" href="#">
+<span class="material-symbols-outlined">shopping_bag</span>
+                    Карточка товара
+                </a>
+</li>
+<li>
+<a class="text-text-secondary hover:bg-surface-variant hover:text-primary rounded-DEFAULT px-4 py-3 flex items-center gap-3 font-label text-label transition-colors" href="#">
+<span class="material-symbols-outlined">history</span>
+                    История
+                </a>
+</li>
+<li>
+<a class="text-text-secondary hover:bg-surface-variant hover:text-primary rounded-DEFAULT px-4 py-3 flex items-center gap-3 font-label text-label transition-colors" href="#">
+<span class="material-symbols-outlined">payments</span>
+                    Кредиты
+                </a>
+</li>
+<li>
+<a class="text-text-secondary hover:bg-surface-variant hover:text-primary rounded-DEFAULT px-4 py-3 flex items-center gap-3 font-label text-label transition-colors" href="#">
+<span class="material-symbols-outlined">person</span>
+                    Профиль стиля
+                </a>
+</li>
+<li>
+<a class="text-text-secondary hover:bg-surface-variant hover:text-primary rounded-DEFAULT px-4 py-3 flex items-center gap-3 font-label text-label transition-colors" href="#">
+<span class="material-symbols-outlined">business_center</span>
+                    Профиль бизнеса
+                </a>
+</li>
+</ul>
+<!-- Bottom CTA -->
+<div class="mt-auto px-6 pt-6">
+<button class="w-full bg-primary text-on-primary font-label text-label py-4 rounded-full hover:opacity-80 transition-opacity flex justify-center items-center gap-2">
+                Создать образ
+            </button>
+</div>
+</nav>
+<!-- Main Workspace Area -->
+<main class="ml-72 flex-1 min-h-screen px-page-padding-desktop py-xl">
+<div class="max-w-content-max mx-auto flex flex-col gap-xxl">
+<!-- Header Section: Greeting & Balance -->
+<header class="flex justify-between items-end pb-8 border-b border-border">
+<div>
+<p class="font-overline text-overline text-text-secondary mb-2 uppercase tracking-widest">Обзор</p>
+<h2 class="font-h1 text-h1 text-primary">Добро пожаловать.</h2>
+</div>
+<!-- Credit Balance Badge -->
+<div class="bg-surface border border-border rounded-xl p-6 flex items-center gap-lg shadow-sm">
+<div class="h-12 w-12 rounded-full bg-ai-soft flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">payments</span>
+</div>
+<div>
+<p class="font-label text-label text-text-secondary">Доступно кредитов</p>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="font-h2 text-h2 text-primary">1,450</span>
+<span class="font-body text-body text-success flex items-center text-sm">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+</span>
+</div>
+</div>
+<button class="ml-4 bg-surface-container hover:bg-surface-variant text-primary font-label text-label px-6 py-3 rounded-full transition-colors">
+                        Пополнить
+                    </button>
+</div>
+</header>
+<!-- Quick Actions (Bento Grid) -->
+<section>
+<h3 class="font-h3 text-h3 text-primary mb-lg">Быстрые действия</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-lg">
+<!-- Action: New Try-On (AI Accent) -->
+<a class="group bg-secondary text-on-secondary rounded-xl p-xl flex flex-col justify-between aspect-square relative overflow-hidden transition-transform hover:-translate-y-1 hover:shadow-lg" href="/workspace/try-on/new">
+<div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
+<span class="material-symbols-outlined text-4xl mb-4" style="font-variation-settings: 'FILL' 1;">add_a_photo</span>
+<div>
+<h4 class="font-body-lg text-body-lg font-bold mb-2">Новая примерка</h4>
+<p class="font-body text-body text-on-secondary/80 text-sm">Загрузите фото для генерации образа</p>
+</div>
+<div class="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined">arrow_forward</span>
+</div>
+</a>
+<!-- Action: Create Look -->
+<a class="group bg-surface border border-border rounded-xl p-xl flex flex-col justify-between aspect-square hover:border-outline-variant transition-colors hover:shadow-sm" href="#">
+<span class="material-symbols-outlined text-4xl text-text-secondary mb-4">auto_fix_high</span>
+<div>
+<h4 class="font-body-lg text-body-lg font-bold text-primary mb-2">Подобрать образ</h4>
+<p class="font-body text-body text-text-secondary text-sm">Создайте лук из вашей базы вещей</p>
+</div>
+</a>
+<!-- Action: Find Similar -->
+<a class="group bg-surface border border-border rounded-xl p-xl flex flex-col justify-between aspect-square hover:border-outline-variant transition-colors hover:shadow-sm" href="#">
+<span class="material-symbols-outlined text-4xl text-text-secondary mb-4">search_check</span>
+<div>
+<h4 class="font-body-lg text-body-lg font-bold text-primary mb-2">Найти похожее</h4>
+<p class="font-body text-body text-text-secondary text-sm">Поиск аналогов по фото или описанию</p>
+</div>
+</a>
+<!-- Action: Create Card -->
+<a class="group bg-surface border border-border rounded-xl p-xl flex flex-col justify-between aspect-square hover:border-outline-variant transition-colors hover:shadow-sm" href="#">
+<span class="material-symbols-outlined text-4xl text-text-secondary mb-4">shopping_bag</span>
+<div>
+<h4 class="font-body-lg text-body-lg font-bold text-primary mb-2">Создать карточку</h4>
+<p class="font-body text-body text-text-secondary text-sm">Генерация фото для маркетплейса</p>
+</div>
+</a>
+</div>
+</section>
+<!-- Recent Results & Projects -->
+<section class="pb-section-md">
+<div class="flex justify-between items-end mb-lg">
+<h3 class="font-h3 text-h3 text-primary">Последние результаты</h3>
+<a class="font-label text-label text-secondary hover:underline flex items-center gap-1" href="#">
+                        Смотреть все <span class="material-symbols-outlined text-sm">chevron_right</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+<!-- Result Card 1 -->
+<div class="group cursor-pointer">
+<div class="aspect-[3/4] rounded-lg overflow-hidden bg-surface-container relative mb-4">
+<img alt="Fashion Look 1" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A high-fashion editorial shot of a woman wearing a minimalist, tailored silk blazer in champagne color. The lighting is soft, natural, and high-key, illuminating a bright, modern studio space. The aesthetic is clean, premium, and sophisticated, perfectly aligning with a high-end light-mode UI. Subtle ambient shadows emphasize the texture of the fabric." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqW7Ph3Wo-ZnAz36mpA4_GaD9ZmAnvPpeCU2KrQ3QKlZ76RPEtKqz3gNvFa121uQKHfq4EWF77brzdsuKTMLzPrZorq0jo-3oJD6pR_X7ZsKPh3FcO8eTAnHtKPiz6dDiHU8RNsP1zJ3Idddxl89TjjqNFwkRy32ERRTPjZAAUlYFV_TGvZEtajCytHBJbke61IHHdG5D8-6uDSaQiDhL_WQG75WdSvygC5bc6LYSCpTdlLwhRTJjQeOweczXn6nL_Bg0oqnyY_c8"/>
+<div class="absolute top-4 left-4 bg-surface/90 backdrop-blur px-3 py-1 rounded-full flex items-center gap-2 border border-border">
+<span class="w-2 h-2 rounded-full bg-success"></span>
+<span class="font-label text-label text-xs">Готово</span>
+</div>
+</div>
+<h4 class="font-label text-label text-primary">Шелковый блейзер (Каталог)</h4>
+<p class="font-body text-body text-sm text-text-secondary mt-1">Сегодня, 14:30</p>
+</div>
+<!-- Result Card 2 -->
+<div class="group cursor-pointer">
+<div class="aspect-[3/4] rounded-lg overflow-hidden bg-surface-container relative mb-4">
+<img alt="Fashion Look 2" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A highly detailed, AI-generated fashion catalog image showing a sleek, graphite-colored asymmetrical midi dress on a mannequin. The background is a warm ivory, seamless cyc wall. The lighting is crisp and even, highlighting the technical construction of the garment. The overall mood is clinical yet luxurious, fitting for a professional fashion tech platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwFr13CZcRbXqjcTcKYMXMnqByt-7yCtc1ZJAqKQsfNu4ArWI1iNQjYrgq3ZRrDXPDtUivB1ng50sK5_BMIbcD3sdXpSsxefDNWZvOZC60qPXybRDKAYnrsTh-lFFLaY5cJjxNA_GNXaW2slqniz5-VTeb50oARgYqFDvmHENrENhSLWTczvuVJdOhhqE1Y8tLmEaI3ly6_MfHZiw1Zsz1N_oN48sTjJRLuk6fJF3mfjBFTa3a0fXQYJVOgmIU6RVuh03jFc3xJnk"/>
+<div class="absolute top-4 left-4 bg-surface/90 backdrop-blur px-3 py-1 rounded-full flex items-center gap-2 border border-border">
+<span class="w-2 h-2 rounded-full bg-success"></span>
+<span class="font-label text-label text-xs">Готово</span>
+</div>
+</div>
+<h4 class="font-label text-label text-primary">Асимметричное платье (WB)</h4>
+<p class="font-body text-body text-sm text-text-secondary mt-1">Вчера, 18:15</p>
+</div>
+<!-- Result Card 3 -->
+<div class="group cursor-pointer">
+<div class="aspect-[3/4] rounded-lg overflow-hidden bg-surface-container relative mb-4">
+<img alt="Fashion Look 3" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 grayscale" data-alt="A cinematic, beautifully composed portrait of a male model wearing a modern, structured trench coat in deep navy. He stands against a pristine white architectural background with geometric shadows. The image feels like a high-end fashion campaign, characterized by minimal clutter, perfect color grading, and a bright, airy atmosphere suitable for an editorial light-theme design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAduF3G5w8_5CBWK5u_pVqqhMEW2vWruemhycPuzcAQ8WlaVEhUdcPNYX4lUtoeq8PsG-TihGQ8efwcO93dJ7Agi3b5mz6VdVWaXt4sashE9ySh0mJ0aT0kmSI_dEOb3g1M4jxBn2CsfJDBOcRKxMTjOoqcVy91cexwomsdv52-cBouzSptpvRm3ZD_DvKc2n4xZGdbcvH8M4BB-kyzNX2N-DXi2hvSL9bWriZyQKcrsv719RxzeuND8Yr9b-R06xrwYOWtemOfaqo"/>
+<div class="absolute inset-0 bg-background/40 backdrop-blur-sm flex items-center justify-center">
+<div class="bg-surface px-4 py-2 rounded-full border border-border flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined animate-spin text-secondary">sync</span>
+<span class="font-label text-label text-sm text-secondary">Генерация...</span>
+</div>
+</div>
+</div>
+<h4 class="font-label text-label text-primary text-opacity-50">Осенняя коллекция (Lookbook)</h4>
+<p class="font-body text-body text-sm text-text-secondary mt-1">В процессе</p>
+</div>
+</div>
+</section>
+</div>
+</main>
+</body></html>

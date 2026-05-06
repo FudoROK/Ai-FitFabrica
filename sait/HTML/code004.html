@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI FitFabrica - Тарифы</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Manrope:wght@700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-fixed": "#e6e1df",
+                      "on-secondary-fixed": "#1d0061",
+                      "on-secondary-fixed-variant": "#4a2ea9",
+                      "surface-container-lowest": "#ffffff",
+                      "primary": "#000000",
+                      "outline-variant": "#c4c7c7",
+                      "tertiary-fixed-dim": "#cac6c4",
+                      "on-primary-fixed-variant": "#474646",
+                      "on-error-container": "#93000a",
+                      "secondary-fixed-dim": "#cbbeff",
+                      "on-tertiary": "#ffffff",
+                      "text-secondary": "#5F5F63",
+                      "surface-bright": "#fdf8f8",
+                      "ai-soft": "#EFEAFD",
+                      "inverse-surface": "#313030",
+                      "surface-tint": "#5f5e5e",
+                      "tertiary-container": "#1c1b1a",
+                      "secondary-container": "#9a83ff",
+                      "surface-dim": "#ddd9d8",
+                      "primary-container": "#1c1b1b",
+                      "text-primary": "#141414",
+                      "border": "#E8E1D6",
+                      "on-primary-fixed": "#1c1b1b",
+                      "inverse-primary": "#c8c6c5",
+                      "on-tertiary-fixed": "#1c1b1a",
+                      "outline": "#747878",
+                      "success": "#2F8F6B",
+                      "on-primary": "#ffffff",
+                      "on-surface": "#1c1b1b",
+                      "warning": "#D96C5F",
+                      "primary-fixed-dim": "#c8c6c5",
+                      "on-background": "#1c1b1b",
+                      "on-tertiary-container": "#868381",
+                      "secondary": "#6249c2",
+                      "surface-alt": "#F1EAE0",
+                      "error-container": "#ffdad6",
+                      "background": "#F7F3EC",
+                      "champagne-accent": "#D8C3A5",
+                      "surface-container-low": "#f7f3f2",
+                      "inverse-on-surface": "#f4f0ef",
+                      "ai-violet": "#6E56CF",
+                      "on-primary-container": "#858383",
+                      "error": "#D93025",
+                      "text-muted": "#8B8580",
+                      "surface-variant": "#e5e2e1",
+                      "on-tertiary-fixed-variant": "#484645",
+                      "surface": "#FFFDF8",
+                      "surface-container-highest": "#e5e2e1",
+                      "surface-container": "#f1edec",
+                      "primary-fixed": "#e5e2e1",
+                      "secondary-fixed": "#e6deff",
+                      "on-error": "#ffffff",
+                      "surface-container-high": "#ebe7e6",
+                      "on-secondary-container": "#300491",
+                      "tertiary": "#000000",
+                      "on-surface-variant": "#444748",
+                      "on-secondary": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "1rem",
+                      "lg": "2rem",
+                      "xl": "3rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "page-padding-desktop": "72px",
+                      "section-md": "96px",
+                      "md": "16px",
+                      "base": "8px",
+                      "content-max": "1280px",
+                      "lg": "24px",
+                      "section-lg": "128px",
+                      "xl": "32px",
+                      "xs": "8px",
+                      "sm": "12px",
+                      "xxl": "48px"
+              },
+              "fontFamily": {
+                      "h3": ["Manrope"],
+                      "body": ["Inter"],
+                      "label": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "h2": ["Manrope"],
+                      "h1": ["Manrope"],
+                      "display": ["Manrope"],
+                      "overline": ["Inter"]
+              },
+              "fontSize": {
+                      "h3": ["32px", { "lineHeight": "1.15", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                      "body": ["16px", { "lineHeight": "1.55", "fontWeight": "400" }],
+                      "label": ["14px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                      "body-lg": ["20px", { "lineHeight": "1.5", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+                      "h2": ["44px", { "lineHeight": "1.08", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+                      "h1": ["56px", { "lineHeight": "1.05", "letterSpacing": "-0.035em", "fontWeight": "700" }],
+                      "display": ["72px", { "lineHeight": "1.02", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+                      "overline": ["12px", { "lineHeight": "1.15", "letterSpacing": "0.08em", "fontWeight": "700" }]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.filled {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="bg-background text-text-primary font-body flex flex-col min-h-screen">
+<!-- TopNavBar Component -->
+<nav class="bg-background/80 dark:bg-background/80 backdrop-blur-md docked full-width top-0 sticky border-b border-border dark:border-outline-variant z-50">
+<div class="flex justify-between items-center w-full px-page-padding-desktop max-w-content-max mx-auto h-20">
+<div class="font-h3 text-h3 font-bold text-primary dark:text-on-primary-fixed">AI FitFabrica</div>
+<div class="hidden md:flex items-center gap-lg">
+<a class="font-label text-label text-text-secondary dark:text-text-muted hover:text-primary hover:opacity-80 transition-opacity" href="#">Для себя</a>
+<a class="font-label text-label text-text-secondary dark:text-text-muted hover:text-primary hover:opacity-80 transition-opacity" href="#">Для бизнеса</a>
+<a class="font-label text-label text-text-secondary dark:text-text-muted hover:text-primary hover:opacity-80 transition-opacity" href="#">Возможножности</a>
+<a class="font-label text-label text-text-secondary dark:text-text-muted hover:text-primary hover:opacity-80 transition-opacity" href="#">Как работает</a>
+<a class="font-label text-label text-primary dark:text-on-primary-fixed font-bold border-b-2 border-primary hover:opacity-80 transition-opacity" href="#">Тарифы</a>
+</div>
+<div class="hidden md:flex items-center gap-md">
+<a class="font-label text-label text-text-secondary dark:text-text-muted hover:text-primary hover:opacity-80 transition-opacity" href="#">Войти</a>
+<button class="bg-primary text-on-primary px-xl py-sm rounded-full font-label text-label hover:opacity-80 transition-opacity">Начать примерку</button>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-grow flex flex-col items-center w-full max-w-content-max mx-auto px-page-padding-desktop py-section-md">
+<!-- Header -->
+<div class="text-center mb-xl">
+<h1 class="font-h1 text-h1 text-primary mb-md">Простые тарифы для любых задач</h1>
+<p class="font-body-lg text-body-lg text-text-secondary max-w-2xl mx-auto">Выберите план, который лучше всего подходит для ваших нужд, будь то личное использование или интеграция в бизнес.</p>
+</div>
+<!-- Toggle Switch -->
+<div class="flex items-center justify-center bg-surface-alt rounded-full p-base mb-section-md border border-border">
+<button class="bg-surface text-primary rounded-full px-xl py-sm font-label text-label shadow-sm transition-colors">Для себя</button>
+<button class="text-text-muted px-xl py-sm font-label text-label hover:text-primary transition-colors">Для бизнеса</button>
+</div>
+<!-- Pricing Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg w-full mb-section-lg">
+<!-- Free Plan -->
+<div class="bg-surface rounded-xl p-xl border border-border flex flex-col h-full hover:border-primary transition-colors">
+<div class="mb-lg">
+<h3 class="font-h3 text-h3 text-primary mb-xs">Free</h3>
+<p class="font-body text-body text-text-secondary">Для знакомства с платформой.</p>
+</div>
+<div class="mb-lg flex-grow">
+<div class="flex items-baseline gap-xs mb-sm">
+<span class="font-h2 text-h2 text-primary">0₽</span>
+<span class="font-body text-body text-text-muted">/мес</span>
+</div>
+<p class="font-label text-label text-ai-violet mb-md">10 кредитов в месяц</p>
+<ul class="space-y-sm">
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-success filled" data-icon="check_circle">check_circle</span>
+<span class="font-body text-body text-text-primary">Базовое качество генерации</span>
+</li>
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-success filled" data-icon="check_circle">check_circle</span>
+<span class="font-body text-body text-text-primary">Стандартная очередь</span>
+</li>
+</ul>
+</div>
+<button class="w-full border border-border text-primary py-sm rounded-full font-label text-label hover:bg-surface-alt transition-colors">Выбрать Free</button>
+</div>
+<!-- Standard Plan -->
+<div class="bg-surface rounded-xl p-xl border-2 border-primary shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col h-full relative">
+<div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-on-primary px-sm py-xs rounded-full font-overline text-overline">ПОПУЛЯРНЫЙ</div>
+<div class="mb-lg">
+<h3 class="font-h3 text-h3 text-primary mb-xs">Standard</h3>
+<p class="font-body text-body text-text-secondary">Идеально для регулярного использования.</p>
+</div>
+<div class="mb-lg flex-grow">
+<div class="flex items-baseline gap-xs mb-sm">
+<span class="font-h2 text-h2 text-primary">990₽</span>
+<span class="font-body text-body text-text-muted">/мес</span>
+</div>
+<p class="font-label text-label text-ai-violet mb-md">100 кредитов в месяц</p>
+<ul class="space-y-sm">
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-success filled" data-icon="check_circle">check_circle</span>
+<span class="font-body text-body text-text-primary">Высокое качество генерации (HD)</span>
+</li>
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-success filled" data-icon="check_circle">check_circle</span>
+<span class="font-body text-body text-text-primary">Приоритетная очередь</span>
+</li>
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-success filled" data-icon="check_circle">check_circle</span>
+<span class="font-body text-body text-text-primary">Удаление фона</span>
+</li>
+</ul>
+</div>
+<button class="w-full bg-primary text-on-primary py-sm rounded-full font-label text-label hover:opacity-80 transition-opacity">Выбрать Standard</button>
+</div>
+<!-- Pro Plan -->
+<div class="bg-surface rounded-xl p-xl border border-border flex flex-col h-full hover:border-primary transition-colors">
+<div class="mb-lg">
+<h3 class="font-h3 text-h3 text-primary mb-xs">Pro</h3>
+<p class="font-body text-body text-text-secondary">Для создателей контента.</p>
+</div>
+<div class="mb-lg flex-grow">
+<div class="flex items-baseline gap-xs mb-sm">
+<span class="font-h2 text-h2 text-primary">2490₽</span>
+<span class="font-body text-body text-text-muted">/мес</span>
+</div>
+<p class="font-label text-label text-ai-violet mb-md">300 кредитов в месяц</p>
+<ul class="space-y-sm">
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-success filled" data-icon="check_circle">check_circle</span>
+<span class="font-body text-body text-text-primary">Максимальное качество (4K)</span>
+</li>
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-success filled" data-icon="check_circle">check_circle</span>
+<span class="font-body text-body text-text-primary">Без очереди</span>
+</li>
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-success filled" data-icon="check_circle">check_circle</span>
+<span class="font-body text-body text-text-primary">Расширенные настройки стиля</span>
+</li>
+</ul>
+</div>
+<button class="w-full border border-border text-primary py-sm rounded-full font-label text-label hover:bg-surface-alt transition-colors">Выбрать Pro</button>
+</div>
+</div>
+<!-- How Credits Work Section -->
+<div class="w-full bg-surface-alt rounded-xl p-xl border border-border">
+<div class="text-center mb-xl">
+<h2 class="font-h2 text-h2 text-primary mb-sm">Как работают кредиты</h2>
+<p class="font-body-lg text-body-lg text-text-secondary">Кредиты — это внутренняя валюта платформы для оплаты нейросетевых генераций.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+<div class="flex flex-col items-center text-center p-md">
+<div class="w-16 h-16 bg-ai-soft rounded-full flex items-center justify-center mb-md">
+<span class="material-symbols-outlined text-ai-violet" data-icon="add_a_photo" style="font-size: 32px;">add_a_photo</span>
+</div>
+<h4 class="font-label text-label text-primary mb-xs">Генерация образа</h4>
+<p class="font-body text-body text-text-secondary">1 примерка одежды = 1 кредит. Вы платите только за успешный результат.</p>
+</div>
+<div class="flex flex-col items-center text-center p-md">
+<div class="w-16 h-16 bg-ai-soft rounded-full flex items-center justify-center mb-md">
+<span class="material-symbols-outlined text-ai-violet" data-icon="auto_fix_high" style="font-size: 32px;">auto_fix_high</span>
+</div>
+<h4 class="font-label text-label text-primary mb-xs">Редактирование</h4>
+<p class="font-body text-body text-text-secondary">Удаление фона или изменение стиля = 0.5 кредита за действие.</p>
+</div>
+<div class="flex flex-col items-center text-center p-md">
+<div class="w-16 h-16 bg-ai-soft rounded-full flex items-center justify-center mb-md">
+<span class="material-symbols-outlined text-ai-violet" data-icon="update" style="font-size: 32px;">update</span>
+</div>
+<h4 class="font-label text-label text-primary mb-xs">Обновление лимитов</h4>
+<p class="font-body text-body text-text-secondary">Неиспользованные кредиты переносятся на следующий месяц при активной подписке.</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Component -->
+<footer class="bg-surface-alt dark:bg-surface-container-low border-t border-border w-full py-xl px-page-padding-desktop mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-center max-w-content-max mx-auto w-full gap-lg">
+<div class="font-h3 text-h3 text-primary">AI FitFabrica</div>
+<div class="flex items-center gap-lg">
+<a class="font-body text-label text-text-muted hover:text-primary transition-colors" href="#">Приватность</a>
+<a class="font-body text-label text-text-muted hover:text-primary transition-colors" href="#">Контакты</a>
+<a class="font-body text-label text-text-muted hover:text-primary transition-colors" href="#">Условия</a>
+</div>
+<div class="font-body text-label text-text-muted dark:text-on-surface-variant">
+                © 2024 AI FitFabrica. Все права защищены.
+            </div>
+</div>
+</footer>
+</body></html>

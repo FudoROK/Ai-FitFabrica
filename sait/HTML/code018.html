@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Приватность и безопасность - AI FitFabrica</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Manrope:wght@700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "tertiary-fixed": "#e6e1df",
+                        "on-secondary-fixed": "#1d0061",
+                        "on-secondary-fixed-variant": "#4a2ea9",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#000000",
+                        "outline-variant": "#c4c7c7",
+                        "tertiary-fixed-dim": "#cac6c4",
+                        "on-primary-fixed-variant": "#474646",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed-dim": "#cbbeff",
+                        "on-tertiary": "#ffffff",
+                        "text-secondary": "#5F5F63",
+                        "surface-bright": "#fdf8f8",
+                        "ai-soft": "#EFEAFD",
+                        "inverse-surface": "#313030",
+                        "surface-tint": "#5f5e5e",
+                        "tertiary-container": "#1c1b1a",
+                        "secondary-container": "#9a83ff",
+                        "surface-dim": "#ddd9d8",
+                        "primary-container": "#1c1b1b",
+                        "text-primary": "#141414",
+                        "border": "#E8E1D6",
+                        "on-primary-fixed": "#1c1b1b",
+                        "inverse-primary": "#c8c6c5",
+                        "on-tertiary-fixed": "#1c1b1a",
+                        "outline": "#747878",
+                        "success": "#2F8F6B",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#1c1b1b",
+                        "warning": "#D96C5F",
+                        "primary-fixed-dim": "#c8c6c5",
+                        "on-background": "#1c1b1b",
+                        "on-tertiary-container": "#868381",
+                        "secondary": "#6249c2",
+                        "surface-alt": "#F1EAE0",
+                        "error-container": "#ffdad6",
+                        "background": "#F7F3EC",
+                        "champagne-accent": "#D8C3A5",
+                        "surface-container-low": "#f7f3f2",
+                        "inverse-on-surface": "#f4f0ef",
+                        "ai-violet": "#6E56CF",
+                        "on-primary-container": "#858383",
+                        "error": "#D93025",
+                        "text-muted": "#8B8580",
+                        "surface-variant": "#e5e2e1",
+                        "on-tertiary-fixed-variant": "#484645",
+                        "surface": "#FFFDF8",
+                        "surface-container-highest": "#e5e2e1",
+                        "surface-container": "#f1edec",
+                        "primary-fixed": "#e5e2e1",
+                        "secondary-fixed": "#e6deff",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#ebe7e6",
+                        "on-secondary-container": "#300491",
+                        "tertiary": "#000000",
+                        "on-surface-variant": "#444748",
+                        "on-secondary": "#ffffff"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "page-padding-desktop": "72px",
+                        "section-md": "96px",
+                        "md": "16px",
+                        "base": "8px",
+                        "content-max": "1280px",
+                        "lg": "24px",
+                        "section-lg": "128px",
+                        "xl": "32px",
+                        "xs": "8px",
+                        "sm": "12px",
+                        "xxl": "48px"
+                    },
+                    fontFamily: {
+                        "h3": ["Manrope", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "label": ["Inter", "sans-serif"],
+                        "body-lg": ["Inter", "sans-serif"],
+                        "h2": ["Manrope", "sans-serif"],
+                        "h1": ["Manrope", "sans-serif"],
+                        "display": ["Manrope", "sans-serif"],
+                        "overline": ["Inter", "sans-serif"]
+                    },
+                    fontSize: {
+                        "h3": ["32px", { lineHeight: "1.15", letterSpacing: "-0.02em", fontWeight: "700" }],
+                        "body": ["16px", { lineHeight: "1.55", fontWeight: "400" }],
+                        "label": ["14px", { lineHeight: "1.2", fontWeight: "600" }],
+                        "body-lg": ["20px", { lineHeight: "1.5", letterSpacing: "-0.01em", fontWeight: "400" }],
+                        "h2": ["44px", { lineHeight: "1.08", letterSpacing: "-0.03em", fontWeight: "700" }],
+                        "h1": ["56px", { lineHeight: "1.05", letterSpacing: "-0.035em", fontWeight: "700" }],
+                        "display": ["72px", { lineHeight: "1.02", letterSpacing: "-0.04em", fontWeight: "700" }],
+                        "overline": ["12px", { lineHeight: "1.15", letterSpacing: "0.08em", fontWeight: "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-text-primary antialiased min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="w-full top-0 sticky z-50 border-b border-border bg-background/80 backdrop-blur-md">
+<nav class="flex justify-between items-center w-full px-page-padding-desktop max-w-content-max mx-auto h-20">
+<!-- Brand Logo -->
+<div class="font-h3 text-h3 font-bold text-primary">
+                AI FitFabrica
+            </div>
+<!-- Navigation Links (Desktop) -->
+<ul class="hidden md:flex items-center gap-lg">
+<li><a class="font-label text-label text-text-secondary hover:text-primary hover:opacity-80 transition-opacity" href="#">Для себя</a></li>
+<li><a class="font-label text-label text-text-secondary hover:text-primary hover:opacity-80 transition-opacity" href="#">Для бизнеса</a></li>
+<li><a class="font-label text-label text-text-secondary hover:text-primary hover:opacity-80 transition-opacity" href="#">Возможности</a></li>
+<li><a class="font-label text-label text-text-secondary hover:text-primary hover:opacity-80 transition-opacity" href="#">Как работает</a></li>
+<li><a class="font-label text-label text-text-secondary hover:text-primary hover:opacity-80 transition-opacity" href="#">Тарифы</a></li>
+<li><a class="font-label text-label text-text-secondary hover:text-primary hover:opacity-80 transition-opacity" href="#">Войти</a></li>
+</ul>
+<!-- Trailing Action -->
+<button class="bg-primary text-on-primary font-label text-label px-6 py-3 rounded-full hover:opacity-80 transition-opacity">
+                Начать примерку
+            </button>
+</nav>
+</header>
+<!-- Main Canvas -->
+<main class="flex-grow w-full pb-section-lg">
+<!-- Hero Section -->
+<section class="w-full px-page-padding-desktop max-w-content-max mx-auto pt-section-md pb-xxl text-center">
+<h1 class="font-display text-display text-primary mb-md">Приватность и безопасность</h1>
+<p class="font-body-lg text-body-lg text-text-secondary max-w-2xl mx-auto">
+                Ваше доверие — фундамент нашего сервиса. Мы применяем строжайшие стандарты защиты данных и передовые технологии шифрования, чтобы ваши личные фотографии и профили стиля оставались исключительно вашими.
+            </p>
+</section>
+<!-- Bento Grid Blocks -->
+<section class="w-full px-page-padding-desktop max-w-content-max mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg">
+<!-- Block 1: Использование фото (Wide) -->
+<div class="col-span-1 md:col-span-8 bg-surface border border-border rounded-xl p-xl flex flex-col justify-between overflow-hidden relative group">
+<div class="absolute top-0 right-0 w-64 h-64 bg-ai-soft rounded-full blur-3xl opacity-50 -translate-y-1/2 translate-x-1/3"></div>
+<div class="relative z-10">
+<span class="material-symbols-outlined text-[48px] text-ai-violet mb-lg" style="font-variation-settings: 'FILL' 1;">
+                            shield_person
+                        </span>
+<h2 class="font-h2 text-h2 text-primary mb-md">Использование фото</h2>
+<p class="font-body text-body text-text-secondary max-w-lg mb-lg">
+                            Мы понимаем деликатность загружаемых материалов. Ваши фотографии лиц и фигур используются алгоритмами AI FitFabrica исключительно для процесса виртуальной примерки.
+                        </p>
+<ul class="space-y-sm">
+<li class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-success" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-body text-body text-text-primary">Автоматическое удаление исходников после сессии</span>
+</li>
+<li class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-success" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-body text-body text-text-primary">Изоляция процессов генерации от публичных сетей</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- Block 2: Хранение данных (Tall) -->
+<div class="col-span-1 md:col-span-4 bg-surface border border-border rounded-xl p-xl flex flex-col">
+<span class="material-symbols-outlined text-[48px] text-text-primary mb-lg" style="font-variation-settings: 'FILL' 1;">
+                        database
+                    </span>
+<h2 class="font-h3 text-h3 text-primary mb-md">Хранение данных</h2>
+<p class="font-body text-body text-text-secondary mb-xl flex-grow">
+                        Профили стиля, история покупок и параметры фигуры хранятся на защищенных серверах с использованием современных протоколов шифрования AES-256. Доступ к этой информации имеете только вы.
+                    </p>
+<div class="bg-surface-container-low p-md rounded-lg border border-border flex items-center gap-md">
+<span class="material-symbols-outlined text-text-muted">vpn_key</span>
+<span class="font-label text-label text-text-primary">Шифрование End-to-End</span>
+</div>
+</div>
+<!-- Block 3: Безопасность (Full Width Visual) -->
+<div class="col-span-1 md:col-span-12 mt-lg bg-primary rounded-xl overflow-hidden flex flex-col md:flex-row items-center justify-between border border-primary-container">
+<div class="p-xl md:p-xxl flex flex-col max-w-2xl">
+<div class="flex items-center gap-sm mb-md">
+<span class="material-symbols-outlined text-champagne-accent" style="font-variation-settings: 'FILL' 1;">lock</span>
+<span class="font-overline text-overline text-champagne-accent uppercase tracking-wider">Глобальный стандарт</span>
+</div>
+<h2 class="font-h2 text-h2 text-on-primary mb-md">Безопасность инфраструктуры</h2>
+<p class="font-body text-body text-inverse-primary mb-xl">
+                            Наша облачная архитектура регулярно проходит независимые аудиты безопасности. Мы внедряем защиту от DDoS-атак, постоянный мониторинг аномалий и строгий контроль доступа сотрудников, гарантируя уровень защиты, сопоставимый с финансовыми институтами.
+                        </p>
+</div>
+<div class="w-full md:w-1/2 h-64 md:h-full min-h-[300px] relative">
+<!-- Generative Image Placeholder -->
+<div class="absolute inset-0 bg-gradient-to-r from-primary to-transparent z-10 md:hidden"></div>
+<div class="absolute inset-0 bg-gradient-to-l from-transparent to-primary z-10 hidden md:block"></div>
+<img alt="Security Abstract Visualization" class="w-full h-full object-cover object-center opacity-80" data-alt="A serene, abstract representation of digital security in a premium context. Soft, flowing architectural curves in deep graphite and dark obsidian tones wrap around a glowing, geometric crystalline structure, symbolizing protected data. The lighting is soft and cinematic, creating a trustworthy, calm, and highly sophisticated minimal aesthetic. No harsh neon colors, only elegant modern security visuals." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1mgHU48NPU_NrzJUn4SNnFuL448Nkp5XkVsTu8F-tCd3TJKS8QsJhHzQU5c071NA9jZJdeccZuAbjPxIXnajVr5Frue_fko2cmniIIH-yoTI6pKhmFwc-I4FRnBSjc_JGRsRkje5MY6pLLFLi9XnhyrELHIfZYXws-l2H4PCVMAerv5UB55vLYsEWwsQBN2C_6jvbGJJlxTAHS1WYBSZCl2r0H4EvQb8f4p9pmWKRWlCtH2MEwgKsMjFJGjAKPovY5jFsSj_GgTA"/>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full bottom-0 bg-surface-alt border-t border-border mt-auto">
+<div class="w-full py-xl px-page-padding-desktop flex flex-col md:flex-row justify-between items-center max-w-content-max mx-auto gap-md">
+<!-- Copyright Text -->
+<p class="font-body text-label text-text-muted">
+                © 2024 AI FitFabrica. Все права защищены.
+            </p>
+<!-- Footer Links -->
+<ul class="flex items-center gap-lg">
+<li><a class="font-body text-label text-text-muted hover:text-primary transition-colors" href="#">Приватность</a></li>
+<li><a class="font-body text-label text-text-muted hover:text-primary transition-colors" href="#">Контакты</a></li>
+<li><a class="font-body text-label text-text-muted hover:text-primary transition-colors" href="#">Условия</a></li>
+</ul>
+</div>
+</footer>
+</body></html>

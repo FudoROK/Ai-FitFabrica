@@ -1,0 +1,36 @@
+.venv/
+.env
+.env.*
+!.env.example
+.idea/
+__pycache__/
+*.pyc
+service-account.json
+*.log
+
+# Frontend/package artifacts
+node_modules/
+
+# Build/test artifacts
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+ruff_cache/
+dist/
+build/
+*.egg-info/
+
+# secrets (never commit)
+.env
+service-account.json
+secrets/
+*.pem
+*.key
+*.p12
+
+# caches
+__pycache__/
+.pytest_cache/
+
+src/agents/.adk/

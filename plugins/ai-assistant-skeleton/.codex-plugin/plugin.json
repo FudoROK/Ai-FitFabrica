@@ -1,0 +1,43 @@
+{
+  "name": "ai-assistant-skeleton",
+  "version": "0.1.0",
+  "description": "Repo-local Codex plugin with architecture guardrails and validation workflows for the AI Assistant skeleton baseline.",
+  "author": {
+    "name": "FudoROK",
+    "email": "madi.igra23@gmail.com",
+    "url": "https://github.com/FudoROK"
+  },
+  "homepage": "https://github.com/FudoROK/ai-assistant-skeleton",
+  "repository": "https://github.com/FudoROK/ai-assistant-skeleton",
+  "license": "UNLICENSED",
+  "keywords": [
+    "fastapi",
+    "gcp",
+    "memory-architecture",
+    "codex-plugin"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "AI Assistant Skeleton",
+    "shortDescription": "Project plugin for architecture-safe Codex work",
+    "longDescription": "Adds repo-specific architecture guardrails and validation workflows for the AI Assistant skeleton backend without changing runtime code.",
+    "developerName": "FudoROK",
+    "category": "Coding",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/FudoROK/ai-assistant-skeleton",
+    "privacyPolicyURL": "https://github.com/FudoROK/ai-assistant-skeleton",
+    "termsOfServiceURL": "https://github.com/FudoROK/ai-assistant-skeleton",
+    "defaultPrompt": [
+      "Audit a change against this repo's memory split rules.",
+      "Run the local validation workflow for my current edits.",
+      "Map a proposed change to the correct architecture layer."
+    ],
+    "brandColor": "#0B6E4F",
+    "composerIcon": "./assets/ai-assistant-skeleton.svg",
+    "logo": "./assets/ai-assistant-skeleton.svg",
+    "screenshots": []
+  }
+}

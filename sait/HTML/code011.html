@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Контакты / Запросить демо - AI FitFabrica</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Manrope:wght@700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#e6e1df",
+                        "on-secondary-fixed": "#1d0061",
+                        "on-secondary-fixed-variant": "#4a2ea9",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#000000",
+                        "outline-variant": "#c4c7c7",
+                        "tertiary-fixed-dim": "#cac6c4",
+                        "on-primary-fixed-variant": "#474646",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed-dim": "#cbbeff",
+                        "on-tertiary": "#ffffff",
+                        "text-secondary": "#5F5F63",
+                        "surface-bright": "#fdf8f8",
+                        "ai-soft": "#EFEAFD",
+                        "inverse-surface": "#313030",
+                        "surface-tint": "#5f5e5e",
+                        "tertiary-container": "#1c1b1a",
+                        "secondary-container": "#9a83ff",
+                        "surface-dim": "#ddd9d8",
+                        "primary-container": "#1c1b1b",
+                        "text-primary": "#141414",
+                        "border": "#E8E1D6",
+                        "on-primary-fixed": "#1c1b1b",
+                        "inverse-primary": "#c8c6c5",
+                        "on-tertiary-fixed": "#1c1b1a",
+                        "outline": "#747878",
+                        "success": "#2F8F6B",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#1c1b1b",
+                        "warning": "#D96C5F",
+                        "primary-fixed-dim": "#c8c6c5",
+                        "on-background": "#1c1b1b",
+                        "on-tertiary-container": "#868381",
+                        "secondary": "#6249c2",
+                        "surface-alt": "#F1EAE0",
+                        "error-container": "#ffdad6",
+                        "background": "#F7F3EC",
+                        "champagne-accent": "#D8C3A5",
+                        "surface-container-low": "#f7f3f2",
+                        "inverse-on-surface": "#f4f0ef",
+                        "ai-violet": "#6E56CF",
+                        "on-primary-container": "#858383",
+                        "error": "#D93025",
+                        "text-muted": "#8B8580",
+                        "surface-variant": "#e5e2e1",
+                        "on-tertiary-fixed-variant": "#484645",
+                        "surface": "#FFFDF8",
+                        "surface-container-highest": "#e5e2e1",
+                        "surface-container": "#f1edec",
+                        "primary-fixed": "#e5e2e1",
+                        "secondary-fixed": "#e6deff",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#ebe7e6",
+                        "on-secondary-container": "#300491",
+                        "tertiary": "#000000",
+                        "on-surface-variant": "#444748",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "page-padding-desktop": "72px",
+                        "section-md": "96px",
+                        "md": "16px",
+                        "base": "8px",
+                        "content-max": "1280px",
+                        "lg": "24px",
+                        "section-lg": "128px",
+                        "xl": "32px",
+                        "xs": "8px",
+                        "sm": "12px",
+                        "xxl": "48px"
+                    },
+                    "fontFamily": {
+                        "h3": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "h2": ["Manrope"],
+                        "h1": ["Manrope"],
+                        "display": ["Manrope"],
+                        "overline": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h3": ["32px", { "lineHeight": "1.15", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body": ["16px", { "lineHeight": "1.55", "fontWeight": "400" }],
+                        "label": ["14px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "body-lg": ["20px", { "lineHeight": "1.5", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+                        "h2": ["44px", { "lineHeight": "1.08", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+                        "h1": ["56px", { "lineHeight": "1.05", "letterSpacing": "-0.035em", "fontWeight": "700" }],
+                        "display": ["72px", { "lineHeight": "1.02", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+                        "overline": ["12px", { "lineHeight": "1.15", "letterSpacing": "0.08em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-text-primary antialiased min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="bg-background/80 dark:bg-background/80 backdrop-blur-md font-label text-label full-width top-0 sticky border-b border-border dark:border-outline-variant flat no shadows z-50">
+<div class="flex justify-between items-center w-full px-page-padding-desktop max-w-content-max mx-auto h-20">
+<div class="font-h3 text-h3 font-bold text-primary dark:text-on-primary-fixed">
+                AI FitFabrica
+            </div>
+<nav class="hidden md:flex items-center gap-lg">
+<a class="text-text-secondary dark:text-text-muted hover:text-primary hover:opacity-80 transition-opacity" href="#">Для себя</a>
+<a class="text-text-secondary dark:text-text-muted hover:text-primary hover:opacity-80 transition-opacity" href="#">Для бизнеса</a>
+<a class="text-text-secondary dark:text-text-muted hover:text-primary hover:opacity-80 transition-opacity" href="#">Возможности</a>
+<a class="text-text-secondary dark:text-text-muted hover:text-primary hover:opacity-80 transition-opacity" href="#">Как работает</a>
+<a class="text-text-secondary dark:text-text-muted hover:text-primary hover:opacity-80 transition-opacity" href="#">Тарифы</a>
+<a class="text-text-secondary dark:text-text-muted hover:text-primary hover:opacity-80 transition-opacity" href="#">Войти</a>
+</nav>
+<button class="bg-primary text-on-primary rounded-full px-lg py-sm hover:opacity-80 transition-opacity Active: scale-95 transition-transform duration-200">
+                Начать примерку
+            </button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow w-full max-w-content-max mx-auto px-page-padding-desktop py-section-md">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-xxl items-start">
+<!-- Left Column: Info & Contacts -->
+<div class="flex flex-col gap-xl">
+<div>
+<h1 class="font-h1 text-h1 text-primary mb-md">Свяжитесь с нами</h1>
+<p class="font-body-lg text-body-lg text-text-secondary">
+                        Узнайте, как AI FitFabrica может трансформировать ваш fashion-бизнес. Заполните форму, и наша команда свяжется с вами для проведения персональной демонстрации.
+                    </p>
+</div>
+<!-- Call to Action Card -->
+<div class="bg-surface rounded-DEFAULT border border-border p-xl flex flex-col gap-md">
+<div class="flex items-center gap-sm text-ai-violet">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="font-label text-label">Мгновенный старт</span>
+</div>
+<h3 class="font-h3 text-h3 text-primary">Готовы попробовать прямо сейчас?</h3>
+<p class="font-body text-body text-text-secondary">
+                        Оцените качество нашей нейросети, загрузив свое фото в разделе быстрой примерки.
+                    </p>
+<button class="self-start mt-sm bg-primary text-on-primary rounded-full px-lg py-sm font-label text-label hover:opacity-80 transition-opacity">
+                        Начать примерку
+                    </button>
+</div>
+<!-- Contact Details -->
+<div class="flex flex-col gap-lg mt-md">
+<div class="flex items-start gap-md">
+<span class="material-symbols-outlined text-text-secondary mt-xs" style="font-variation-settings: 'FILL' 1;">mail</span>
+<div>
+<span class="font-label text-label block text-primary">Email</span>
+<a class="font-body text-body text-text-secondary hover:text-primary transition-colors" href="mailto:hello@fitfabrica.ai">hello@fitfabrica.ai</a>
+</div>
+</div>
+<div class="flex items-start gap-md">
+<span class="material-symbols-outlined text-text-secondary mt-xs" style="font-variation-settings: 'FILL' 1;">location_on</span>
+<div>
+<span class="font-label text-label block text-primary">Офис</span>
+<span class="font-body text-body text-text-secondary block">Инновационный центр, Москва</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Form -->
+<div class="bg-surface rounded-lg border border-border p-xxl shadow-sm">
+<h2 class="font-h2 text-h2 text-primary mb-xl">Запросить демо</h2>
+<form class="flex flex-col gap-lg">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+<div class="flex flex-col gap-xs">
+<label class="font-label text-label text-text-primary" for="name">Имя</label>
+<input class="bg-background border border-border rounded-DEFAULT px-md py-sm font-body text-body text-text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" id="name" placeholder="Иван Иванов" type="text"/>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-label text-label text-text-primary" for="email">Рабочий Email</label>
+<input class="bg-background border border-border rounded-DEFAULT px-md py-sm font-body text-body text-text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" id="email" placeholder="ivan@brand.com" type="email"/>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+<div class="flex flex-col gap-xs">
+<label class="font-label text-label text-text-primary" for="brand">Название бренда / компании</label>
+<input class="bg-background border border-border rounded-DEFAULT px-md py-sm font-body text-body text-text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" id="brand" placeholder="Fashion Brand" type="text"/>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-label text-label text-text-primary" for="catalog">Размер каталога (SKU)</label>
+<select class="bg-background border border-border rounded-DEFAULT px-md py-sm font-body text-body text-text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors appearance-none" id="catalog">
+<option>&lt; 100</option>
+<option>100 - 500</option>
+<option>500 - 1000</option>
+<option>&gt; 1000</option>
+</select>
+</div>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-label text-label text-text-primary" for="business">Тип бизнеса</label>
+<select class="bg-background border border-border rounded-DEFAULT px-md py-sm font-body text-body text-text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors appearance-none" id="business">
+<option>Ритейлер одежды</option>
+<option>Локальный бренд</option>
+<option>Маркетплейс</option>
+<option>Агентство</option>
+<option>Другое</option>
+</select>
+</div>
+<div class="flex flex-col gap-sm mt-sm">
+<span class="font-label text-label text-text-primary">Интересующие инструменты (можно выбрать несколько)</span>
+<div class="flex flex-col gap-sm">
+<label class="flex items-center gap-sm cursor-pointer group">
+<input class="w-5 h-5 rounded border-border text-primary focus:ring-primary bg-background" type="checkbox"/>
+<span class="font-body text-body text-text-secondary group-hover:text-primary transition-colors">Виртуальная примерочная (Widget)</span>
+</label>
+<label class="flex items-center gap-sm cursor-pointer group">
+<input class="w-5 h-5 rounded border-border text-primary focus:ring-primary bg-background" type="checkbox"/>
+<span class="font-body text-body text-text-secondary group-hover:text-primary transition-colors">Генерация лукбуков</span>
+</label>
+<label class="flex items-center gap-sm cursor-pointer group">
+<input class="w-5 h-5 rounded border-border text-primary focus:ring-primary bg-background" type="checkbox"/>
+<span class="font-body text-body text-text-secondary group-hover:text-primary transition-colors">AI Стилист</span>
+</label>
+</div>
+</div>
+<button class="mt-md bg-ai-violet text-on-primary rounded-full px-xl py-md font-label text-label w-full hover:opacity-90 transition-opacity flex justify-center items-center gap-sm" type="button">
+                        Запросить демо
+                        <span class="material-symbols-outlined text-on-primary" style="font-size: 20px;">arrow_forward</span>
+</button>
+<p class="font-overline text-overline text-text-muted text-center mt-sm">
+                        Нажимая кнопку, вы соглашаетесь с условиями обработки персональных данных.
+                    </p>
+</form>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-alt dark:bg-surface-container-low font-body text-label full-width bottom-0 border-t border-border flat mt-auto">
+<div class="w-full py-xl px-page-padding-desktop flex flex-col md:flex-row justify-between items-center max-w-content-max mx-auto">
+<div class="font-h3 text-h3 text-primary mb-md md:mb-0">
+                AI FitFabrica
+            </div>
+<div class="text-text-muted dark:text-on-surface-variant font-body text-label mb-md md:mb-0 text-center md:text-left">
+                © 2024 AI FitFabrica. Все права защищены.
+            </div>
+<nav class="flex items-center gap-lg">
+<a class="text-text-muted hover:text-primary transition-colors" href="#">Приватность</a>
+<a class="text-primary font-bold hover:text-primary transition-colors" href="#">Контакты</a>
+<a class="text-text-muted hover:text-primary transition-colors" href="#">Условия</a>
+</nav>
+</div>
+</footer>
+</body></html>

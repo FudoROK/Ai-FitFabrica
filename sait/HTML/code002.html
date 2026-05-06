@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI FitFabrica - Кредиты и баланс</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Manrope:wght@700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#e6e1df",
+                        "on-secondary-fixed": "#1d0061",
+                        "on-secondary-fixed-variant": "#4a2ea9",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#000000",
+                        "outline-variant": "#c4c7c7",
+                        "tertiary-fixed-dim": "#cac6c4",
+                        "on-primary-fixed-variant": "#474646",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed-dim": "#cbbeff",
+                        "on-tertiary": "#ffffff",
+                        "text-secondary": "#5F5F63",
+                        "surface-bright": "#fdf8f8",
+                        "ai-soft": "#EFEAFD",
+                        "inverse-surface": "#313030",
+                        "surface-tint": "#5f5e5e",
+                        "tertiary-container": "#1c1b1a",
+                        "secondary-container": "#9a83ff",
+                        "surface-dim": "#ddd9d8",
+                        "primary-container": "#1c1b1b",
+                        "text-primary": "#141414",
+                        "border": "#E8E1D6",
+                        "on-primary-fixed": "#1c1b1b",
+                        "inverse-primary": "#c8c6c5",
+                        "on-tertiary-fixed": "#1c1b1a",
+                        "outline": "#747878",
+                        "success": "#2F8F6B",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#1c1b1b",
+                        "warning": "#D96C5F",
+                        "primary-fixed-dim": "#c8c6c5",
+                        "on-background": "#1c1b1b",
+                        "on-tertiary-container": "#868381",
+                        "secondary": "#6249c2",
+                        "surface-alt": "#F1EAE0",
+                        "error-container": "#ffdad6",
+                        "background": "#F7F3EC",
+                        "champagne-accent": "#D8C3A5",
+                        "surface-container-low": "#f7f3f2",
+                        "inverse-on-surface": "#f4f0ef",
+                        "ai-violet": "#6E56CF",
+                        "on-primary-container": "#858383",
+                        "error": "#D93025",
+                        "text-muted": "#8B8580",
+                        "surface-variant": "#e5e2e1",
+                        "on-tertiary-fixed-variant": "#484645",
+                        "surface": "#FFFDF8",
+                        "surface-container-highest": "#e5e2e1",
+                        "surface-container": "#f1edec",
+                        "primary-fixed": "#e5e2e1",
+                        "secondary-fixed": "#e6deff",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#ebe7e6",
+                        "on-secondary-container": "#300491",
+                        "tertiary": "#000000",
+                        "on-surface-variant": "#444748",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "page-padding-desktop": "72px",
+                        "section-md": "96px",
+                        "md": "16px",
+                        "base": "8px",
+                        "content-max": "1280px",
+                        "lg": "24px",
+                        "section-lg": "128px",
+                        "xl": "32px",
+                        "xs": "8px",
+                        "sm": "12px",
+                        "xxl": "48px"
+                    },
+                    "fontFamily": {
+                        "h3": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "h2": ["Manrope"],
+                        "h1": ["Manrope"],
+                        "display": ["Manrope"],
+                        "overline": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h3": ["32px", { "lineHeight": "1.15", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body": ["16px", { "lineHeight": "1.55", "fontWeight": "400" }],
+                        "label": ["14px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "body-lg": ["20px", { "lineHeight": "1.5", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+                        "h2": ["44px", { "lineHeight": "1.08", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+                        "h1": ["56px", { "lineHeight": "1.05", "letterSpacing": "-0.035em", "fontWeight": "700" }],
+                        "display": ["72px", { "lineHeight": "1.02", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+                        "overline": ["12px", { "lineHeight": "1.15", "letterSpacing": "0.08em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-primary font-body text-body min-h-screen flex">
+<!-- SideNavBar -->
+<nav class="bg-surface dark:bg-surface-container-lowest left-0 h-full w-72 border-r border-border dark:border-outline-variant fixed top-0 flex flex-col py-6 z-50">
+<!-- Header -->
+<div class="px-6 mb-8 flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden border border-border">
+<img class="w-full h-full object-cover" data-alt="A sophisticated close-up portrait of a female model with natural makeup, looking directly at the camera. The lighting is soft and high-key, creating a premium, clean aesthetic suitable for a modern fashion technology platform. The color palette is composed of warm neutral tones, soft creams, and natural skin textures, aligning with a minimalist light-mode design system. The mood is professional, calm, and trustworthy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXIvyrVRV_cW55KS6xSAm0u-fv9uqLMNckku-c852EHuiuRFxJ_KL6b4vtT5ra8kWT_kl6gU2MMp9Wagi74Lo9QiDsyGO6D1I5fK4S127h7DESb6jRlJYxsTKLS3thxBe2zaU1JPDcYHsTuVx_GUkrQyyGgnxzOxTZEf60TRvpmtDJHgl9V08b6FR19If6VUbcEQGW2cvi2fXq0K9o3Njy9rHGIPDUczcoRbrmGRimWbCojtIX62F9sux1rElKxbbWGVPvcJZW0C4"/>
+</div>
+<div>
+<div class="font-h3 text-body font-bold text-primary dark:text-on-primary-fixed leading-tight">FitFabrica Workspace</div>
+<div class="font-label text-overline text-text-secondary mt-1">Premium Fashion AI</div>
+</div>
+</div>
+<!-- Navigation Links -->
+<div class="flex-1 flex flex-col gap-1 overflow-y-auto">
+<!-- Кабинет -->
+<a class="text-text-secondary dark:text-text-muted mx-2 px-4 py-3 flex items-center gap-3 hover:bg-surface-variant hover:bg-surface-container-high transition-colors rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label text-label">Кабинет</span>
+</a>
+<!-- Новая примерка -->
+<a class="text-text-secondary dark:text-text-muted mx-2 px-4 py-3 flex items-center gap-3 hover:bg-surface-variant hover:bg-surface-container-high transition-colors rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">add_a_photo</span>
+<span class="font-label text-label">Новая примерка</span>
+</a>
+<!-- Подбор образа -->
+<a class="text-text-secondary dark:text-text-muted mx-2 px-4 py-3 flex items-center gap-3 hover:bg-surface-variant hover:bg-surface-container-high transition-colors rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">auto_fix_high</span>
+<span class="font-label text-label">Подбор образа</span>
+</a>
+<!-- Найти похожее -->
+<a class="text-text-secondary dark:text-text-muted mx-2 px-4 py-3 flex items-center gap-3 hover:bg-surface-variant hover:bg-surface-container-high transition-colors rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">search_check</span>
+<span class="font-label text-label">Найти похожее</span>
+</a>
+<!-- Карточка товара -->
+<a class="text-text-secondary dark:text-text-muted mx-2 px-4 py-3 flex items-center gap-3 hover:bg-surface-variant hover:bg-surface-container-high transition-colors rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">shopping_bag</span>
+<span class="font-label text-label">Карточка товара</span>
+</a>
+<!-- История -->
+<a class="text-text-secondary dark:text-text-muted mx-2 px-4 py-3 flex items-center gap-3 hover:bg-surface-variant hover:bg-surface-container-high transition-colors rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label text-label">История</span>
+</a>
+<!-- Кредиты (ACTIVE) -->
+<a class="bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-DEFAULT mx-2 px-4 py-3 flex items-center gap-3 hover:bg-surface-container-high transition-colors translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">payments</span>
+<span class="font-label text-label">Кредиты</span>
+</a>
+<!-- Профиль стиля -->
+<a class="text-text-secondary dark:text-text-muted mx-2 px-4 py-3 flex items-center gap-3 hover:bg-surface-variant hover:bg-surface-container-high transition-colors rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label text-label">Профиль стиля</span>
+</a>
+<!-- Профиль бизнеса -->
+<a class="text-text-secondary dark:text-text-muted mx-2 px-4 py-3 flex items-center gap-3 hover:bg-surface-variant hover:bg-surface-container-high transition-colors rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">business_center</span>
+<span class="font-label text-label">Профиль бизнеса</span>
+</a>
+</div>
+<!-- CTA -->
+<div class="px-6 mt-6">
+<button class="w-full bg-primary text-on-primary font-label text-label py-3 px-4 rounded-full flex items-center justify-center gap-2 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined">add</span>
+                Создать образ
+            </button>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 ml-72 p-page-padding-desktop max-w-content-max w-full box-border">
+<!-- Page Header -->
+<header class="mb-xl">
+<h1 class="font-h1 text-h1 text-primary">Баланс и тариф</h1>
+<p class="font-body-lg text-body-lg text-text-secondary mt-2 max-w-2xl">Управляйте своими кредитами, пополняйте баланс и отслеживайте историю списаний за генерации.</p>
+</header>
+<!-- Section 1: Dashboard Overview (Bento Grid) -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-lg mb-xxl">
+<!-- Current Balance Card -->
+<div class="md:col-span-2 bg-surface rounded-xl p-xl border border-border flex flex-col justify-between relative overflow-hidden">
+<div class="absolute -right-20 -top-20 w-64 h-64 bg-ai-soft rounded-full opacity-50 blur-3xl pointer-events-none"></div>
+<div>
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-secondary">account_balance_wallet</span>
+<h2 class="font-label text-label text-text-secondary uppercase tracking-wider">Доступно кредитов</h2>
+</div>
+<div class="font-display text-display text-primary leading-none tracking-tight">
+                        1,450
+                    </div>
+</div>
+<div class="mt-8 flex items-center gap-4">
+<button class="bg-primary text-on-primary font-label text-label py-3 px-6 rounded-full hover:opacity-90 transition-opacity">
+                        Пополнить баланс
+                    </button>
+<div class="flex items-center gap-2 px-3 py-1.5 bg-surface-variant rounded-full">
+<span class="w-2 h-2 rounded-full bg-success"></span>
+<span class="font-label text-overline text-text-secondary">Автоплатеж активен</span>
+</div>
+</div>
+</div>
+<!-- Current Tariff Card -->
+<div class="md:col-span-1 bg-surface-alt rounded-xl p-xl border border-border flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-label text-label text-text-secondary uppercase tracking-wider">Текущий тариф</h2>
+<span class="material-symbols-outlined text-text-secondary">workspace_premium</span>
+</div>
+<div class="font-h3 text-h3 text-primary mb-2">Pro Business</div>
+<p class="font-body text-body text-text-secondary">Следующее списание: 15 ноября 2024</p>
+</div>
+<div class="mt-8 pt-6 border-t border-border border-dashed">
+<a class="font-label text-label text-secondary flex items-center gap-1 hover:opacity-80 transition-opacity" href="#">
+                        Управление тарифом
+                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+</div>
+</section>
+<!-- Section 2: Top-up Packages -->
+<section class="mb-xxl">
+<h2 class="font-h2 text-h2 text-primary mb-lg">Пакеты пополнения</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+<!-- Starter Package -->
+<div class="bg-surface rounded-xl p-lg border border-border flex flex-col hover:shadow-sm transition-shadow">
+<div class="mb-6">
+<div class="font-label text-overline text-text-secondary mb-2">STARTER</div>
+<div class="flex items-baseline gap-2">
+<span class="font-h2 text-h2 text-primary">500</span>
+<span class="font-body text-body text-text-secondary">кредитов</span>
+</div>
+</div>
+<ul class="font-body text-body text-text-secondary space-y-3 mb-8 flex-1">
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-success text-sm">check</span> ~10 генераций образов</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-success text-sm">check</span> Базовое качество</li>
+</ul>
+<button class="w-full bg-surface-variant text-text-primary font-label text-label py-3 px-4 rounded-full border border-border hover:bg-surface-container-high transition-colors">
+                        Купить за 490 ₽
+                    </button>
+</div>
+<!-- Popular Package (Highlighted) -->
+<div class="bg-surface rounded-xl p-lg border-2 border-secondary relative flex flex-col shadow-sm">
+<div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-secondary text-on-secondary font-label text-overline px-3 py-1 rounded-full whitespace-nowrap">
+                        ПОПУЛЯРНЫЙ ВЫБОР
+                    </div>
+<div class="mb-6 mt-2">
+<div class="font-label text-overline text-secondary mb-2">PRO PACK</div>
+<div class="flex items-baseline gap-2">
+<span class="font-h2 text-h2 text-primary">2,000</span>
+<span class="font-body text-body text-text-secondary">кредитов</span>
+</div>
+</div>
+<ul class="font-body text-body text-text-secondary space-y-3 mb-8 flex-1">
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-success text-sm">check</span> ~40 генераций образов</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-success text-sm">check</span> Высокое разрешение 4K</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-success text-sm">check</span> Приоритетная очередь</li>
+</ul>
+<button class="w-full bg-secondary text-on-secondary font-label text-label py-3 px-4 rounded-full hover:opacity-90 transition-opacity">
+                        Купить за 1,490 ₽
+                    </button>
+</div>
+<!-- Premium Package -->
+<div class="bg-surface rounded-xl p-lg border border-border flex flex-col hover:shadow-sm transition-shadow">
+<div class="mb-6">
+<div class="font-label text-overline text-text-secondary mb-2">AGENCY</div>
+<div class="flex items-baseline gap-2">
+<span class="font-h2 text-h2 text-primary">10,000</span>
+<span class="font-body text-body text-text-secondary">кредитов</span>
+</div>
+</div>
+<ul class="font-body text-body text-text-secondary space-y-3 mb-8 flex-1">
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-success text-sm">check</span> Для командной работы</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-success text-sm">check</span> API доступ</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-success text-sm">check</span> Выделенный менеджер</li>
+</ul>
+<button class="w-full bg-surface-variant text-text-primary font-label text-label py-3 px-4 rounded-full border border-border hover:bg-surface-container-high transition-colors">
+                        Купить за 5,990 ₽
+                    </button>
+</div>
+</div>
+</section>
+<!-- Section 3: Transaction History -->
+<section>
+<div class="flex items-center justify-between mb-lg">
+<h2 class="font-h3 text-h3 text-primary">История списаний</h2>
+<button class="font-label text-label text-text-secondary flex items-center gap-2 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">filter_list</span>
+                    Фильтр
+                </button>
+</div>
+<div class="bg-surface rounded-xl border border-border overflow-hidden">
+<!-- Table Header -->
+<div class="grid grid-cols-12 gap-4 p-4 border-b border-border bg-surface-variant/50 font-label text-overline text-text-secondary">
+<div class="col-span-3">ДАТА</div>
+<div class="col-span-5">ОПЕРАЦИЯ</div>
+<div class="col-span-2 text-right">СУММА</div>
+<div class="col-span-2 text-right">СТАТУС</div>
+</div>
+<!-- History Items -->
+<div class="divide-y divide-border">
+<!-- Item 1: Try-on -->
+<div class="grid grid-cols-12 gap-4 p-4 items-center hover:bg-surface-variant/30 transition-colors">
+<div class="col-span-3 font-body text-body text-text-secondary">
+                            Сегодня, 14:32
+                        </div>
+<div class="col-span-5 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center text-text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'opsz' 20;">add_a_photo</span>
+</div>
+<div>
+<div class="font-label text-label text-primary">Генерация примерки</div>
+<div class="font-body text-label text-text-secondary">Осеннее пальто (Проект A)</div>
+</div>
+</div>
+<div class="col-span-2 text-right font-label text-label text-error">
+                            - 45 кр.
+                        </div>
+<div class="col-span-2 flex justify-end">
+<span class="px-2 py-1 bg-surface-variant rounded-md font-label text-overline text-text-secondary">Выполнено</span>
+</div>
+</div>
+<!-- Item 2: Card Creation -->
+<div class="grid grid-cols-12 gap-4 p-4 items-center hover:bg-surface-variant/30 transition-colors">
+<div class="col-span-3 font-body text-body text-text-secondary">
+                            Вчера, 18:05
+                        </div>
+<div class="col-span-5 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-ai-soft flex items-center justify-center text-ai-violet">
+<span class="material-symbols-outlined" style="font-variation-settings: 'opsz' 20;">shopping_bag</span>
+</div>
+<div>
+<div class="font-label text-label text-primary">Создание карточки товара</div>
+<div class="font-body text-label text-text-secondary">Набор аксессуаров (3 фона)</div>
+</div>
+</div>
+<div class="col-span-2 text-right font-label text-label text-error">
+                            - 120 кр.
+                        </div>
+<div class="col-span-2 flex justify-end">
+<span class="px-2 py-1 bg-surface-variant rounded-md font-label text-overline text-text-secondary">Выполнено</span>
+</div>
+</div>
+<!-- Item 3: Refund -->
+<div class="grid grid-cols-12 gap-4 p-4 items-center hover:bg-surface-variant/30 transition-colors">
+<div class="col-span-3 font-body text-body text-text-secondary">
+                            12 Октября, 09:15
+                        </div>
+<div class="col-span-5 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-alt flex items-center justify-center text-success">
+<span class="material-symbols-outlined" style="font-variation-settings: 'opsz' 20;">replay</span>
+</div>
+<div>
+<div class="font-label text-label text-primary">Возврат средств</div>
+<div class="font-body text-label text-text-secondary">Ошибка генерации (ID: #8821)</div>
+</div>
+</div>
+<div class="col-span-2 text-right font-label text-label text-success">
+                            + 45 кр.
+                        </div>
+<div class="col-span-2 flex justify-end">
+<span class="px-2 py-1 bg-success/10 text-success rounded-md font-label text-overline">Возврат</span>
+</div>
+</div>
+<!-- Item 4: Top-up -->
+<div class="grid grid-cols-12 gap-4 p-4 items-center hover:bg-surface-variant/30 transition-colors">
+<div class="col-span-3 font-body text-body text-text-secondary">
+                            10 Октября, 11:00
+                        </div>
+<div class="col-span-5 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'opsz' 20;">account_balance</span>
+</div>
+<div>
+<div class="font-label text-label text-primary">Пополнение баланса</div>
+<div class="font-body text-label text-text-secondary">Пакет PRO PACK</div>
+</div>
+</div>
+<div class="col-span-2 text-right font-label text-label text-success">
+                            + 2,000 кр.
+                        </div>
+<div class="col-span-2 flex justify-end">
+<span class="px-2 py-1 bg-surface-variant rounded-md font-label text-overline text-text-secondary">Успешно</span>
+</div>
+</div>
+</div>
+<div class="p-4 border-t border-border flex justify-center bg-surface-variant/20">
+<button class="font-label text-label text-secondary hover:opacity-80 transition-opacity flex items-center gap-1">
+                        Загрузить еще
+                        <span class="material-symbols-outlined text-sm">expand_more</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+</body></html>

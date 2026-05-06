@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Возможности - AI FitFabrica</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Manrope:wght@700;800;900&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#e6e1df",
+                        "on-secondary-fixed": "#1d0061",
+                        "on-secondary-fixed-variant": "#4a2ea9",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#000000",
+                        "outline-variant": "#c4c7c7",
+                        "tertiary-fixed-dim": "#cac6c4",
+                        "on-primary-fixed-variant": "#474646",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed-dim": "#cbbeff",
+                        "on-tertiary": "#ffffff",
+                        "text-secondary": "#5F5F63",
+                        "surface-bright": "#fdf8f8",
+                        "ai-soft": "#EFEAFD",
+                        "inverse-surface": "#313030",
+                        "surface-tint": "#5f5e5e",
+                        "tertiary-container": "#1c1b1a",
+                        "secondary-container": "#9a83ff",
+                        "surface-dim": "#ddd9d8",
+                        "primary-container": "#1c1b1b",
+                        "text-primary": "#141414",
+                        "border": "#E8E1D6",
+                        "on-primary-fixed": "#1c1b1b",
+                        "inverse-primary": "#c8c6c5",
+                        "on-tertiary-fixed": "#1c1b1a",
+                        "outline": "#747878",
+                        "success": "#2F8F6B",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#1c1b1b",
+                        "warning": "#D96C5F",
+                        "primary-fixed-dim": "#c8c6c5",
+                        "on-background": "#1c1b1b",
+                        "on-tertiary-container": "#868381",
+                        "secondary": "#6249c2",
+                        "surface-alt": "#F1EAE0",
+                        "error-container": "#ffdad6",
+                        "background": "#F7F3EC",
+                        "champagne-accent": "#D8C3A5",
+                        "surface-container-low": "#f7f3f2",
+                        "inverse-on-surface": "#f4f0ef",
+                        "ai-violet": "#6E56CF",
+                        "on-primary-container": "#858383",
+                        "error": "#D93025",
+                        "text-muted": "#8B8580",
+                        "surface-variant": "#e5e2e1",
+                        "on-tertiary-fixed-variant": "#484645",
+                        "surface": "#FFFDF8",
+                        "surface-container-highest": "#e5e2e1",
+                        "surface-container": "#f1edec",
+                        "primary-fixed": "#e5e2e1",
+                        "secondary-fixed": "#e6deff",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#ebe7e6",
+                        "on-secondary-container": "#300491",
+                        "tertiary": "#000000",
+                        "on-surface-variant": "#444748",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "page-padding-desktop": "72px",
+                        "section-md": "96px",
+                        "md": "16px",
+                        "base": "8px",
+                        "content-max": "1280px",
+                        "lg": "24px",
+                        "section-lg": "128px",
+                        "xl": "32px",
+                        "xs": "8px",
+                        "sm": "12px",
+                        "xxl": "48px"
+                    },
+                    "fontFamily": {
+                        "h3": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "h2": ["Manrope"],
+                        "h1": ["Manrope"],
+                        "display": ["Manrope"],
+                        "overline": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h3": ["32px", { "lineHeight": "1.15", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body": ["16px", { "lineHeight": "1.55", "fontWeight": "400" }],
+                        "label": ["14px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "body-lg": ["20px", { "lineHeight": "1.5", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+                        "h2": ["44px", { "lineHeight": "1.08", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+                        "h1": ["56px", { "lineHeight": "1.05", "letterSpacing": "-0.035em", "fontWeight": "700" }],
+                        "display": ["72px", { "lineHeight": "1.02", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+                        "overline": ["12px", { "lineHeight": "1.15", "letterSpacing": "0.08em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-text-primary font-body antialiased selection:bg-secondary selection:text-on-secondary min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav class="bg-background/80 dark:bg-background/80 backdrop-blur-md docked full-width top-0 sticky border-b border-border dark:border-outline-variant flat no shadows z-50">
+<div class="flex justify-between items-center w-full px-page-padding-desktop max-w-content-max mx-auto h-20">
+<!-- Brand Logo -->
+<a class="font-h3 text-h3 font-bold text-primary dark:text-on-primary-fixed hover:opacity-80 transition-opacity" href="#">
+                AI FitFabrica
+            </a>
+<!-- Navigation Links -->
+<div class="hidden md:flex items-center gap-xl">
+<a class="font-label text-label text-text-secondary dark:text-text-muted hover:text-primary hover:opacity-80 transition-opacity" href="#">Для себя</a>
+<a class="font-label text-label text-text-secondary dark:text-text-muted hover:text-primary hover:opacity-80 transition-opacity" href="#">Для бизнеса</a>
+<a class="font-label text-label text-primary dark:text-on-primary-fixed font-bold border-b-2 border-primary hover:opacity-80 transition-opacity" href="#">Возможности</a>
+<a class="font-label text-label text-text-secondary dark:text-text-muted hover:text-primary hover:opacity-80 transition-opacity" href="#">Как работает</a>
+<a class="font-label text-label text-text-secondary dark:text-text-muted hover:text-primary hover:opacity-80 transition-opacity" href="#">Тарифы</a>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-lg">
+<a class="hidden md:block font-label text-label text-text-secondary dark:text-text-muted hover:text-primary hover:opacity-80 transition-opacity" href="#">Войти</a>
+<a class="font-label text-label bg-primary text-on-primary px-xl py-sm rounded-full hover:opacity-80 transition-opacity flex items-center justify-center" href="#">
+                    Начать примерку
+                </a>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-content-max mx-auto px-md md:px-page-padding-desktop pt-section-md pb-section-lg">
+<!-- Hero Header -->
+<header class="text-center mb-section-md max-w-3xl mx-auto">
+<h1 class="font-display text-display mb-lg text-primary">Инструменты будущего</h1>
+<p class="font-body-lg text-body-lg text-text-secondary">
+                Откройте для себя интеллектуальные решения на базе ИИ. Независимо от того, обновляете ли вы личный гардероб или масштабируете модный бизнес, наши алгоритмы обеспечат идеальный результат.
+            </p>
+</header>
+<!-- Group 1: Для себя -->
+<section class="mb-section-lg">
+<div class="mb-xl flex items-center gap-md">
+<span class="material-symbols-outlined text-secondary text-h3" data-weight="fill" style="font-variation-settings: 'FILL' 1;">face</span>
+<h2 class="font-h2 text-h2 text-primary">Для себя</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+<!-- Feature Card 1 -->
+<div class="bg-surface border border-border rounded-xl p-xl flex flex-col hover:border-outline-variant transition-colors group">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center mb-lg group-hover:bg-ai-soft transition-colors">
+<span class="material-symbols-outlined text-primary group-hover:text-ai-violet transition-colors">checkroom</span>
+</div>
+<h3 class="font-h3 text-h3 mb-sm">Умная примерка</h3>
+<p class="font-body text-body text-text-secondary mb-xl flex-grow">
+                        Примеряйте одежду на свои фотографии с невероятной точностью. Нейросеть учитывает особенности фигуры, ткань и освещение для создания реалистичного результата.
+                    </p>
+<a class="font-label text-label text-primary inline-flex items-center gap-xs hover:text-secondary transition-colors mt-auto w-fit" href="#">
+                        Попробовать <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+<!-- Feature Card 2 -->
+<div class="bg-surface border border-border rounded-xl p-xl flex flex-col hover:border-outline-variant transition-colors group">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center mb-lg group-hover:bg-ai-soft transition-colors">
+<span class="material-symbols-outlined text-primary group-hover:text-ai-violet transition-colors">auto_awesome</span>
+</div>
+<h3 class="font-h3 text-h3 mb-sm">Анализ гардероба</h3>
+<p class="font-body text-body text-text-secondary mb-xl flex-grow">
+                        Загрузите фотографии своих вещей, и искусственный интеллект проанализирует их, предложив десятки новых, стильных сочетаний на каждый день.
+                    </p>
+<a class="font-label text-label text-primary inline-flex items-center gap-xs hover:text-secondary transition-colors mt-auto w-fit" href="#">
+                        Анализировать <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+<!-- Feature Card 3 -->
+<div class="bg-surface border border-border rounded-xl p-xl flex flex-col hover:border-outline-variant transition-colors group">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center mb-lg group-hover:bg-ai-soft transition-colors">
+<span class="material-symbols-outlined text-primary group-hover:text-ai-violet transition-colors">face_retouching_natural</span>
+</div>
+<h3 class="font-h3 text-h3 mb-sm">AI Стилист</h3>
+<p class="font-body text-body text-text-secondary mb-xl flex-grow">
+                        Получите персональные рекомендации по стилю, цветовой палитре и крою одежды, идеально подходящие именно вашему типу внешности.
+                    </p>
+<a class="font-label text-label text-primary inline-flex items-center gap-xs hover:text-secondary transition-colors mt-auto w-fit" href="#">
+                        Начать работу <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+<!-- Feature Card 4 -->
+<div class="bg-surface border border-border rounded-xl p-xl flex flex-col hover:border-outline-variant transition-colors group">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center mb-lg group-hover:bg-ai-soft transition-colors">
+<span class="material-symbols-outlined text-primary group-hover:text-ai-violet transition-colors">sell</span>
+</div>
+<h3 class="font-h3 text-h3 mb-sm">Поиск аналогов</h3>
+<p class="font-body text-body text-text-secondary mb-xl flex-grow">
+                        Загрузите фото понравившейся вещи, и мы найдем похожие модели в других магазинах по более выгодной цене всего за пару секунд.
+                    </p>
+<a class="font-label text-label text-primary inline-flex items-center gap-xs hover:text-secondary transition-colors mt-auto w-fit" href="#">
+                        Найти дешевле <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</section>
+<!-- Group 2: Для бизнеса -->
+<section>
+<div class="mb-xl flex items-center gap-md">
+<span class="material-symbols-outlined text-primary text-h3" data-weight="fill" style="font-variation-settings: 'FILL' 1;">storefront</span>
+<h2 class="font-h2 text-h2 text-primary">Для бизнеса</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+<!-- Feature Card 1 -->
+<div class="bg-surface border border-border rounded-xl p-xl flex flex-col hover:border-outline-variant transition-colors group">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center mb-lg group-hover:bg-surface-dim transition-colors">
+<span class="material-symbols-outlined text-primary">inventory_2</span>
+</div>
+<h3 class="font-h3 text-h3 mb-sm">Генерация карточек</h3>
+<p class="font-body text-body text-text-secondary mb-xl flex-grow">
+                        Автоматическое создание продающих описаний, заголовков и SEO-тегов для сотен товаров на основе их фотографий и базовых характеристик.
+                    </p>
+<a class="font-label text-label text-primary inline-flex items-center gap-xs hover:opacity-70 transition-opacity mt-auto w-fit" href="#">
+                        Подробнее <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+<!-- Feature Card 2 -->
+<div class="bg-surface border border-border rounded-xl p-xl flex flex-col hover:border-outline-variant transition-colors group">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center mb-lg group-hover:bg-surface-dim transition-colors">
+<span class="material-symbols-outlined text-primary">group</span>
+</div>
+<h3 class="font-h3 text-h3 mb-sm">Фото на модели</h3>
+<p class="font-body text-body text-text-secondary mb-xl flex-grow">
+                        Сократите расходы на фотосессии. Генерируйте студийные фотографии вашей одежды на виртуальных моделях различных типажей и размеров.
+                    </p>
+<a class="font-label text-label text-primary inline-flex items-center gap-xs hover:opacity-70 transition-opacity mt-auto w-fit" href="#">
+                        Смотреть примеры <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+<!-- Feature Card 3 -->
+<div class="bg-surface border border-border rounded-xl p-xl flex flex-col hover:border-outline-variant transition-colors group">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center mb-lg group-hover:bg-surface-dim transition-colors">
+<span class="material-symbols-outlined text-primary">view_cozy</span>
+</div>
+<h3 class="font-h3 text-h3 mb-sm">Контент-пакет</h3>
+<p class="font-body text-body text-text-secondary mb-xl flex-grow">
+                        Создавайте готовые образы, атмосферные лукбуки и визуальные концепции для социальных сетей в один клик без привлечения команды дизайнеров.
+                    </p>
+<a class="font-label text-label text-primary inline-flex items-center gap-xs hover:opacity-70 transition-opacity mt-auto w-fit" href="#">
+                        Узнать больше <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+<!-- Feature Card 4 -->
+<div class="bg-surface border border-border rounded-xl p-xl flex flex-col hover:border-outline-variant transition-colors group">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center mb-lg group-hover:bg-surface-dim transition-colors">
+<span class="material-symbols-outlined text-primary">query_stats</span>
+</div>
+<h3 class="font-h3 text-h3 mb-sm">Аналитика цен</h3>
+<p class="font-body text-body text-text-secondary mb-xl flex-grow">
+                        Глубокий мониторинг рынка и конкурентов. Получайте ИИ-рекомендации по оптимальному ценообразованию для увеличения маржинальности коллекций.
+                    </p>
+<a class="font-label text-label text-primary inline-flex items-center gap-xs hover:opacity-70 transition-opacity mt-auto w-fit" href="#">
+                        Начать анализ <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-alt dark:bg-surface-container-low border-t border-border w-full py-xl px-page-padding-desktop flex flex-col md:flex-row justify-between items-center max-w-content-max mx-auto mt-auto">
+<div class="font-h3 text-h3 text-primary mb-md md:mb-0">
+            AI FitFabrica
+        </div>
+<div class="font-body text-label text-text-muted dark:text-on-surface-variant flex gap-lg mb-md md:mb-0">
+<a class="text-text-muted hover:text-primary transition-colors" href="#">Приватность</a>
+<a class="text-text-muted hover:text-primary transition-colors" href="#">Контакты</a>
+<a class="text-text-muted hover:text-primary transition-colors" href="#">Условия</a>
+</div>
+<div class="font-body text-label text-text-muted dark:text-on-surface-variant">
+            © 2024 AI FitFabrica. Все права защищены.
+        </div>
+</footer>
+</body></html>

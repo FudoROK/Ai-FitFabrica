@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test-and-architecture-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Compile source
+        run: python -m compileall src
+
+      - name: Prepare test environment and run tests
+        run: |
+          ./scripts/setup_test_env.sh
+          source .venv/bin/activate
+          pytest -q
+          pytest -q tests/architecture
+
+      - name: Architecture static gate
+        run: |
+          source .venv/bin/activate
+          python scripts/check_architecture.py

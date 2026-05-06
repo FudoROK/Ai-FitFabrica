@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Профиль бизнеса - FitFabrica</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Manrope:wght@700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#e6e1df",
+                        "on-secondary-fixed": "#1d0061",
+                        "on-secondary-fixed-variant": "#4a2ea9",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#000000",
+                        "outline-variant": "#c4c7c7",
+                        "tertiary-fixed-dim": "#cac6c4",
+                        "on-primary-fixed-variant": "#474646",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed-dim": "#cbbeff",
+                        "on-tertiary": "#ffffff",
+                        "text-secondary": "#5F5F63",
+                        "surface-bright": "#fdf8f8",
+                        "ai-soft": "#EFEAFD",
+                        "inverse-surface": "#313030",
+                        "surface-tint": "#5f5e5e",
+                        "tertiary-container": "#1c1b1a",
+                        "secondary-container": "#9a83ff",
+                        "surface-dim": "#ddd9d8",
+                        "primary-container": "#1c1b1b",
+                        "text-primary": "#141414",
+                        "border": "#E8E1D6",
+                        "on-primary-fixed": "#1c1b1b",
+                        "inverse-primary": "#c8c6c5",
+                        "on-tertiary-fixed": "#1c1b1a",
+                        "outline": "#747878",
+                        "success": "#2F8F6B",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#1c1b1b",
+                        "warning": "#D96C5F",
+                        "primary-fixed-dim": "#c8c6c5",
+                        "on-background": "#1c1b1b",
+                        "on-tertiary-container": "#868381",
+                        "secondary": "#6249c2",
+                        "surface-alt": "#F1EAE0",
+                        "error-container": "#ffdad6",
+                        "background": "#F7F3EC",
+                        "champagne-accent": "#D8C3A5",
+                        "surface-container-low": "#f7f3f2",
+                        "inverse-on-surface": "#f4f0ef",
+                        "ai-violet": "#6E56CF",
+                        "on-primary-container": "#858383",
+                        "error": "#D93025",
+                        "text-muted": "#8B8580",
+                        "surface-variant": "#e5e2e1",
+                        "on-tertiary-fixed-variant": "#484645",
+                        "surface": "#FFFDF8",
+                        "surface-container-highest": "#e5e2e1",
+                        "surface-container": "#f1edec",
+                        "primary-fixed": "#e5e2e1",
+                        "secondary-fixed": "#e6deff",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#ebe7e6",
+                        "on-secondary-container": "#300491",
+                        "tertiary": "#000000",
+                        "on-surface-variant": "#444748",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "page-padding-desktop": "72px",
+                        "section-md": "96px",
+                        "md": "16px",
+                        "base": "8px",
+                        "content-max": "1280px",
+                        "lg": "24px",
+                        "section-lg": "128px",
+                        "xl": "32px",
+                        "xs": "8px",
+                        "sm": "12px",
+                        "xxl": "48px"
+                    },
+                    "fontFamily": {
+                        "h3": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "h2": ["Manrope"],
+                        "h1": ["Manrope"],
+                        "display": ["Manrope"],
+                        "overline": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h3": ["32px", { "lineHeight": "1.15", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body": ["16px", { "lineHeight": "1.55", "fontWeight": "400" }],
+                        "label": ["14px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "body-lg": ["20px", { "lineHeight": "1.5", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+                        "h2": ["44px", { "lineHeight": "1.08", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+                        "h1": ["56px", { "lineHeight": "1.05", "letterSpacing": "-0.035em", "fontWeight": "700" }],
+                        "display": ["72px", { "lineHeight": "1.02", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+                        "overline": ["12px", { "lineHeight": "1.15", "letterSpacing": "0.08em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex">
+<!-- SideNavBar Component -->
+<nav class="bg-surface fixed left-0 top-0 h-screen w-72 border-r border-border flex flex-col py-6 z-50">
+<!-- Header -->
+<div class="px-xl mb-xl flex flex-col gap-sm">
+<div class="w-12 h-12 rounded-full bg-surface-variant overflow-hidden mb-sm">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="A close-up portrait of a professional individual in a sleek, minimalist studio setting. The lighting is soft and high-key, emphasizing a clean, modern aesthetic. The color palette revolves around warm ivory, neutral greys, and subtle skin tones. The mood is confident, approachable, and aligned with premium tech and fashion standards." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRlqcVzCzP3r2yb_U9qJZKXFO7jY5yxXQriYWDsoFZEntzL4EqA2QCpJFwNNrX0CKChW9YNGYwkESqJdvuujCTS_ixwu2Em9Rf4JVc-zf1FHNwmn0JKWOkquNY9b2Uph4XBi2d3mKHrrVTFyyO47igiGiBxasG2-0ThseUweS2DZug4DA3GGDmtditoVvg2RGo3KO2dURcegleyLOB-z6L_jJIZGo9IqODNzULe0amQEUFNoeeNEiN1gXkhMC9sU9M8sm_lBllmK8"/>
+</div>
+<h2 class="font-h2 text-[24px] font-black text-primary leading-tight">FitFabrica Workspace</h2>
+<p class="font-body text-label text-text-secondary">Premium Fashion AI</p>
+</div>
+<!-- Navigation Links -->
+<div class="flex-1 overflow-y-auto flex flex-col gap-xs">
+<a class="text-text-secondary mx-2 px-4 py-3 flex items-center gap-3 hover:bg-surface-variant font-label text-label transition-colors rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                Кабинет
+            </a>
+<a class="text-text-secondary mx-2 px-4 py-3 flex items-center gap-3 hover:bg-surface-variant font-label text-label transition-colors rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">add_a_photo</span>
+                Новая примерка
+            </a>
+<a class="text-text-secondary mx-2 px-4 py-3 flex items-center gap-3 hover:bg-surface-variant font-label text-label transition-colors rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">auto_fix_high</span>
+                Подбор образа
+            </a>
+<a class="text-text-secondary mx-2 px-4 py-3 flex items-center gap-3 hover:bg-surface-variant font-label text-label transition-colors rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">search_check</span>
+                Найти похожее
+            </a>
+<a class="text-text-secondary mx-2 px-4 py-3 flex items-center gap-3 hover:bg-surface-variant font-label text-label transition-colors rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">shopping_bag</span>
+                Карточка товара
+            </a>
+<a class="text-text-secondary mx-2 px-4 py-3 flex items-center gap-3 hover:bg-surface-variant font-label text-label transition-colors rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">history</span>
+                История
+            </a>
+<a class="text-text-secondary mx-2 px-4 py-3 flex items-center gap-3 hover:bg-surface-variant font-label text-label transition-colors rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">payments</span>
+                Кредиты
+            </a>
+<a class="text-text-secondary mx-2 px-4 py-3 flex items-center gap-3 hover:bg-surface-variant font-label text-label transition-colors rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">person</span>
+                Профиль стиля
+            </a>
+<!-- Active State -->
+<a class="bg-secondary-container text-on-secondary-container rounded-DEFAULT mx-2 px-4 py-3 flex items-center gap-3 font-label text-label translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">business_center</span>
+                Профиль бизнеса
+            </a>
+</div>
+<!-- CTA -->
+<div class="px-lg mt-auto">
+<button class="w-full bg-primary text-on-primary font-label text-label py-3 rounded-full hover:opacity-80 transition-opacity">
+                Создать образ
+            </button>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="ml-72 flex-1 p-page-padding-desktop min-h-screen">
+<div class="max-w-content-max mx-auto flex flex-col gap-xxl">
+<!-- Header -->
+<header class="flex justify-between items-end border-b border-border pb-lg">
+<div>
+<h1 class="font-h1 text-h1 text-primary mb-xs">Профиль бизнеса</h1>
+<p class="font-body text-body text-text-secondary">Настройте уникальный стиль и параметры вашего магазина для точной генерации контента.</p>
+</div>
+<button class="bg-primary text-on-primary font-label text-label px-xl py-3 rounded-full hover:opacity-80 transition-opacity">
+                    Сохранить изменения
+                </button>
+</header>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-xl">
+<!-- Block 1: Название магазина (Span 7) -->
+<section class="xl:col-span-7 bg-surface rounded-lg border border-border p-xl flex flex-col gap-lg relative overflow-hidden">
+<div class="absolute top-0 right-0 w-64 h-64 bg-surface-alt rounded-full blur-3xl opacity-50 -mr-20 -mt-20 pointer-events-none"></div>
+<h2 class="font-h3 text-h3 text-primary relative z-10">Основная информация</h2>
+<div class="flex flex-col gap-md relative z-10">
+<label class="flex flex-col gap-xs">
+<span class="font-label text-label text-text-primary">Название магазина или бренда</span>
+<input class="w-full bg-background border border-border rounded-DEFAULT px-4 py-3 font-body text-body text-primary focus:ring-2 focus:ring-secondary focus:outline-none transition-all" type="text" value="Urban Silk Studio"/>
+</label>
+<label class="flex flex-col gap-xs">
+<span class="font-label text-label text-text-primary">Описание бренда (для контекста ИИ)</span>
+<textarea class="w-full bg-background border border-border rounded-DEFAULT px-4 py-3 font-body text-body text-primary focus:ring-2 focus:ring-secondary focus:outline-none transition-all resize-none" rows="3">Современный бренд женской одежды, специализирующийся на минималистичных силуэтах и натуральных тканях. Эстетика: тихая роскошь, городской комфорт.</textarea>
+</label>
+</div>
+<div class="mt-auto pt-md border-t border-border flex items-center gap-md">
+<div class="w-16 h-16 rounded-DEFAULT bg-background border border-dashed border-outline-variant flex items-center justify-center text-text-muted hover:bg-surface-variant transition-colors cursor-pointer">
+<span class="material-symbols-outlined">add_photo_alternate</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label text-label text-primary">Логотип бренда</span>
+<span class="font-body text-[14px] text-text-secondary">PNG или JPG, до 2MB</span>
+</div>
+</div>
+</section>
+<!-- Block 2: Каналы продаж (Span 5) -->
+<section class="xl:col-span-5 bg-surface rounded-lg border border-border p-xl flex flex-col gap-lg">
+<h2 class="font-h3 text-h3 text-primary">Каналы продаж</h2>
+<p class="font-body text-body text-text-secondary -mt-sm">Выберите платформы, где представлен ваш бренд. Это поможет ИИ адаптировать форматы.</p>
+<div class="flex flex-col gap-md mt-sm">
+<!-- Channel Item -->
+<label class="flex items-center justify-between p-4 rounded-DEFAULT border border-border hover:bg-surface-variant transition-colors cursor-pointer bg-background">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-secondary">language</span>
+<span class="font-label text-label text-primary">Собственный сайт</span>
+</div>
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"/>
+</label>
+<!-- Channel Item -->
+<label class="flex items-center justify-between p-4 rounded-DEFAULT border border-border hover:bg-surface-variant transition-colors cursor-pointer bg-background">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-text-muted">storefront</span>
+<span class="font-label text-label text-primary">Wildberries</span>
+</div>
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"/>
+</label>
+<!-- Channel Item -->
+<label class="flex items-center justify-between p-4 rounded-DEFAULT border border-border hover:bg-surface-variant transition-colors cursor-pointer">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-text-muted">local_mall</span>
+<span class="font-label text-label text-primary">Ozon</span>
+</div>
+<input class="w-5 h-5 rounded border-outline-variant text-secondary focus:ring-secondary" type="checkbox"/>
+</label>
+</div>
+</section>
+<!-- Block 3: Визуальный стиль бренда (Span 12 - Full Width) -->
+<section class="xl:col-span-12 bg-surface rounded-lg border border-border p-xl flex flex-col gap-xl">
+<div class="flex justify-between items-center">
+<div>
+<h2 class="font-h3 text-h3 text-primary mb-xs">Визуальный стиль бренда</h2>
+<p class="font-body text-body text-text-secondary">Цветовая палитра и мудборд, определяющие атмосферу ваших генераций.</p>
+</div>
+<button class="flex items-center gap-2 font-label text-label text-secondary hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined">auto_awesome</span>
+                            Сгенерировать стиль по описанию
+                        </button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-xl">
+<!-- Colors -->
+<div class="flex flex-col gap-md">
+<h3 class="font-label text-label text-primary">Фирменные цвета</h3>
+<div class="flex gap-md">
+<div class="w-12 h-12 rounded-full border border-border shadow-sm cursor-pointer hover:scale-110 transition-transform" style="background-color: #F7F3EC;"></div>
+<div class="w-12 h-12 rounded-full border border-border shadow-sm cursor-pointer hover:scale-110 transition-transform" style="background-color: #D8C3A5;"></div>
+<div class="w-12 h-12 rounded-full border border-border shadow-sm cursor-pointer hover:scale-110 transition-transform" style="background-color: #5F5F63;"></div>
+<div class="w-12 h-12 rounded-full border border-border shadow-sm flex items-center justify-center bg-surface-variant text-text-muted cursor-pointer hover:bg-surface-dim transition-colors">
+<span class="material-symbols-outlined">add</span>
+</div>
+</div>
+</div>
+<!-- Moodboard Grid -->
+<div class="md:col-span-2 flex flex-col gap-md">
+<h3 class="font-label text-label text-primary flex items-center justify-between">
+                                Мудборд / Референсы
+                                <span class="text-text-muted text-[12px] font-normal">Загружено: 3/5</span>
+</h3>
+<div class="grid grid-cols-3 gap-md h-32">
+<div class="rounded-DEFAULT bg-surface-variant overflow-hidden border border-border relative group cursor-pointer">
+<img class="w-full h-full object-cover" data-alt="A high-fashion editorial photograph showcasing a minimalist beige silk dress draped elegantly over a model. The setting is a bright, sunlit studio with stark white walls and architectural shadows creating a premium, modern aesthetic. The mood is calm, sophisticated, and perfectly aligned with a 'quiet luxury' visual style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlGY7pSYxxR5O_bs2KnLunOdhYXT-Nv78O-75L_tXvCPpWhfE2ZJcM873uFSTJqWeD7n20Ux8cCZ1N4ELMDq93oLqmkH2ol8l7n7p0QX0fThmbODwm8M4Waw2zCYsXH8A1BQg2W5Ymo-V9L-Cn5eOp2cQ2GDKRazkhzRo0tK4573jmwjkq7cj4pDQehN2B3g15p5AgZz3I8AZ6rGa2xf0UMJs_ulRIzopPdk-DM13tu8qNWqL_73u_HFB63h21r0ZGozJFF2Vxtz4"/>
+<div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary">open_in_full</span>
+</div>
+</div>
+<div class="rounded-DEFAULT bg-surface-variant overflow-hidden border border-border relative group cursor-pointer">
+<img class="w-full h-full object-cover" data-alt="A clean, flat-lay product shot of premium minimalist clothing against a smooth ivory background. The lighting is soft, diffused, and even, highlighting the texture of the organic fabrics without harsh contrasts. The composition is structured and editorial, emitting a sense of calm sophistication and high-end retail presentation." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcbAU0IOIa2pMfIzO7X1yn-doTwlc7l_YO5X0wxgukZ0H-rUJEIs7f-NS_cIHaG8APOdpGUcpe4UceNxhnwQSvXJ5s9rZc0M-5G6Lk3YA0jGySD2CgYAys2osa6-1m1AwuHKjO6PFpM_FsbAQLuyfCdKqxasOQFlkCI4jPhakh94vqR08n1-q1Bt0aEbXmtlt__zYb9IzBzO7d-I0wO8L1CqMRcGKALMI28WT1dCIf8f8mwD2a94J4kQOK9w29B5AxvGv9zZXdzt8"/>
+<div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary">open_in_full</span>
+</div>
+</div>
+<div class="rounded-DEFAULT bg-surface-variant border border-dashed border-outline-variant flex items-center justify-center text-text-muted hover:bg-surface-dim transition-colors cursor-pointer flex-col gap-2">
+<span class="material-symbols-outlined">add_photo_alternate</span>
+<span class="font-body text-[12px]">Добавить фото</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Block 4: Требования к контенту (Span 12 - Full Width) -->
+<section class="xl:col-span-12 bg-surface rounded-lg border border-border p-xl flex flex-col gap-lg">
+<h2 class="font-h3 text-h3 text-primary">Требования к контенту (ИИ Настройки)</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-xl mt-sm">
+<div class="flex flex-col gap-md">
+<span class="font-label text-label text-primary">Предпочтительный фон для каталога</span>
+<div class="flex gap-sm">
+<button class="flex-1 py-3 px-4 rounded-DEFAULT border-2 border-primary bg-background font-label text-label text-primary text-center">Студийный светлый</button>
+<button class="flex-1 py-3 px-4 rounded-DEFAULT border border-border hover:bg-surface-variant font-label text-label text-text-secondary text-center transition-colors">Городская среда</button>
+<button class="flex-1 py-3 px-4 rounded-DEFAULT border border-border hover:bg-surface-variant font-label text-label text-text-secondary text-center transition-colors">Интерьер</button>
+</div>
+</div>
+<div class="flex flex-col gap-md">
+<span class="font-label text-label text-primary">Строгость сохранения деталей кроя</span>
+<div class="flex flex-col gap-2">
+<input class="w-full accent-secondary" max="100" min="1" type="range" value="85"/>
+<div class="flex justify-between font-body text-[12px] text-text-muted">
+<span>Больше креатива</span>
+<span>Точная копия (Выбрано: 85%)</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+</main>
+</body></html>

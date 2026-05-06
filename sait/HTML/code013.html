@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI FitFabrica - Для себя</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#e6e1df",
+                        "on-secondary-fixed": "#1d0061",
+                        "on-secondary-fixed-variant": "#4a2ea9",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#000000",
+                        "outline-variant": "#c4c7c7",
+                        "tertiary-fixed-dim": "#cac6c4",
+                        "on-primary-fixed-variant": "#474646",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed-dim": "#cbbeff",
+                        "on-tertiary": "#ffffff",
+                        "text-secondary": "#5F5F63",
+                        "surface-bright": "#fdf8f8",
+                        "ai-soft": "#EFEAFD",
+                        "inverse-surface": "#313030",
+                        "surface-tint": "#5f5e5e",
+                        "tertiary-container": "#1c1b1a",
+                        "secondary-container": "#9a83ff",
+                        "surface-dim": "#ddd9d8",
+                        "primary-container": "#1c1b1b",
+                        "text-primary": "#141414",
+                        "border": "#E8E1D6",
+                        "on-primary-fixed": "#1c1b1b",
+                        "inverse-primary": "#c8c6c5",
+                        "on-tertiary-fixed": "#1c1b1a",
+                        "outline": "#747878",
+                        "success": "#2F8F6B",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#1c1b1b",
+                        "warning": "#D96C5F",
+                        "primary-fixed-dim": "#c8c6c5",
+                        "on-background": "#1c1b1b",
+                        "on-tertiary-container": "#868381",
+                        "secondary": "#6249c2",
+                        "surface-alt": "#F1EAE0",
+                        "error-container": "#ffdad6",
+                        "background": "#F7F3EC",
+                        "champagne-accent": "#D8C3A5",
+                        "surface-container-low": "#f7f3f2",
+                        "inverse-on-surface": "#f4f0ef",
+                        "ai-violet": "#6E56CF",
+                        "on-primary-container": "#858383",
+                        "error": "#D93025",
+                        "text-muted": "#8B8580",
+                        "surface-variant": "#e5e2e1",
+                        "on-tertiary-fixed-variant": "#484645",
+                        "surface": "#FFFDF8",
+                        "surface-container-highest": "#e5e2e1",
+                        "surface-container": "#f1edec",
+                        "primary-fixed": "#e5e2e1",
+                        "secondary-fixed": "#e6deff",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#ebe7e6",
+                        "on-secondary-container": "#300491",
+                        "tertiary": "#000000",
+                        "on-surface-variant": "#444748",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "page-padding-desktop": "72px",
+                        "section-md": "96px",
+                        "md": "16px",
+                        "base": "8px",
+                        "content-max": "1280px",
+                        "lg": "24px",
+                        "section-lg": "128px",
+                        "xl": "32px",
+                        "xs": "8px",
+                        "sm": "12px",
+                        "xxl": "48px"
+                    },
+                    "fontFamily": {
+                        "h3": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "h2": ["Manrope"],
+                        "h1": ["Manrope"],
+                        "display": ["Manrope"],
+                        "overline": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h3": ["32px", { "lineHeight": "1.15", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body": ["16px", { "lineHeight": "1.55", "fontWeight": "400" }],
+                        "label": ["14px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "body-lg": ["20px", { "lineHeight": "1.5", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+                        "h2": ["44px", { "lineHeight": "1.08", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+                        "h1": ["56px", { "lineHeight": "1.05", "letterSpacing": "-0.035em", "fontWeight": "700" }],
+                        "display": ["72px", { "lineHeight": "1.02", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+                        "overline": ["12px", { "lineHeight": "1.15", "letterSpacing": "0.08em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: theme('colors.background'); color: theme('colors.text-primary'); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-body text-body bg-background">
+<!-- TopNavBar -->
+<nav class="bg-background/80 dark:bg-background/80 backdrop-blur-md w-full top-0 sticky z-50 border-b border-border dark:border-outline-variant">
+<div class="flex justify-between items-center w-full px-page-padding-desktop max-w-content-max mx-auto h-20">
+<a class="font-h3 text-h3 font-bold text-primary dark:text-on-primary-fixed hover:opacity-80 transition-opacity" href="/">AI FitFabrica</a>
+<div class="hidden md:flex gap-lg items-center">
+<a class="font-label text-label text-primary dark:text-on-primary-fixed font-bold border-b-2 border-primary hover:opacity-80 transition-opacity active:scale-95 transition-transform duration-200" href="/for-you">Для себя</a>
+<a class="font-label text-label text-text-secondary dark:text-text-muted hover:text-primary hover:opacity-80 transition-opacity active:scale-95 transition-transform duration-200" href="/for-business">Для бизнеса</a>
+<a class="font-label text-label text-text-secondary dark:text-text-muted hover:text-primary hover:opacity-80 transition-opacity active:scale-95 transition-transform duration-200" href="/features">Возможности</a>
+<a class="font-label text-label text-text-secondary dark:text-text-muted hover:text-primary hover:opacity-80 transition-opacity active:scale-95 transition-transform duration-200" href="/how-it-works">Как работает</a>
+<a class="font-label text-label text-text-secondary dark:text-text-muted hover:text-primary hover:opacity-80 transition-opacity active:scale-95 transition-transform duration-200" href="/pricing">Тарифы</a>
+<a class="font-label text-label text-text-secondary dark:text-text-muted hover:text-primary hover:opacity-80 transition-opacity active:scale-95 transition-transform duration-200" href="/login">Войти</a>
+</div>
+<a class="hidden md:inline-flex bg-primary text-on-primary font-label text-label px-lg py-sm rounded-full hover:opacity-80 transition-opacity active:scale-95 transition-transform duration-200" href="/workspace/try-on/new">
+                Начать примерку
+            </a>
+</div>
+</nav>
+<main class="flex-grow">
+<!-- Hero Section -->
+<section class="py-section-lg px-page-padding-desktop max-w-content-max mx-auto flex flex-col items-center text-center">
+<h1 class="font-display text-display text-primary mb-lg max-w-4xl">Одежда, которая подходит именно вам</h1>
+<p class="font-body-lg text-body-lg text-text-secondary mb-xl max-w-2xl">
+                Используйте возможности AI для идеальной посадки. Загрузите фото, примеряйте новинки виртуально и находите лучшие альтернативы по выгодной цене.
+            </p>
+<div class="flex flex-col sm:flex-row gap-md">
+<a class="bg-primary text-on-primary font-label text-label px-xl py-md rounded-full hover:opacity-80 transition-opacity" href="/workspace/try-on/new">
+                    Начать примерку
+                </a>
+<a class="bg-surface border border-border text-primary font-label text-label px-xl py-md rounded-full hover:bg-surface-variant transition-colors" href="/workspace/similar-search">
+                    Найти похожее дешевле
+                </a>
+</div>
+</section>
+<!-- Bento Grid: Try-On & Analysis -->
+<section class="py-section-md px-page-padding-desktop max-w-content-max mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg">
+<!-- Main Try-on Area -->
+<div class="md:col-span-8 bg-surface rounded-xl p-xl border border-border flex flex-col">
+<h2 class="font-h3 text-h3 text-primary mb-md">Виртуальная примерочная</h2>
+<p class="font-body text-body text-text-secondary mb-lg">Загрузите свое фото и посмотрите, как сидит выбранная вещь до покупки.</p>
+<div class="flex-grow grid grid-cols-2 gap-md">
+<div class="bg-background rounded-lg border border-dashed border-champagne-accent flex flex-col items-center justify-center p-xl relative overflow-hidden group cursor-pointer hover:bg-surface-alt transition-colors min-h-[400px]">
+<span class="material-symbols-outlined text-4xl text-text-muted mb-sm group-hover:text-primary transition-colors">add_a_photo</span>
+<span class="font-label text-label text-text-secondary group-hover:text-primary transition-colors">Загрузить ваше фото</span>
+<img alt="User Photo Placeholder" class="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-10 transition-opacity" data-alt="A clean, well-lit studio portrait of a woman in simple clothing, serving as a placeholder for user photo upload. The image is bright and professional, shot against a plain light gray background. The lighting is soft and even, typical of high-end fashion e-commerce. The overall aesthetic is premium, minimalist, and focuses entirely on the subject without distractions." src="https://lh3.googleusercontent.com/aida-public/AB6AXuANQpMUgJ26TCi4w7gtUGTB1nHvxFoMfTRn9o9IHYvq0JHvtN35yfutMCSFX5jdrPMqqF3dXjiBJGEPF-lF7QoET4aOF86uueFdDdBZmV7r8aumuiONBiRFPu9qy2YkNIZ5D4GnevpvE6qICmeOe0r7c0hjkROFw90KXKYzaU8paAI3gQiSNCuNLAyswTKibTzDA-m18rq8e4Snw0PYF50M9AeKLmO8jOMzKsrbuqrxuXC9QTlc3Y0W-NxicsPg0HOfneDRPdEVVpM"/>
+</div>
+<div class="bg-surface-container-low rounded-lg overflow-hidden relative min-h-[400px]">
+<img alt="AI Try-On Result" class="w-full h-full object-cover" data-alt="A high-quality fashion rendering showing a sleek, modern dress digitally overlaid on a human silhouette. The result is photorealistic, demonstrating advanced AI try-on technology. The fabric texture is clearly visible, and the drape looks natural. The lighting is bright and matches a premium e-commerce look, set against a soft ivory background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbB1mG-TqV-Xkj1cIIAClB6urOfbYnpaSSX5gh8dpfrI3RdE7YTsgnLz5HCe119ELpEoK454EdZuwgzPdXxmcRtW6EEmgT65pRS6-yzjr9UC-xGKxGRGh8wwsHjW9KfUclWJDEhct2PrXpQRDpNsvGPqSBxzXXoVqrwV1B9E-nVDMUfaBbjLe6TB7qo8X7iPM2jcYcVE6vaGdJ1LDcKNndUYNmyi86_96Wi2YWqAxEjuofMSghjlayW3PwvFA4TKPobnEz092e23o"/>
+<div class="absolute bottom-md left-md right-md bg-surface/90 backdrop-blur-sm p-sm rounded-lg flex items-center justify-between border border-border/50">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-ai-violet" data-weight="fill">auto_fix_high</span>
+<span class="font-label text-label text-primary">Генерация завершена</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Analysis Sidebar -->
+<div class="md:col-span-4 flex flex-col gap-lg">
+<!-- Style & Proportions -->
+<div class="bg-surface rounded-xl p-xl border border-border flex-grow">
+<div class="flex items-center gap-sm mb-lg">
+<span class="material-symbols-outlined text-primary">analytics</span>
+<h3 class="font-h3 text-h3 text-primary text-[24px]">Анализ посадки</h3>
+</div>
+<div class="space-y-md">
+<div class="flex flex-col gap-xs">
+<span class="font-overline text-overline text-text-muted uppercase tracking-widest">Фасон</span>
+<div class="flex justify-between items-center">
+<span class="font-body text-body text-primary">Приталенный силуэт</span>
+<span class="bg-success/10 text-success font-label text-label px-sm py-xs rounded-full text-[12px]">Идеально</span>
+</div>
+</div>
+<hr class="border-t border-border"/>
+<div class="flex flex-col gap-xs">
+<span class="font-overline text-overline text-text-muted uppercase tracking-widest">Цвет</span>
+<div class="flex justify-between items-center">
+<span class="font-body text-body text-primary">Глубокий изумрудный</span>
+<span class="bg-warning/10 text-warning font-label text-label px-sm py-xs rounded-full text-[12px]">Контрастно</span>
+</div>
+<p class="font-body text-body text-text-secondary text-sm mt-xs">Подчеркивает тон кожи, но может потребовать ярких акцентов в макияже.</p>
+</div>
+<hr class="border-t border-border"/>
+<div class="flex flex-col gap-xs">
+<span class="font-overline text-overline text-text-muted uppercase tracking-widest">Пропорции</span>
+<div class="flex items-center gap-sm mt-xs">
+<div class="flex-grow h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[85%]"></div>
+</div>
+<span class="font-label text-label text-primary">85% Match</span>
+</div>
+</div>
+</div>
+</div>
+<!-- AI Stylist CTA -->
+<div class="bg-ai-soft rounded-xl p-xl border border-secondary/20 flex flex-col justify-between">
+<div class="mb-md">
+<div class="w-10 h-10 bg-ai-violet rounded-full flex items-center justify-center mb-sm">
+<span class="material-symbols-outlined text-white" data-weight="fill">psychology</span>
+</div>
+<h4 class="font-h3 text-h3 text-on-secondary-fixed-variant text-[20px] mb-xs">Подбор образа</h4>
+<p class="font-body text-body text-on-secondary-fixed/80 text-sm">AI-стилист подберет капсулу на основе ваших предпочтений.</p>
+</div>
+<button class="bg-ai-violet text-white font-label text-label px-md py-sm rounded-full w-full hover:opacity-90 transition-opacity">
+                             Подобрать лук
+                         </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Style Profile Section -->
+<section class="py-section-md px-page-padding-desktop max-w-content-max mx-auto">
+<div class="bg-surface rounded-xl p-xl border border-border flex flex-col md:flex-row gap-xl items-center">
+<div class="flex-1">
+<h2 class="font-h2 text-h2 text-primary mb-md">Ваш профиль стиля</h2>
+<p class="font-body text-body text-text-secondary mb-lg">
+                        Система запоминает ваши удачные образы, параметры и предпочтения по брендам, чтобы каждая следующая примерка была точнее.
+                    </p>
+<ul class="space-y-sm mb-lg">
+<li class="flex items-center gap-sm text-primary font-body text-body">
+<span class="material-symbols-outlined text-success">check_circle</span>
+                            Сохранение точных мерок
+                        </li>
+<li class="flex items-center gap-sm text-primary font-body text-body">
+<span class="material-symbols-outlined text-success">check_circle</span>
+                            История удачных сочетаний
+                        </li>
+<li class="flex items-center gap-sm text-primary font-body text-body">
+<span class="material-symbols-outlined text-success">check_circle</span>
+                            Персональная палитра цветов
+                        </li>
+</ul>
+<a class="inline-flex bg-surface border border-border text-primary font-label text-label px-lg py-sm rounded-full hover:bg-surface-variant transition-colors" href="/workspace/profile">
+                        Настроить профиль
+                    </a>
+</div>
+<div class="flex-1 w-full max-w-md">
+<div class="bg-surface-container-low rounded-lg p-md border border-border/50 relative">
+<!-- Decorative profile elements -->
+<div class="flex items-center gap-md border-b border-border/50 pb-md mb-md">
+<div class="w-16 h-16 bg-surface-variant rounded-full overflow-hidden">
+<img alt="Profile Avatar" class="w-full h-full object-cover" data-alt="A clear, professional portrait of a woman looking directly at the camera, used as a user profile avatar. The background is a soft, neutral studio gray. The lighting is flattering and high-key. The overall mood is approachable and clean, fitting a premium technology platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEavUFWtLYR4-XqO5PBtJ1Z6V7hpO7HlnUrOMa1_flH9IzNrZVOuF8NLTUGfZwKhpmzFxUlxnLrFk_xJU-ydcXi_MvCGJx3LpLlW9iBCWNHZ6EuITMVzLwzqMVZSefWLZK4JjyXCZL063GtHdHfXYcwkLvV849ydXqehgmS92WdeNNPSlFQIqgeroKW5Og9cl0Zy6d6fBBLpXNmWAs1A-N6VGzhLZmuvEYjTwAiWOnr9ztme1naHkIwBIj12PdKKjOk3j5srKSZ9E"/>
+</div>
+<div>
+<div class="font-label text-label text-primary">Елена В.</div>
+<div class="font-body text-body text-text-muted text-sm">Стиль: Минимализм, Casual</div>
+</div>
+</div>
+<div class="flex gap-sm">
+<span class="bg-surface border border-border rounded-full px-sm py-xs font-label text-label text-[12px] text-text-secondary">S / 42 RU</span>
+<span class="bg-surface border border-border rounded-full px-sm py-xs font-label text-label text-[12px] text-text-secondary">Лето (цветотип)</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-alt dark:bg-surface-container-low w-full bottom-0 border-t border-border">
+<div class="w-full py-xl px-page-padding-desktop flex flex-col md:flex-row justify-between items-center max-w-content-max mx-auto gap-md">
+<div class="font-h3 text-h3 text-primary">AI FitFabrica</div>
+<div class="flex gap-lg">
+<a class="font-body text-label text-text-muted dark:text-on-surface-variant hover:text-primary transition-colors" href="/privacy">Приватность</a>
+<a class="font-body text-label text-text-muted dark:text-on-surface-variant hover:text-primary transition-colors" href="/contacts">Контакты</a>
+<a class="font-body text-label text-text-muted dark:text-on-surface-variant hover:text-primary transition-colors" href="/terms">Условия</a>
+</div>
+<div class="font-body text-label text-text-muted dark:text-on-surface-variant">© 2024 AI FitFabrica. Все права защищены.</div>
+</div>
+</footer>
+</body></html>

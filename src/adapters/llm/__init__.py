@@ -1,0 +1,1 @@
+"""LLM-facing payload adapters."""

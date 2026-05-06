@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Приватность и безопасность - AI FitFabrica</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=Manrope:wght@700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "tertiary-fixed": "#e6e1df",
+                        "on-secondary-fixed": "#1d0061",
+                        "on-secondary-fixed-variant": "#4a2ea9",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#000000",
+                        "outline-variant": "#c4c7c7",
+                        "tertiary-fixed-dim": "#cac6c4",
+                        "on-primary-fixed-variant": "#474646",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed-dim": "#cbbeff",
+                        "on-tertiary": "#ffffff",
+                        "text-secondary": "#5F5F63",
+                        "surface-bright": "#fdf8f8",
+                        "ai-soft": "#EFEAFD",
+                        "inverse-surface": "#313030",
+                        "surface-tint": "#5f5e5e",
+                        "tertiary-container": "#1c1b1a",
+                        "secondary-container": "#9a83ff",
+                        "surface-dim": "#ddd9d8",
+                        "primary-container": "#1c1b1b",
+                        "text-primary": "#141414",
+                        "border": "#E8E1D6",
+                        "on-primary-fixed": "#1c1b1b",
+                        "inverse-primary": "#c8c6c5",
+                        "on-tertiary-fixed": "#1c1b1a",
+                        "outline": "#747878",
+                        "success": "#2F8F6B",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#1c1b1b",
+                        "warning": "#D96C5F",
+                        "primary-fixed-dim": "#c8c6c5",
+                        "on-background": "#1c1b1b",
+                        "on-tertiary-container": "#868381",
+                        "secondary": "#6249c2",
+                        "surface-alt": "#F1EAE0",
+                        "error-container": "#ffdad6",
+                        "background": "#F7F3EC",
+                        "champagne-accent": "#D8C3A5",
+                        "surface-container-low": "#f7f3f2",
+                        "inverse-on-surface": "#f4f0ef",
+                        "ai-violet": "#6E56CF",
+                        "on-primary-container": "#858383",
+                        "error": "#D93025",
+                        "text-muted": "#8B8580",
+                        "surface-variant": "#e5e2e1",
+                        "on-tertiary-fixed-variant": "#484645",
+                        "surface": "#FFFDF8",
+                        "surface-container-highest": "#e5e2e1",
+                        "surface-container": "#f1edec",
+                        "primary-fixed": "#e5e2e1",
+                        "secondary-fixed": "#e6deff",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#ebe7e6",
+                        "on-secondary-container": "#300491",
+                        "tertiary": "#000000",
+                        "on-surface-variant": "#444748",
+                        "on-secondary": "#ffffff"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "page-padding-desktop": "72px",
+                        "section-md": "96px",
+                        "md": "16px",
+                        "base": "8px",
+                        "content-max": "1280px",
+                        "lg": "24px",
+                        "section-lg": "128px",
+                        "xl": "32px",
+                        "xs": "8px",
+                        "sm": "12px",
+                        "xxl": "48px"
+                    },
+                    fontFamily: {
+                        "h3": ["Manrope", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "label": ["Inter", "sans-serif"],
+                        "body-lg": ["Inter", "sans-serif"],
+                        "h2": ["Manrope", "sans-serif"],
+                        "h1": ["Manrope", "sans-serif"],
+                        "display": ["Manrope", "sans-serif"],
+                        "overline": ["Inter", "sans-serif"]
+                    },
+                    fontSize: {
+                        "h3": ["32px", { lineHeight: "1.15", letterSpacing: "-0.02em", fontWeight: "700" }],
+                        "body": ["16px", { lineHeight: "1.55", fontWeight: "400" }],
+                        "label": ["14px", { lineHeight: "1.2", fontWeight: "600" }],
+                        "body-lg": ["20px", { lineHeight: "1.5", letterSpacing: "-0.01em", fontWeight: "400" }],
+                        "h2": ["44px", { lineHeight: "1.08", letterSpacing: "-0.03em", fontWeight: "700" }],
+                        "h1": ["56px", { lineHeight: "1.05", letterSpacing: "-0.035em", fontWeight: "700" }],
+                        "display": ["72px", { lineHeight: "1.02", letterSpacing: "-0.04em", fontWeight: "700" }],
+                        "overline": ["12px", { lineHeight: "1.15", letterSpacing: "0.08em", fontWeight: "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: theme('colors.background'); color: theme('colors.text-primary'); }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav class="w-full top-0 sticky z-50 bg-background/80 backdrop-blur-md border-b border-border">
+<div class="flex justify-between items-center w-full px-page-padding-desktop max-w-content-max mx-auto h-20">
+<!-- Brand Logo -->
+<a class="font-h3 text-h3 font-bold text-primary" href="#">AI FitFabrica</a>
+<!-- Navigation Links (Hidden on Mobile, flex on md) -->
+<div class="hidden md:flex items-center gap-lg">
+<a class="font-label text-label text-text-secondary hover:text-primary hover:opacity-80 transition-opacity" href="#">Для себя</a>
+<a class="font-label text-label text-text-secondary hover:text-primary hover:opacity-80 transition-opacity" href="#">Для бизнеса</a>
+<a class="font-label text-label text-text-secondary hover:text-primary hover:opacity-80 transition-opacity" href="#">Возможности</a>
+<a class="font-label text-label text-text-secondary hover:text-primary hover:opacity-80 transition-opacity" href="#">Как работает</a>
+<a class="font-label text-label text-text-secondary hover:text-primary hover:opacity-80 transition-opacity" href="#">Тарифы</a>
+</div>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-md">
+<a class="hidden md:block font-label text-label text-text-secondary hover:text-primary hover:opacity-80 transition-opacity" href="#">Войти</a>
+<a class="bg-primary text-on-primary font-label text-label px-6 py-3 rounded-full hover:opacity-80 transition-opacity flex items-center justify-center active:scale-95 transition-transform duration-200" href="#">
+                    Начать примерку
+                </a>
+</div>
+</div>
+</nav>
+<!-- Main Canvas -->
+<main class="flex-grow flex flex-col items-center w-full">
+<!-- Hero Section -->
+<section class="w-full px-page-padding-desktop py-section-md max-w-content-max mx-auto text-center flex flex-col items-center">
+<div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface-container-high border border-border mb-lg">
+<span class="material-symbols-outlined text-text-secondary" style="font-variation-settings: 'FILL' 1;">lock</span>
+<span class="font-overline text-overline text-text-secondary uppercase">Доверие и Контроль</span>
+</div>
+<h1 class="font-display text-display text-primary max-w-4xl mb-lg">Приватность и безопасность</h1>
+<p class="font-body-lg text-body-lg text-text-secondary max-w-2xl mx-auto">
+                Ваши данные принадлежат только вам. Мы создали инфраструктуру AI FitFabrica с фундаментальным упором на защиту личной информации, используя передовые стандарты шифрования.
+            </p>
+</section>
+<!-- Bento Grid for Core Privacy Pillars -->
+<section class="w-full px-page-padding-desktop pb-section-md max-w-content-max mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-lg auto-rows-[minmax(300px,auto)]">
+<!-- Block 1: Использование фото (Spans 8 cols) -->
+<div class="md:col-span-8 bg-surface-container-lowest rounded-xl border border-border p-xl flex flex-col justify-between hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-shadow">
+<div class="flex justify-between items-start mb-xxl">
+<div class="bg-surface-container h-16 w-16 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">photo_camera</span>
+</div>
+<span class="bg-success/10 text-success font-label text-label px-3 py-1 rounded-full">Строго конфиденциально</span>
+</div>
+<div>
+<h2 class="font-h3 text-h3 text-primary mb-sm">Использование фото</h2>
+<p class="font-body text-body text-text-secondary">
+                            Загруженные вами фотографии используются исключительно алгоритмами машинного обучения для генерации примерки одежды в реальном времени. Мы не используем ваши изображения для обучения публичных моделей, не передаем их третьим лицам и не публикуем без вашего прямого согласия.
+                        </p>
+</div>
+</div>
+<!-- Block 2: Хранение данных (Spans 4 cols) -->
+<div class="md:col-span-4 bg-surface-alt rounded-xl border border-border p-xl flex flex-col justify-between">
+<div class="bg-surface h-16 w-16 rounded-full flex items-center justify-center mb-xxl shadow-sm">
+<span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">dns</span>
+</div>
+<div>
+<h2 class="font-h3 text-h3 text-primary mb-sm">Хранение данных</h2>
+<p class="font-body text-body text-text-secondary">
+                            Вся чувствительная информация хранится на защищенных серверах с использованием стандарта AES-256. Исходные фотографии автоматически удаляются через 30 дней неактивности.
+                        </p>
+</div>
+</div>
+<!-- Block 3: Безопасность (Spans full width, image heavy) -->
+<div class="md:col-span-12 bg-primary rounded-xl border border-primary-container p-xl flex flex-col md:flex-row items-center gap-xl overflow-hidden relative">
+<!-- Decorative background element -->
+<div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-ai-violet/20 to-transparent opacity-50 pointer-events-none"></div>
+<div class="flex-1 z-10">
+<div class="bg-tertiary-container h-16 w-16 rounded-full flex items-center justify-center mb-lg">
+<span class="material-symbols-outlined text-on-primary text-3xl" style="font-variation-settings: 'FILL' 1;">shield</span>
+</div>
+<h2 class="font-h2 text-h2 text-on-primary mb-md">Безопасность уровня enterprise</h2>
+<p class="font-body text-body text-inverse-primary max-w-xl">
+                            Мы регулярно проходим независимые аудиты безопасности. Наши системы спроектированы так, чтобы противостоять современным киберугрозам, обеспечивая непрерывную защиту вашего профиля и сгенерированного контента.
+                        </p>
+</div>
+<div class="flex-1 w-full h-64 md:h-80 rounded-lg overflow-hidden relative z-10 border border-inverse-surface/30">
+<img alt="Digital security abstract representation" class="w-full h-full object-cover opacity-80 mix-blend-luminosity" data-alt="A highly detailed, minimalist representation of digital security. A glowing, abstract network of connections forming a subtle shield shape against a deep, dark grey background. The lighting is soft and premium, with subtle hints of violet and stark white illuminating the data nodes, creating an atmosphere of impenetrable, sophisticated technology without being cliché." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrivA33DJtCcs6WnUHVjZFjna9Lg7jgOuYEbUZO2NDMLuRoSoY9Ntv_dPL5n8hszI66k2V4MWfSp-Yuva4GXZFTCCwk0M4s3VgYuQ9qemFLcSRGYd9EQaurWlcQgc3a9OfLDoS4MWEzHaQzKKG2W-P-Y1YMzqXfuhmBZgm9XHRBRCJGXrFKqWuHMLIBtl4MZJYRdJZD8qSIPUoVcijxAY9fTcRhYgY319JHMhDVfvG8CsSguBiHgm2WmtGSP_aaye5i_qmSR7nya8"/>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full bottom-0 bg-surface-alt border-t border-border">
+<div class="w-full py-xl px-page-padding-desktop flex flex-col md:flex-row justify-between items-center max-w-content-max mx-auto gap-md">
+<!-- Brand -->
+<div class="font-h3 text-h3 text-primary">
+                AI FitFabrica
+            </div>
+<!-- Links -->
+<div class="flex gap-lg">
+<a class="font-body text-label text-primary font-bold" href="#">Приватность</a>
+<a class="font-body text-label text-text-muted hover:text-primary" href="#">Контакты</a>
+<a class="font-body text-label text-text-muted hover:text-primary" href="#">Условия</a>
+</div>
+<!-- Copyright -->
+<div class="font-body text-label text-text-muted">
+                © 2024 AI FitFabrica. Все права защищены.
+            </div>
+</div>
+</footer>
+</body></html>

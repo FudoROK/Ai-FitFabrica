@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI FitFabrica - Для себя</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed": "#e6e1df",
+                    "on-secondary-fixed": "#1d0061",
+                    "on-secondary-fixed-variant": "#4a2ea9",
+                    "surface-container-lowest": "#ffffff",
+                    "primary": "#000000",
+                    "outline-variant": "#c4c7c7",
+                    "tertiary-fixed-dim": "#cac6c4",
+                    "on-primary-fixed-variant": "#474646",
+                    "on-error-container": "#93000a",
+                    "secondary-fixed-dim": "#cbbeff",
+                    "on-tertiary": "#ffffff",
+                    "text-secondary": "#5F5F63",
+                    "surface-bright": "#fdf8f8",
+                    "ai-soft": "#EFEAFD",
+                    "inverse-surface": "#313030",
+                    "surface-tint": "#5f5e5e",
+                    "tertiary-container": "#1c1b1a",
+                    "secondary-container": "#9a83ff",
+                    "surface-dim": "#ddd9d8",
+                    "primary-container": "#1c1b1b",
+                    "text-primary": "#141414",
+                    "border": "#E8E1D6",
+                    "on-primary-fixed": "#1c1b1b",
+                    "inverse-primary": "#c8c6c5",
+                    "on-tertiary-fixed": "#1c1b1a",
+                    "outline": "#747878",
+                    "success": "#2F8F6B",
+                    "on-primary": "#ffffff",
+                    "on-surface": "#1c1b1b",
+                    "warning": "#D96C5F",
+                    "primary-fixed-dim": "#c8c6c5",
+                    "on-background": "#1c1b1b",
+                    "on-tertiary-container": "#868381",
+                    "secondary": "#6249c2",
+                    "surface-alt": "#F1EAE0",
+                    "error-container": "#ffdad6",
+                    "background": "#F7F3EC",
+                    "champagne-accent": "#D8C3A5",
+                    "surface-container-low": "#f7f3f2",
+                    "inverse-on-surface": "#f4f0ef",
+                    "ai-violet": "#6E56CF",
+                    "on-primary-container": "#858383",
+                    "error": "#D93025",
+                    "text-muted": "#8B8580",
+                    "surface-variant": "#e5e2e1",
+                    "on-tertiary-fixed-variant": "#484645",
+                    "surface": "#FFFDF8",
+                    "surface-container-highest": "#e5e2e1",
+                    "surface-container": "#f1edec",
+                    "primary-fixed": "#e5e2e1",
+                    "secondary-fixed": "#e6deff",
+                    "on-error": "#ffffff",
+                    "surface-container-high": "#ebe7e6",
+                    "on-secondary-container": "#300491",
+                    "tertiary": "#000000",
+                    "on-surface-variant": "#444748",
+                    "on-secondary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "1rem",
+                    "lg": "2rem",
+                    "xl": "3rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "page-padding-desktop": "72px",
+                    "section-md": "96px",
+                    "md": "16px",
+                    "base": "8px",
+                    "content-max": "1280px",
+                    "lg": "24px",
+                    "section-lg": "128px",
+                    "xl": "32px",
+                    "xs": "8px",
+                    "sm": "12px",
+                    "xxl": "48px"
+            },
+            "fontFamily": {
+                    "h3": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "h2": ["Manrope"],
+                    "h1": ["Manrope"],
+                    "display": ["Manrope"],
+                    "overline": ["Inter"]
+            },
+            "fontSize": {
+                    "h3": ["32px", { "lineHeight": "1.15", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                    "body": ["16px", { "lineHeight": "1.55", "fontWeight": "400" }],
+                    "label": ["14px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                    "body-lg": ["20px", { "lineHeight": "1.5", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+                    "h2": ["44px", { "lineHeight": "1.08", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+                    "h1": ["56px", { "lineHeight": "1.05", "letterSpacing": "-0.035em", "fontWeight": "700" }],
+                    "display": ["72px", { "lineHeight": "1.02", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+                    "overline": ["12px", { "lineHeight": "1.15", "letterSpacing": "0.08em", "fontWeight": "700" }]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+          font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[style*="'FILL' 1"] {
+          font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-text-primary antialiased font-body">
+<!-- TopNavBar -->
+<nav class="bg-background/80 dark:bg-background/80 backdrop-blur-md docked full-width top-0 sticky border-b border-border dark:border-outline-variant flat no shadows z-50">
+<div class="flex justify-between items-center w-full px-page-padding-desktop max-w-content-max mx-auto h-20">
+<div class="font-h3 text-h3 font-bold text-primary dark:text-on-primary-fixed">AI FitFabrica</div>
+<div class="hidden md:flex gap-8 items-center">
+<a class="text-primary dark:text-on-primary-fixed font-bold border-b-2 border-primary hover:opacity-80 transition-opacity font-label text-label Active: scale-95 transition-transform duration-200" href="/for-you">Для себя</a>
+<a class="text-text-secondary dark:text-text-muted hover:text-primary hover:opacity-80 transition-opacity font-label text-label" href="/for-business">Для бизнеса</a>
+<a class="text-text-secondary dark:text-text-muted hover:text-primary hover:opacity-80 transition-opacity font-label text-label" href="/features">Возможности</a>
+<a class="text-text-secondary dark:text-text-muted hover:text-primary hover:opacity-80 transition-opacity font-label text-label" href="/how-it-works">Как работает</a>
+<a class="text-text-secondary dark:text-text-muted hover:text-primary hover:opacity-80 transition-opacity font-label text-label" href="/pricing">Тарифы</a>
+<a class="text-text-secondary dark:text-text-muted hover:text-primary hover:opacity-80 transition-opacity font-label text-label" href="/login">Войти</a>
+</div>
+<a class="bg-primary text-on-primary font-label text-label px-6 py-3 rounded-full hover:opacity-80 transition-opacity" href="/workspace/try-on/new">Начать примерку</a>
+</div>
+</nav>
+<main class="w-full flex flex-col">
+<!-- Hero Section -->
+<section class="py-section-lg px-page-padding-desktop max-w-content-max mx-auto flex flex-col md:flex-row items-center gap-xxl w-full">
+<div class="flex-1 flex flex-col gap-lg">
+<h1 class="font-display text-display text-primary">Одежда, которая подходит именно вам</h1>
+<p class="font-body-lg text-body-lg text-text-secondary max-w-2xl">
+                    Загрузите своё фото и виртуально примеряйте одежду любых брендов. Наш ИИ учитывает ваши пропорции, анализирует фасон и предлагает лучшие варианты.
+                </p>
+<div class="flex flex-wrap gap-4 mt-8">
+<a class="bg-ai-violet text-on-primary font-label text-label px-8 py-4 rounded-full flex items-center gap-2 hover:opacity-90 transition-opacity" href="/workspace/try-on/new">
+<span class="material-symbols-outlined" data-icon="auto_awesome">auto_awesome</span>
+                        Начать примерку
+                    </a>
+<a class="bg-transparent border border-outline text-text-primary font-label text-label px-8 py-4 rounded-full flex items-center gap-2 hover:bg-surface transition-colors" href="/workspace/similar-search">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+                        Найти похожее дешевле
+                    </a>
+</div>
+</div>
+<div class="flex-1 w-full relative">
+<div class="w-full aspect-[4/5] bg-surface rounded-xl overflow-hidden border border-border relative">
+<img alt="Fashion model" class="w-full h-full object-cover" data-alt="A high-fashion minimalist photography shot showing a sleek split-screen effect. On the left, a modern woman in neutral minimalist basics stands confidently in a bright, ivory-toned studio setting. On the right, a digital overlay seamlessly transitions her outfit into a high-end, tailored graphite suit with precise, clean lines. The lighting is soft, cinematic, and editorial, emphasizing the sophisticated, tech-enabled luxury aesthetic of the platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzyfUshMZKO0_oDmxvHCkn3UeOZ_MPBZGUUw6YxhwzbyHymLXTNglmyFARQPCnJcYr0BVlJdbFoZpe0sMlqmt9xjvomPKSP7_Mtz-x0lHRjS2arTF-qM2f8nvl_KO-C2mxQjSx8QEPcNotoWcBoe7_1MVFQ_9EdRkpwU6ZMJ0j8F6qWM8gLNt8n3ZFN42hBY4-eCbquy6URJG9z4UMJB0d2yRXPNqKvjjw8JVhFzvVRtm9iUWxycib-wNNy2s8dgFmVajlOYXrctE"/>
+<div class="absolute bottom-6 left-6 right-6 bg-surface-container-lowest/90 backdrop-blur-md rounded-DEFAULT p-4 border border-border/50 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-ai-soft flex items-center justify-center text-ai-violet">
+<span class="material-symbols-outlined" data-icon="check_circle" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div>
+<div class="font-label text-label text-primary">Идеальная посадка</div>
+<div class="font-body text-body text-text-secondary text-sm">Пропорции учтены</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Upload & Result Preview Section -->
+<section class="py-section-md px-page-padding-desktop max-w-content-max mx-auto w-full">
+<div class="text-center mb-16">
+<h2 class="font-h2 text-h2 text-primary mb-4">Виртуальная примерочная</h2>
+<p class="font-body-lg text-body-lg text-text-secondary">От фотографии до готового образа за несколько секунд.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Step 1 -->
+<div class="bg-surface rounded-lg p-xl border border-border flex flex-col items-center text-center gap-6">
+<div class="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center text-text-secondary mb-2">
+<span class="material-symbols-outlined text-3xl" data-icon="upload">upload</span>
+</div>
+<div>
+<h3 class="font-h3 text-h3 text-primary mb-2 text-2xl">Загрузите фото</h3>
+<p class="font-body text-body text-text-secondary">Сделайте селфи в полный рост при хорошем освещении.</p>
+</div>
+<div class="w-full aspect-[3/4] border-2 border-dashed border-champagne-accent rounded-DEFAULT flex items-center justify-center bg-surface-container-lowest mt-4 hover:bg-surface transition-colors cursor-pointer">
+<div class="text-text-muted flex flex-col items-center gap-2">
+<span class="material-symbols-outlined text-4xl" data-icon="add_photo_alternate">add_photo_alternate</span>
+<span class="font-label text-label">Выбрать файл</span>
+</div>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="bg-surface rounded-lg p-xl border border-border flex flex-col items-center text-center gap-6">
+<div class="w-16 h-16 rounded-full bg-ai-soft flex items-center justify-center text-ai-violet mb-2">
+<span class="material-symbols-outlined text-3xl" data-icon="auto_fix_high">auto_fix_high</span>
+</div>
+<div>
+<h3 class="font-h3 text-h3 text-primary mb-2 text-2xl">Выберите одежду</h3>
+<p class="font-body text-body text-text-secondary">Укажите ссылку на товар или загрузите скриншот.</p>
+</div>
+<div class="w-full space-y-4 mt-4 text-left">
+<div class="bg-surface-container-lowest p-4 rounded-DEFAULT border border-border flex items-center gap-4">
+<div class="w-12 h-16 bg-surface-variant rounded-sm">
+<img alt="Item" class="w-full h-full object-cover rounded-sm" data-alt="A clean, minimalist product shot of a tailored silk blouse in warm ivory. The blouse is displayed elegantly against a stark white background with subtle studio lighting highlighting the fabric's texture. Premium fashion tech aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCP7BJVt3_ktM8OubgDTwg7EIsqoRtMFlUnF8t3vkNZos4wMTaYkHQ4_sgn4gizlumVkXsDF3A9O2BZ8PG43tKMXMLGMSnCA0DU4HbhCQfuoYyYdPeg9puccvxFfkafOi0bBF3636roJX558OojRjh1FJmtewFh1uqaAX9c6j09ocNZKEPS4iFWbMQfUqEeYGICnGk6iO4TFZL9VUOYhi29aV4BSpYWj7a2LEYsefiMgcCY9UQ_VzacK1zAqmR-KAFBCsi9-phE3i0"/>
+</div>
+<div class="flex-1">
+<div class="font-label text-label text-primary">Шелковая блуза</div>
+<div class="font-body text-body text-text-secondary text-sm">Massimo Dutti</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-DEFAULT border border-border flex items-center gap-4">
+<div class="w-12 h-16 bg-surface-variant rounded-sm">
+<img alt="Item" class="w-full h-full object-cover rounded-sm" data-alt="A sharp, minimalist product shot of wide-leg trousers in a deep graphite color. Displayed against a pristine white background. High-end editorial lighting emphasizes the clean lines and tailored fit." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8yW3ZVHBH0ajelJJSH1CHAd_YSc0dYD3fYouvpOaGfjNyZsdiNTUUAQz9JmAQGo3PtS_nzfCp0BTxfF6LAYVv3DIIldo8xuxjE0HK2qa9EwMTRJ39AfGf2gFzHHl1Wjaedf96ibkcqbIDs6jewd3spDKewenAMSrSzEbKv766L1gWQVoWkfoaFlOc17SgmW0fZsoeRGU95cFUTrkb5eCohKYLBqXww1DHfVKYFIQoqkqlFd94Y7abGORaenXVPWqvz3mqQpGBO5I"/>
+</div>
+<div class="flex-1">
+<div class="font-label text-label text-primary">Брюки палаццо</div>
+<div class="font-body text-body text-text-secondary text-sm">12 STOREEZ</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="bg-surface rounded-lg p-xl border border-border flex flex-col items-center text-center gap-6 relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/80 to-transparent z-10 pointer-events-none"></div>
+<div class="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center text-success mb-2 z-20">
+<span class="material-symbols-outlined text-3xl" data-icon="check" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<div class="z-20">
+<h3 class="font-h3 text-h3 text-primary mb-2 text-2xl">Оцените результат</h3>
+<p class="font-body text-body text-text-secondary">ИИ аккуратно "наденет" вещи, сохраняя текстуру и тени.</p>
+</div>
+<div class="w-full aspect-[3/4] rounded-DEFAULT overflow-hidden mt-4 z-0 relative">
+<img alt="Result" class="w-full h-full object-cover" data-alt="A highly realistic AI-generated try-on result. A woman standing in a minimalist studio environment wearing the previously shown silk blouse and wide-leg graphite trousers. The lighting is bright and warm, casting natural soft shadows that blend the clothing seamlessly onto her form, showcasing a premium, flawless digital fitting experience." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD934FYkw7RdUMY2pnruiPf9ZdQk5loDzLtUHc-6_Qeqi9FoBIgV12-J5HDXdmCdn8ndx8WYdnlt4PKkKtUndFWi0ch-fRVpEq0f6EUaTEltjNgsN7nupz7R9OLzouTK9KBAjmXjaZbFWP8TU6CdiQ0v5D_aPwHabE84MwZr7PeVhNUvbB2ko0cu51ff96ERlTj6j-aNPO93fCJUQErKq9856tXkD6wGbuXymqDgU_l2LwOpSiDdD4TQ-ljdw3VD4M4Ye7iB0TAvWc"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Analysis Bento Grid -->
+<section class="py-section-md px-page-padding-desktop max-w-content-max mx-auto w-full bg-surface-alt rounded-3xl my-16">
+<div class="mb-12">
+<h2 class="font-h2 text-h2 text-primary mb-4">Глубокий анализ стиля</h2>
+<p class="font-body-lg text-body-lg text-text-secondary max-w-3xl">Нейросеть оценивает не только размер, но и то, как вещь взаимодействует с вашим типом фигуры и колоритом.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[240px]">
+<!-- Color Analysis -->
+<div class="md:col-span-8 bg-surface-container-lowest rounded-xl p-8 border border-border flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<div>
+<div class="font-overline text-overline text-text-secondary mb-2 uppercase tracking-wider">Цветотип</div>
+<h3 class="font-h3 text-h3 text-primary text-2xl">Анализ палитры</h3>
+</div>
+<span class="material-symbols-outlined text-text-muted" data-icon="palette">palette</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex-1 flex gap-2">
+<div class="h-12 flex-1 bg-[#D8C3A5] rounded-sm"></div>
+<div class="h-12 flex-1 bg-[#8B8580] rounded-sm"></div>
+<div class="h-12 flex-1 bg-[#1c1b1b] rounded-sm"></div>
+<div class="h-12 flex-1 bg-[#9a83ff] rounded-sm"></div>
+</div>
+<div class="font-body text-body text-text-secondary w-1/3">
+                            Ваша идеальная база — теплые нюдовые оттенки с акцентом на графит.
+                        </div>
+</div>
+</div>
+<!-- Proportions -->
+<div class="md:col-span-4 bg-surface-container-lowest rounded-xl p-8 border border-border flex flex-col justify-between relative overflow-hidden">
+<div class="flex justify-between items-start z-10">
+<div>
+<div class="font-overline text-overline text-text-secondary mb-2 uppercase tracking-wider">Фигура</div>
+<h3 class="font-h3 text-h3 text-primary text-2xl">Пропорции</h3>
+</div>
+<span class="material-symbols-outlined text-text-muted z-10" data-icon="straighten">straighten</span>
+</div>
+<div class="z-10 mt-4">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-success text-sm" data-icon="check_circle">check_circle</span>
+<span class="font-label text-label text-primary">Длина макси</span>
+</div>
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-success text-sm" data-icon="check_circle">check_circle</span>
+<span class="font-label text-label text-primary">Высокая посадка</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-warning text-sm" data-icon="warning">warning</span>
+<span class="font-label text-label text-primary">Осторожно с оверсайз</span>
+</div>
+</div>
+</div>
+<!-- Stylist AI -->
+<div class="md:col-span-12 bg-ai-soft rounded-xl p-8 border border-ai-violet/20 flex flex-col md:flex-row items-center gap-8">
+<div class="flex-1">
+<div class="font-overline text-overline text-ai-violet mb-2 uppercase tracking-wider flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="smart_toy">smart_toy</span>
+                            AI Стилист
+                        </div>
+<h3 class="font-h3 text-h3 text-primary text-2xl mb-4">Персональные рекомендации</h3>
+<p class="font-body text-body text-text-secondary">
+                            На основе ваших сохраненных образов и анализа внешности, мы подобрали 15 капсульных вещей, которые идеально дополнят ваш гардероб на этот сезон.
+                        </p>
+<a class="mt-6 inline-flex items-center gap-2 text-ai-violet font-label text-label hover:opacity-80" href="/workspace/style-profile">
+                            Смотреть подборку
+                            <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+<div class="flex gap-4">
+<div class="w-24 h-32 bg-surface-container-lowest rounded-md border border-border shadow-sm p-2 flex flex-col items-center justify-center">
+<span class="material-symbols-outlined text-text-muted mb-2" data-icon="apparel">apparel</span>
+<span class="font-label text-label text-xs text-center">Базовый<br/>гардероб</span>
+</div>
+<div class="w-24 h-32 bg-surface-container-lowest rounded-md border border-border shadow-sm p-2 flex flex-col items-center justify-center -translate-y-4">
+<span class="material-symbols-outlined text-text-muted mb-2" data-icon="diamond">diamond</span>
+<span class="font-label text-label text-xs text-center">Вечерние<br/>образы</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-alt dark:bg-surface-container-low border-t border-border w-full bottom-0 flat mt-auto">
+<div class="w-full py-xl px-page-padding-desktop flex flex-col md:flex-row justify-between items-center max-w-content-max mx-auto">
+<div class="font-h3 text-h3 text-primary mb-4 md:mb-0">AI FitFabrica</div>
+<div class="font-body text-label text-text-muted dark:text-on-surface-variant mb-4 md:mb-0">
+                © 2024 AI FitFabrica. Все права защищены.
+            </div>
+<div class="flex gap-6">
+<a class="text-text-muted hover:text-primary font-body text-label" href="#">Приватность</a>
+<a class="text-text-muted hover:text-primary font-body text-label" href="#">Контакты</a>
+<a class="text-text-muted hover:text-primary font-body text-label" href="#">Условия</a>
+</div>
+</div>
+</footer>
+</body></html>

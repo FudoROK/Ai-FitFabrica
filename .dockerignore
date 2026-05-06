@@ -1,0 +1,53 @@
+# VCS / CI
+.git
+.gitignore
+.github
+
+# Python caches / local env
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.coverage
+htmlcov
+
+# Local env / secrets
+.env
+.env.*
+!.env.example
+service-account.json
+secrets
+*.pem
+*.key
+*.p12
+
+# Non-runtime project zones
+docs
+tests
+/contracts
+scripts
+
+# Local build artifacts
+dist
+build
+*.egg-info
+*.log
+
+# IDE / OS
+.idea
+.vscode
+.DS_Store
+Thumbs.db
+
+# ADK / misc local artifacts
+src/.adk
+iam_snapshot.json
+
+# Keep only runtime-relevant root files implicitly:
+# - Dockerfile
+# - requirements.txt
+# - src/

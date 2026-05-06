@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>История и проекты - AI FitFabrica</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&amp;family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#e6e1df",
+                        "on-secondary-fixed": "#1d0061",
+                        "on-secondary-fixed-variant": "#4a2ea9",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#000000",
+                        "outline-variant": "#c4c7c7",
+                        "tertiary-fixed-dim": "#cac6c4",
+                        "on-primary-fixed-variant": "#474646",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed-dim": "#cbbeff",
+                        "on-tertiary": "#ffffff",
+                        "text-secondary": "#5F5F63",
+                        "surface-bright": "#fdf8f8",
+                        "ai-soft": "#EFEAFD",
+                        "inverse-surface": "#313030",
+                        "surface-tint": "#5f5e5e",
+                        "tertiary-container": "#1c1b1a",
+                        "secondary-container": "#9a83ff",
+                        "surface-dim": "#ddd9d8",
+                        "primary-container": "#1c1b1b",
+                        "text-primary": "#141414",
+                        "border": "#E8E1D6",
+                        "on-primary-fixed": "#1c1b1b",
+                        "inverse-primary": "#c8c6c5",
+                        "on-tertiary-fixed": "#1c1b1a",
+                        "outline": "#747878",
+                        "success": "#2F8F6B",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#1c1b1b",
+                        "warning": "#D96C5F",
+                        "primary-fixed-dim": "#c8c6c5",
+                        "on-background": "#1c1b1b",
+                        "on-tertiary-container": "#868381",
+                        "secondary": "#6249c2",
+                        "surface-alt": "#F1EAE0",
+                        "error-container": "#ffdad6",
+                        "background": "#F7F3EC",
+                        "champagne-accent": "#D8C3A5",
+                        "surface-container-low": "#f7f3f2",
+                        "inverse-on-surface": "#f4f0ef",
+                        "ai-violet": "#6E56CF",
+                        "on-primary-container": "#858383",
+                        "error": "#D93025",
+                        "text-muted": "#8B8580",
+                        "surface-variant": "#e5e2e1",
+                        "on-tertiary-fixed-variant": "#484645",
+                        "surface": "#FFFDF8",
+                        "surface-container-highest": "#e5e2e1",
+                        "surface-container": "#f1edec",
+                        "primary-fixed": "#e5e2e1",
+                        "secondary-fixed": "#e6deff",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#ebe7e6",
+                        "on-secondary-container": "#300491",
+                        "tertiary": "#000000",
+                        "on-surface-variant": "#444748",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "page-padding-desktop": "72px",
+                        "section-md": "96px",
+                        "md": "16px",
+                        "base": "8px",
+                        "content-max": "1280px",
+                        "lg": "24px",
+                        "section-lg": "128px",
+                        "xl": "32px",
+                        "xs": "8px",
+                        "sm": "12px",
+                        "xxl": "48px"
+                    },
+                    "fontFamily": {
+                        "h3": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "h2": ["Manrope"],
+                        "h1": ["Manrope"],
+                        "display": ["Manrope"],
+                        "overline": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h3": ["32px", { "lineHeight": "1.15", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body": ["16px", { "lineHeight": "1.55", "fontWeight": "400" }],
+                        "label": ["14px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "body-lg": ["20px", { "lineHeight": "1.5", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+                        "h2": ["44px", { "lineHeight": "1.08", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+                        "h1": ["56px", { "lineHeight": "1.05", "letterSpacing": "-0.035em", "fontWeight": "700" }],
+                        "display": ["72px", { "lineHeight": "1.02", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+                        "overline": ["12px", { "lineHeight": "1.15", "letterSpacing": "0.08em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-text-primary font-body antialiased min-h-screen flex">
+<!-- SideNavBar -->
+<nav class="bg-surface dark:bg-surface-container-lowest text-primary dark:text-on-primary-fixed font-label text-label docked left-0 h-full w-72 border-r border-border dark:border-outline-variant flat no shadows fixed left-0 top-0 h-screen flex flex-col py-6 z-50">
+<div class="px-lg mb-xl">
+<h2 class="font-h2 text-h2 font-black text-primary mb-xs tracking-tighter">AI FitFabrica</h2>
+<p class="font-overline text-overline text-text-muted">Premium Fashion AI</p>
+</div>
+<div class="px-lg mb-lg">
+<button class="w-full bg-ai-violet text-on-primary font-label text-label py-sm px-md rounded-full hover:opacity-90 transition-opacity flex items-center justify-center gap-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
+                Создать образ
+            </button>
+</div>
+<ul class="flex flex-col gap-xs flex-grow overflow-y-auto">
+<li>
+<a class="text-text-secondary dark:text-text-muted mx-2 px-4 py-3 flex items-center gap-3 hover:bg-surface-variant hover:bg-surface-container-high transition-colors rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                    Кабинет
+                </a>
+</li>
+<li>
+<a class="text-text-secondary dark:text-text-muted mx-2 px-4 py-3 flex items-center gap-3 hover:bg-surface-variant hover:bg-surface-container-high transition-colors rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">add_a_photo</span>
+                    Новая примерка
+                </a>
+</li>
+<li>
+<a class="text-text-secondary dark:text-text-muted mx-2 px-4 py-3 flex items-center gap-3 hover:bg-surface-variant hover:bg-surface-container-high transition-colors rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">auto_fix_high</span>
+                    Подбор образа
+                </a>
+</li>
+<li>
+<a class="text-text-secondary dark:text-text-muted mx-2 px-4 py-3 flex items-center gap-3 hover:bg-surface-variant hover:bg-surface-container-high transition-colors rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">search_check</span>
+                    Найти похожее
+                </a>
+</li>
+<li>
+<a class="text-text-secondary dark:text-text-muted mx-2 px-4 py-3 flex items-center gap-3 hover:bg-surface-variant hover:bg-surface-container-high transition-colors rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">shopping_bag</span>
+                    Карточка товара
+                </a>
+</li>
+<li>
+<a class="bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary rounded-DEFAULT mx-2 px-4 py-3 flex items-center gap-3 Active: translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">history</span>
+                    История
+                </a>
+</li>
+<li>
+<a class="text-text-secondary dark:text-text-muted mx-2 px-4 py-3 flex items-center gap-3 hover:bg-surface-variant hover:bg-surface-container-high transition-colors rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">payments</span>
+                    Кредиты
+                </a>
+</li>
+<li class="mt-auto border-t border-border pt-xs">
+<a class="text-text-secondary dark:text-text-muted mx-2 px-4 py-3 flex items-center gap-3 hover:bg-surface-variant hover:bg-surface-container-high transition-colors rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">person</span>
+                    Профиль стиля
+                </a>
+</li>
+<li>
+<a class="text-text-secondary dark:text-text-muted mx-2 px-4 py-3 flex items-center gap-3 hover:bg-surface-variant hover:bg-surface-container-high transition-colors rounded-DEFAULT" href="#">
+<span class="material-symbols-outlined">business_center</span>
+                    Профиль бизнеса
+                </a>
+</li>
+</ul>
+</nav>
+<!-- Main Content Area -->
+<main class="ml-72 flex-grow min-h-screen bg-background p-page-padding-desktop">
+<!-- Header -->
+<header class="mb-xxl flex justify-between items-end">
+<div>
+<h1 class="font-h1 text-h1 text-primary mb-sm">История и проекты</h1>
+<p class="font-body-lg text-body-lg text-text-secondary">Управление вашими генерациями и сохраненными результатами.</p>
+</div>
+<!-- Tabs -->
+<div class="flex gap-md bg-surface p-base rounded-full border border-border">
+<button class="bg-primary text-on-primary font-label text-label py-sm px-lg rounded-full">Примерки</button>
+<button class="text-text-secondary hover:text-primary font-label text-label py-sm px-lg rounded-full transition-colors">Образы</button>
+<button class="text-text-secondary hover:text-primary font-label text-label py-sm px-lg rounded-full transition-colors">Похожие товары</button>
+<button class="text-text-secondary hover:text-primary font-label text-label py-sm px-lg rounded-full transition-colors">Карточки</button>
+</div>
+</header>
+<!-- Content Grid (Bento Style) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
+<!-- Project Card 1 -->
+<div class="bg-surface rounded-[40px] p-lg border border-border flex flex-col group hover:border-text-secondary transition-colors">
+<div class="relative w-full aspect-[4/5] rounded-[24px] overflow-hidden mb-md bg-surface-alt">
+<img alt="Generated outfit preview" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A high-fashion studio shot of a female model wearing a flowing, asymmetrical silk dress in a deep burgundy color. The lighting is soft and cinematic, casting subtle shadows on a minimalist warm ivory backdrop. The aesthetic is premium, editorial, and sophisticated, perfectly matching the UI's elegant light-mode style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpLlCVeom8Tg-CjQ5g00eC2nk0FlVV_cf1GocOEeW4ZtXuDpt_N3NgwfCNF3F8EH1X4kMOBfLRrfwgPht_0_Rdl7iJiipaK55vjepGkmeC5yJYrTk_-KIPuPU5PfI0nSR69so-NnJfwuMWOak-OWKkO-N83yeCTliLRMrn3ZJRdZTrvFosqqd3emsyIxvzPQ1_0nZa8C1Mt-fPoOEUc26hQLcuBP8Q0ZJ1T1sUsB6TT5yQKrDfeeT4a57r_lLWinEFdlaiEuYFJDs"/>
+<div class="absolute top-md right-md bg-success/10 text-success font-label text-label py-xs px-sm rounded-full backdrop-blur-md flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">check_circle</span> Готово
+                    </div>
+</div>
+<div class="flex-grow">
+<h3 class="font-h3 text-h3 text-primary mb-xs text-[24px]">Вечерний шелк</h3>
+<p class="font-body text-body text-text-muted mb-md">Генерация образа • 12 Окт 2023</p>
+</div>
+<div class="flex gap-sm mt-auto">
+<button class="flex-1 bg-surface-variant text-text-primary font-label text-label py-sm px-md rounded-full hover:bg-border transition-colors">Открыть</button>
+<button class="bg-surface-variant text-text-primary w-10 h-10 rounded-full flex items-center justify-center hover:bg-border transition-colors">
+<span class="material-symbols-outlined">download</span>
+</button>
+</div>
+</div>
+<!-- Project Card 2 -->
+<div class="bg-surface rounded-[40px] p-lg border border-border flex flex-col group hover:border-text-secondary transition-colors">
+<div class="relative w-full aspect-[4/5] rounded-[24px] overflow-hidden mb-md bg-surface-alt">
+<img alt="Generated outfit preview" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A detailed flat lay of premium menswear items including a tailored navy blazer, crisp white shirt, and minimalist leather accessories. The arrangement is precise on a soft cream background, illuminated by soft, diffused lighting. The image exudes a clean, sophisticated, and high-end fashion tech vibe." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkRbiFx9Uzj735dVTZu0EGVURfzl6-Vwn8LHYfJfGGs8J7OFG4RdOb146uw3WfKKTI65JBWqcUuIsgb_GAp_EyMlTggtFBJr7K2FLQqF8-86WDy9PA139a2hBFd67zOE8j7Ocryv2LGLX03kyogWWRfGXziq3Fr_Hjmv7T04acplOqfA8dVSZRKJBhhdM5Vw0SmP2V3gQ4y4GOOw8W7sFbJW0eCNelztwTnudUfwj0N8cBJESPzKufDK9KHA1VXGxD6CNMPk09TXA"/>
+<div class="absolute top-md right-md bg-surface/80 text-text-primary font-label text-label py-xs px-sm rounded-full backdrop-blur-md flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px] text-ai-violet animate-spin">sync</span> В процессе
+                    </div>
+</div>
+<div class="flex-grow">
+<h3 class="font-h3 text-h3 text-primary mb-xs text-[24px]">Летняя капсула</h3>
+<p class="font-body text-body text-text-muted mb-md">Примерка • 14 Окт 2023</p>
+</div>
+<div class="flex gap-sm mt-auto">
+<button class="flex-1 bg-surface-variant text-text-primary font-label text-label py-sm px-md rounded-full hover:bg-border transition-colors opacity-50 cursor-not-allowed">Открыть</button>
+</div>
+</div>
+<!-- Project Card 3 -->
+<div class="bg-surface rounded-[40px] p-lg border border-border flex flex-col group hover:border-text-secondary transition-colors">
+<div class="relative w-full aspect-[4/5] rounded-[24px] overflow-hidden mb-md bg-surface-alt">
+<img alt="Generated outfit preview" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A close-up fashion shot of intricate textile details, focusing on a heavily textured, monochromatic wool coat. The lighting highlights the weave and quality of the fabric against a subtle silk-white background. The mood is tactile, warm, and distinctly premium, fitting a luxury AI styling tool." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCoh8oB6QNwW7od23geArdfYBTSGVelcwcTLL0O74pxeOAUy10gdQpymriqyRptaAdqMrjyoa0apmzwxMdEwp01J8vERPjMxVqtW5kx32Magfnwjy2yj80NIdPrAkdvULZR1X8UbSWkIu0K6Fc7O_D5LssP7laq0cTn0-1Yc1F2ACbhvOdIvSEqs7Rjj2vsa5IOSQY5hdZv2FD7VEosobR2tsHPzqiuHovNF23OrZ86kp0ehyd3muHnKZA9-PTnOQICsm8xqql1aM8"/>
+<div class="absolute top-md right-md bg-success/10 text-success font-label text-label py-xs px-sm rounded-full backdrop-blur-md flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">check_circle</span> Готово
+                    </div>
+</div>
+<div class="flex-grow">
+<h3 class="font-h3 text-h3 text-primary mb-xs text-[24px]">Осеннее пальто</h3>
+<p class="font-body text-body text-text-muted mb-md">Подбор образа • 10 Окт 2023</p>
+</div>
+<div class="flex gap-sm mt-auto">
+<button class="flex-1 bg-surface-variant text-text-primary font-label text-label py-sm px-md rounded-full hover:bg-border transition-colors">Открыть</button>
+<button class="bg-surface-variant text-text-primary w-10 h-10 rounded-full flex items-center justify-center hover:bg-border transition-colors">
+<span class="material-symbols-outlined">download</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+</body></html>
