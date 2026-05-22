@@ -2,30 +2,27 @@
 
 import type { FormEvent } from "react";
 import { useState } from "react";
-import { FormField } from "@/components/ui/form-field";
+import { MaterialIcon } from "@/components/site/material-icon";
+import { SiteButton } from "@/components/site/site-button";
 import { WebApiClient } from "@/lib/api/client";
-
-type SignInState = {
-  email: string;
-  password: string;
-};
 
 function getApiBaseUrl(): string {
   return process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 }
 
 export function SignInForm() {
-  const [form, setForm] = useState<SignInState>({ email: "", password: "" });
-  const [error, setError] = useState<string>("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [success, setSuccess] = useState<string>("");
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
     setSuccess("");
 
-    if (!form.email.trim() || !form.password.trim()) {
+    if (!email.trim() || !password.trim()) {
       setError("Введите email и пароль.");
       return;
     }
@@ -41,10 +38,7 @@ export function SignInForm() {
 
     try {
       const client = new WebApiClient(baseUrl);
-      const response = await client.signIn({
-        email: form.email.trim(),
-        password: form.password
-      });
+      const response = await client.signIn({ email: email.trim(), password });
 
       if (!response.ok) {
         setError("Вход отклонен. Проверьте email и пароль.");
@@ -60,49 +54,41 @@ export function SignInForm() {
   }
 
   return (
-    <form className="surface-card auth-shell" onSubmit={handleSubmit}>
-      <div className="form-shell-header">
-        <p className="eyebrow">Доступ к workspace</p>
-        <h1 className="section-title">Вход в рабочее пространство</h1>
-        <p className="section-copy">
-          Войдите по email или используйте корпоративную авторизацию, когда backend
-          будет подключен к вашему identity provider.
-        </p>
+    <form className="site-card mx-auto mt-40 w-full max-w-[550px] rounded-[3rem] p-10" onSubmit={handleSubmit}>
+      <div className="grid grid-cols-2 border-b border-[var(--border)] text-center text-[2rem] font-medium">
+        <div className="border-b-2 border-black pb-4">Войти</div>
+        <div className="pb-4 text-[var(--text-secondary)]">Регистрация</div>
       </div>
-      <div className="form-grid">
-        <FormField
-          id="sign-in-email"
-          label="Email"
-          onChange={(value) => setForm((current) => ({ ...current, email: value }))}
-          placeholder="name@company.com"
-          required
-          type="email"
-          value={form.email}
-        />
-        <FormField
-          id="sign-in-password"
-          label="Пароль"
-          onChange={(value) => setForm((current) => ({ ...current, password: value }))}
-          placeholder="Введите пароль"
-          required
-          type="password"
-          value={form.password}
-        />
+      <button className="site-pill-button mt-8 w-full" type="button">
+        <span className="text-[1.6rem]">G</span>
+        <span>Продолжить с Google</span>
+      </button>
+      <div className="my-8 flex items-center gap-4 text-[var(--text-muted)]">
+        <div className="h-px flex-1 bg-[var(--border)]" />
+        <span className="text-[1.1rem] font-semibold uppercase tracking-[0.18em]">или</span>
+        <div className="h-px flex-1 bg-[var(--border)]" />
       </div>
-      <div className="auth-options">
-        <button className="button button-primary" disabled={isSubmitting} type="submit">
-          {isSubmitting ? "Проверяем доступ" : "Войти по email"}
-        </button>
-        <button className="button button-secondary" disabled type="button">
-          Продолжить с Google
+      <label className="grid gap-3 text-[1.1rem] font-semibold">
+        <span>Email</span>
+        <input className="site-input" onChange={(event) => setEmail(event.target.value)} type="email" value={email} />
+      </label>
+      <div className="mt-6 flex items-center justify-between">
+        <span className="text-[1.1rem] font-semibold">Пароль</span>
+        <button className="site-pill-button site-pill-button--compact" type="button">
+          Забыли пароль?
         </button>
       </div>
-      {error ? <p className="form-error-banner">{error}</p> : null}
-      {success ? <p className="form-success-banner">{success}</p> : null}
-      <div className="surface-subcard auth-note">
-        <h2>Что подключить позже</h2>
-        <p>Google Sign-In, protected routes и redirect после успешного входа подключаются на backend-first контракте.</p>
-      </div>
+      <label className="relative mt-3 block">
+        <input className="site-input pr-14" onChange={(event) => setPassword(event.target.value)} type="password" value={password} />
+        <span className="absolute right-5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]">
+          <MaterialIcon name="visibility" />
+        </span>
+      </label>
+      {error ? <p className="mt-6 rounded-2xl bg-[#fce8e6] px-5 py-4 text-sm font-medium text-[var(--error)]">{error}</p> : null}
+      {success ? <p className="mt-6 rounded-2xl bg-[var(--success-soft)] px-5 py-4 text-sm font-medium text-[var(--success)]">{success}</p> : null}
+      <SiteButton className="mt-8 w-full" type="submit" disabled={isSubmitting}>
+        {isSubmitting ? "Проверяем доступ" : "Войти"}
+      </SiteButton>
     </form>
   );
 }

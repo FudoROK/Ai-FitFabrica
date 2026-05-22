@@ -2,33 +2,43 @@
 
 import type { FormEvent } from "react";
 import { useState } from "react";
-import { FormField } from "@/components/ui/form-field";
-import { FormTextarea } from "@/components/ui/form-textarea";
+import { MaterialIcon } from "@/components/site/material-icon";
+import { SiteButton } from "@/components/site/site-button";
 import { WebApiClient } from "@/lib/api/client";
 
 type FormState = {
   company: string;
   email: string;
-  message: string;
   name: string;
+  size: string;
+  tools: string[];
+  type: string;
 };
 
 const initialState: FormState = {
   company: "",
   email: "",
-  message: "",
-  name: ""
+  name: "",
+  size: "< 100",
+  tools: [],
+  type: "Ритейлер одежды"
 };
 
 function getApiBaseUrl(): string {
   return process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 }
 
+const toolOptions = [
+  "Виртуальная примерочная (Widget)",
+  "Генерация лукбуков",
+  "AI Стилист"
+];
+
 export function ContactForm() {
   const [form, setForm] = useState<FormState>(initialState);
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [success, setSuccess] = useState<string>("");
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -54,7 +64,13 @@ export function ContactForm() {
       const response = await client.requestDemo({
         company: form.company.trim() || undefined,
         email: form.email.trim(),
-        message: form.message.trim() || undefined,
+        message: [
+          `Размер каталога: ${form.size}`,
+          `Тип бизнеса: ${form.type}`,
+          form.tools.length ? `Интересующие инструменты: ${form.tools.join(", ")}` : undefined
+        ]
+          .filter(Boolean)
+          .join("\n"),
         name: form.name.trim()
       });
 
@@ -73,62 +89,80 @@ export function ContactForm() {
   }
 
   return (
-    <form className="surface-card form-shell" onSubmit={handleSubmit}>
-      <div className="form-shell-header">
-        <p className="eyebrow">Запрос демо</p>
-        <h2 className="section-title">Запросить демонстрацию</h2>
-        <p className="section-copy">
-          Оставьте контакты и кратко опишите каталог, ассортимент или задачу. Мы
-          вернемся с подходящим сценарием запуска.
-        </p>
+    <form className="site-card rounded-[2.75rem] p-14" onSubmit={handleSubmit}>
+      <h2 className="font-[family-name:var(--font-manrope)] text-[4rem] font-bold leading-[0.95] tracking-[-0.05em]">
+        Запросить демо
+      </h2>
+      <div className="mt-10 grid gap-8 md:grid-cols-2">
+        <label className="grid gap-3 text-[1.1rem] font-semibold">
+          <span>Имя</span>
+          <input className="site-input" onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))} value={form.name} />
+        </label>
+        <label className="grid gap-3 text-[1.1rem] font-semibold">
+          <span>Рабочий Email</span>
+          <input className="site-input" onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))} type="email" value={form.email} />
+        </label>
+        <label className="grid gap-3 text-[1.1rem] font-semibold">
+          <span>Название бренда / компании</span>
+          <input className="site-input" onChange={(event) => setForm((current) => ({ ...current, company: event.target.value }))} value={form.company} />
+        </label>
+        <label className="grid gap-3 text-[1.1rem] font-semibold">
+          <span>Размер каталога (SKU)</span>
+          <select className="site-select appearance-none" onChange={(event) => setForm((current) => ({ ...current, size: event.target.value }))} value={form.size}>
+            <option>&lt; 100</option>
+            <option>100 - 500</option>
+            <option>500 - 2000</option>
+            <option>2000+</option>
+          </select>
+        </label>
       </div>
-      <div className="form-grid">
-        <FormField
-          id="contact-name"
-          label="Имя"
-          onChange={(value) => setForm((current) => ({ ...current, name: value }))}
-          placeholder="Анна Соколова"
-          required
-          value={form.name}
-        />
-        <FormField
-          id="contact-email"
-          label="Рабочий email"
-          onChange={(value) => setForm((current) => ({ ...current, email: value }))}
-          placeholder="brand@company.com"
-          required
-          type="email"
-          value={form.email}
-        />
-        <FormField
-          helper="Опционально"
-          id="contact-company"
-          label="Компания"
-          onChange={(value) => setForm((current) => ({ ...current, company: value }))}
-          placeholder="FitFabrica Retail"
-          value={form.company}
-        />
-        <div className="surface-subcard form-note">
-          <h3>Что будет дальше</h3>
-          <p>Разберем ваш каталог, оценим сценарии генерации и предложим дорожную карту внедрения.</p>
+      <label className="mt-8 grid gap-3 text-[1.1rem] font-semibold">
+        <span>Тип бизнеса</span>
+        <select className="site-select appearance-none" onChange={(event) => setForm((current) => ({ ...current, type: event.target.value }))} value={form.type}>
+          <option>Ритейлер одежды</option>
+          <option>Маркетплейс</option>
+          <option>Производитель</option>
+          <option>Контент-студия</option>
+        </select>
+      </label>
+      <div className="mt-10">
+        <p className="text-[1.1rem] font-semibold">Интересующие инструменты (можно выбрать несколько)</p>
+        <div className="mt-5 grid gap-4">
+          {toolOptions.map((tool) => {
+            const checked = form.tools.includes(tool);
+
+            return (
+              <label className="flex items-center gap-4 text-[1.15rem] text-[var(--text-secondary)]" key={tool}>
+                <input
+                  checked={checked}
+                  className="h-7 w-7 accent-[var(--ai)]"
+                  onChange={(event) =>
+                    setForm((current) => ({
+                      ...current,
+                      tools: event.target.checked
+                        ? [...current.tools, tool]
+                        : current.tools.filter((item) => item !== tool)
+                    }))
+                  }
+                  type="checkbox"
+                />
+                <span>{tool}</span>
+              </label>
+            );
+          })}
         </div>
-        <FormTextarea
-          helper="Можно описать ассортимент, объем каталога, канал продаж или сроки."
-          id="contact-message"
-          label="Задача"
-          onChange={(value) => setForm((current) => ({ ...current, message: value }))}
-          placeholder="Нужно ускорить подготовку карточек товара и снизить стоимость контента."
-          rows={5}
-          value={form.message}
-        />
       </div>
-      {error ? <p className="form-error-banner">{error}</p> : null}
-      {success ? <p className="form-success-banner">{success}</p> : null}
-      <div className="form-actions">
-        <button className="button button-primary" disabled={isSubmitting} type="submit">
-          {isSubmitting ? "Отправляем заявку" : "Отправить заявку"}
-        </button>
-        <p className="form-helper">Нажимая кнопку, вы соглашаетесь на обработку персональных данных.</p>
+      {error ? <p className="mt-6 rounded-2xl bg-[#fce8e6] px-5 py-4 text-sm font-medium text-[var(--error)]">{error}</p> : null}
+      {success ? <p className="mt-6 rounded-2xl bg-[var(--success-soft)] px-5 py-4 text-sm font-medium text-[var(--success)]">{success}</p> : null}
+      <SiteButton className="mt-10 w-full" icon="arrow_forward" type="submit" variant="violet" disabled={isSubmitting}>
+        {isSubmitting ? "Отправляем заявку" : "Запросить демо"}
+      </SiteButton>
+      <p className="mt-10 text-center text-[0.95rem] font-semibold tracking-[0.08em] text-[var(--text-muted)]">
+        Нажимая кнопку, вы соглашаетесь с условиями обработки персональных данных.
+      </p>
+      <div className="mt-8 flex gap-4 text-[var(--text-secondary)]">
+        <MaterialIcon className="text-[1.4rem]" name="mail" />
+        <span>hello@fitfabrica.ai</span>
       </div>
     </form>
   );

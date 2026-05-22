@@ -3,17 +3,15 @@ import { publicFooterRoutes } from "@/lib/routes/public-routes";
 
 export function PublicFooter() {
   return (
-    <footer className="site-footer">
-      <div className="page-shell site-footer-shell">
-        <div>
-          <strong className="site-logo">AI FitFabrica</strong>
-          <p className="site-footer-copy">
-            Спокойный product-first интерфейс для примерки, контент-пакетов и fashion-операций.
-          </p>
-        </div>
-        <nav className="site-footer-nav">
+    <footer className="border-t border-[var(--border)] bg-[var(--background)]">
+      <div className="site-container flex flex-col gap-6 py-8 text-sm text-[var(--text-muted)] lg:flex-row lg:items-center lg:justify-between">
+        <strong className="font-[family-name:var(--font-manrope)] text-[2rem] font-bold text-black tracking-[-0.04em]">
+          AI FitFabrica
+        </strong>
+        <p>© 2024 AI FitFabrica. Все права защищены.</p>
+        <nav className="flex flex-wrap items-center gap-6">
           {publicFooterRoutes.map((route) => (
-            <Link key={route.href} href={route.href}>
+            <Link className="transition hover:text-black" href={route.href} key={route.href}>
               {route.label}
             </Link>
           ))}
