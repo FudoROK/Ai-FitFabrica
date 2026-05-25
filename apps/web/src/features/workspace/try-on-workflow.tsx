@@ -21,10 +21,9 @@ type UploadCardProps = {
 };
 
 const acceptedImageTypes = ["image/jpeg", "image/png", "image/webp"] as const;
-const acceptedImageTypesLabel = "JPEG, PNG, WebP до 10MB";
+const acceptedImageTypesLabel = "JPEG, PNG или WebP, до 10 МБ";
 const maxFileSizeBytes = 10 * 1024 * 1024;
 const emptyImage: SelectedImage = { error: "", file: null, previewUrl: "" };
-
 function getApiBaseUrl(): string {
   return process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 }
@@ -92,7 +91,7 @@ function StatusHistory({ items }: { items: TryOnStatusEvent[] }) {
       <div className="rounded-[1.2rem] bg-[var(--background)] p-4">
         <strong className="block text-[0.95rem]">Ожидание запуска</strong>
         <p className="mt-1 text-[0.85rem] leading-6 text-[var(--text-secondary)]">
-          После отправки backend вернет историю статусов job.
+          После отправки бэкенд вернет историю статусов задачи.
         </p>
       </div>
     );
@@ -132,12 +131,16 @@ export function TryOnWorkflow() {
       if (humanPhoto.previewUrl) {
         URL.revokeObjectURL(humanPhoto.previewUrl);
       }
+    };
+  }, [humanPhoto.previewUrl]);
 
+  useEffect(() => {
+    return () => {
       if (garmentPhoto.previewUrl) {
         URL.revokeObjectURL(garmentPhoto.previewUrl);
       }
     };
-  }, [humanPhoto.previewUrl, garmentPhoto.previewUrl]);
+  }, [garmentPhoto.previewUrl]);
 
   function updateImage(role: UploadRole, file: File | null) {
     const errorMessage = validateImageFile(file);
@@ -226,7 +229,7 @@ export function TryOnWorkflow() {
           <div className="min-w-0">
             <h1 className="workspace-title font-[family-name:var(--font-manrope)]">Новая примерка</h1>
             <p className="workspace-subtitle mt-2 max-w-[760px] text-[var(--text-secondary)]">
-              Загрузите фото человека и фото одежды. Frontend отправит файлы на backend и покажет текущий статус job.
+              Загрузите фото человека и фото одежды. Интерфейс отправит файлы на бэкенд и покажет текущий статус задачи.
             </p>
           </div>
           <Link className="site-pill-button site-pill-button--compact" href="/workspace/chat">
@@ -251,16 +254,16 @@ export function TryOnWorkflow() {
                   {isSubmitting ? "..." : "AI"}
                 </div>
                 <h2 className="result-title mt-6 font-[family-name:var(--font-manrope)] font-bold tracking-[-0.04em]">
-                  {workflowState === "completed" ? "Job завершен" : "Подготовка примерки"}
+                  {workflowState === "completed" ? "Задача завершена" : "Подготовка примерки"}
                 </h2>
                 <p className="result-description mx-auto mt-4 max-w-[620px] text-[var(--text-secondary)]">
                   {createdJobId
-                    ? `Job ${createdJobId} создан. Результат будет открыт после статуса completed.`
-                    : "Выберите два изображения и отправьте их на backend. Генерация, качество и сохранение остаются на стороне backend."}
+                    ? `Задача ${createdJobId} создана. Результат откроется после статуса completed.`
+                    : "Выберите два изображения и отправьте их на бэкенд. Генерация, качество и сохранение остаются на стороне бэкенда."}
                 </p>
                 {workflowState === "status_loaded" && status ? (
                   <p className="mt-5 rounded-2xl bg-[var(--success-soft)] px-5 py-4 text-sm font-medium text-[var(--success)]">
-                    Статус получен: {status.status}. Если backend еще работает, продолжайте отслеживание на result page.
+                    Статус получен: {status.status}. Если бэкенд еще работает, продолжайте отслеживание на странице результата.
                   </p>
                 ) : null}
                 {error ? <p className="mt-5 rounded-2xl bg-[#fce8e6] px-5 py-4 text-sm font-medium text-[var(--error)]">{error}</p> : null}
@@ -271,18 +274,18 @@ export function TryOnWorkflow() {
           <aside className="workspace-status min-h-0 overflow-y-auto overflow-x-hidden pr-1">
             <div className="site-card flex min-h-0 flex-col justify-between p-6">
               <div>
-                <h2 className="text-[1.35rem] font-semibold">Статус backend</h2>
+                <h2 className="text-[1.35rem] font-semibold">Статус бэкенда</h2>
                 <div className="mt-6 grid gap-4">
                   <StatusHistory items={status?.status_history ?? []} />
                 </div>
               </div>
               <div className="mt-6">
                 <div className="mb-4 flex items-center justify-between gap-4 text-[0.95rem]">
-                  <span className="text-[var(--text-secondary)]">Sandbox charge:</span>
+                  <span className="text-[var(--text-secondary)]">Списание в песочнице:</span>
                   <strong>0 кредитов</strong>
                 </div>
                 <SiteButton className="w-full" disabled={!canSubmit} type="submit" variant="violet">
-                  {isSubmitting ? "Создаем job..." : "Создать примерку"}
+                  {isSubmitting ? "Создаем задачу..." : "Создать примерку"}
                 </SiteButton>
                 <p className="mt-3 text-center text-[0.82rem] font-medium text-[var(--text-muted)]">
                   {canSubmit ? "Файлы готовы к отправке" : "Загрузите оба изображения для начала"}
