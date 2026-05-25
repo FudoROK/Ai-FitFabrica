@@ -62,6 +62,39 @@ def test_try_on_rejects_unsupported_content_type():
     assert body["error"]["details"]["field"] == "human_photo"
 
 
+def test_try_on_rejects_empty_file():
+    response = client.post(
+        "/api/try-on/jobs",
+        files={
+            "human_photo": ("human.png", b"", "image/png"),
+            "garment_photo": ("garment.png", b"fake-image", "image/png"),
+        },
+    )
+
+    assert response.status_code == 422
+    body = response.json()
+    assert body["error"]["code"] == "empty_file"
+    assert body["error"]["details"]["field"] == "human_photo"
+
+
+def test_try_on_unknown_status_job_returns_typed_error():
+    response = client.get("/api/jobs/missing/status")
+
+    assert response.status_code == 404
+    body = response.json()
+    assert body["error"]["code"] == "job_not_found"
+    assert body["error"]["details"]["job_id"] == "missing"
+
+
+def test_try_on_unknown_result_job_returns_typed_error():
+    response = client.get("/api/jobs/missing/result")
+
+    assert response.status_code == 404
+    body = response.json()
+    assert body["error"]["code"] == "job_not_found"
+    assert body["error"]["details"]["job_id"] == "missing"
+
+
 def test_try_on_job_creation_records_status_history_and_cost_events():
     """Route lifecycle should expose completed status history and cost events."""
     response = client.post(
