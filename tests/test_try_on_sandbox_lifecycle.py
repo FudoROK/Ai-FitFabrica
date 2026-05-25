@@ -278,7 +278,7 @@ def _service() -> tuple[TryOnWorkflowService, InMemoryTryOnJobRepository]:
     service = TryOnWorkflowService(
         repository=repository,
         generator=FakeTryOnGenerationAdapter(),
-        validation=TryOnUploadValidationConfig(
+        validation_config=TryOnUploadValidationConfig(
             allowed_content_types={"image/jpeg", "image/png", "image/webp"},
             max_upload_bytes=1024,
         ),
@@ -304,12 +304,41 @@ async def test_try_on_workflow_service_creates_completed_job_and_persists_it():
         TryOnJobStatus.QUALITY_CHECKING,
         TryOnJobStatus.COMPLETED,
     ]
+    assert [event.stage for event in job.status_history] == [
+        "accepted",
+        "input_validation",
+        "sandbox_generation",
+        "quality_check",
+        "completed",
+    ]
     assert job.cost_events[0].event_type == "try_on_sandbox_generation"
     assert job.cost_events[0].charge_status == TryOnChargeStatus.NOT_CHARGED
     assert job.cost_events[0].charged_credits == 0
     assert job.result is not None
     assert job.result.quality_report.verdict == "pass"
-    assert job.result.quality_report.checks[0].name == "face_preservation"
+    assert job.result.quality_report.checks[0] == TryOnQualityCheck(
+        name="face_preservation",
+        status="passed",
+        confidence=0.92,
+        message="Sandbox verifier confirms the face-preservation check shape.",
+    )
+    assert job.result.quality_report.checks[1] == TryOnQualityCheck(
+        name="garment_similarity",
+        status="passed",
+        confidence=0.9,
+        message="Sandbox verifier confirms garment-similarity reporting shape.",
+    )
+    assert job.result.quality_report.checks[2] == TryOnQualityCheck(
+        name="artifact_scan",
+        status="warning",
+        confidence=0.74,
+        message="Sandbox output is deterministic and not a real image generation.",
+    )
+    assert job.result.quality_report.limitations == ["Sandbox fake generation does not evaluate the uploaded pixels."]
+    assert (
+        job.result.stylist_note
+        == "Sandbox Try-On completed. Real stylist advice will be generated after the production generation adapter is connected."
+    )
     assert await repository.get(job.job_id) == job
 
 

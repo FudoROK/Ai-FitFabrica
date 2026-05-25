@@ -47,12 +47,12 @@ class TryOnWorkflowService:
         self,
         repository: TryOnJobRepositoryPort,
         generator: TryOnGenerationPort,
-        validation: TryOnUploadValidationConfig,
+        validation_config: TryOnUploadValidationConfig,
     ) -> None:
         """Create the workflow service with explicit ports and validation rules."""
         self._repository = repository
         self._generator = generator
-        self._validation = validation
+        self._validation = validation_config
 
     async def create_job(
         self,
@@ -177,7 +177,14 @@ class TryOnWorkflowService:
 
     def _status_event(self, status: TryOnJobStatus, message: str) -> TryOnStatusEvent:
         """Build a status event with the canonical stage value."""
-        return TryOnStatusEvent(status=status, stage=status.value, message=message)
+        stages = {
+            TryOnJobStatus.ACCEPTED: "accepted",
+            TryOnJobStatus.VALIDATING_INPUTS: "input_validation",
+            TryOnJobStatus.GENERATING: "sandbox_generation",
+            TryOnJobStatus.QUALITY_CHECKING: "quality_check",
+            TryOnJobStatus.COMPLETED: "completed",
+        }
+        return TryOnStatusEvent(status=status, stage=stages[status], message=message)
 
     def _validation_error(
         self,

@@ -32,27 +32,27 @@ class FakeTryOnGenerationAdapter(TryOnGenerationPort):
                     TryOnQualityCheck(
                         name="face_preservation",
                         status="passed",
-                        confidence=0.93,
-                        message="Sandbox placeholder preserves the submitted human identity contract.",
+                        confidence=0.92,
+                        message="Sandbox verifier confirms the face-preservation check shape.",
                     ),
                     TryOnQualityCheck(
                         name="garment_similarity",
                         status="passed",
                         confidence=0.9,
-                        message="Sandbox placeholder keeps garment matching behind the backend contract.",
+                        message="Sandbox verifier confirms garment-similarity reporting shape.",
                     ),
                     TryOnQualityCheck(
                         name="artifact_scan",
-                        status="passed",
-                        confidence=0.89,
-                        message="No blocking sandbox artifacts were detected.",
+                        status="warning",
+                        confidence=0.74,
+                        message="Sandbox output is deterministic and not a real image generation.",
                     ),
                 ],
-                limitations=["This sandbox result is deterministic and does not perform real AI generation."],
+                limitations=["Sandbox fake generation does not evaluate the uploaded pixels."],
             ),
             stylist_note=(
-                "Sandbox Try-On completed. The backend accepted both images, ran the placeholder generation "
-                "port, and verified the result before exposing it."
+                "Sandbox Try-On completed. Real stylist advice will be generated after the production generation "
+                "adapter is connected."
             ),
             input_metadata=input_metadata,
         )
