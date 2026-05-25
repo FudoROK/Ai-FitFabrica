@@ -8,12 +8,15 @@ import { SiteButton } from "@/components/site/site-button";
 import type { TryOnResult, TryOnResultResponse } from "@/lib/api/contracts";
 import { WebApiClient } from "@/lib/api/client";
 
+const safeJobIdPattern = /^[A-Za-z0-9_-]+$/;
+
 function getApiBaseUrl(): string {
   return process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 }
 
 function percent(value: number): string {
-  return `${Math.round(value * 100)}%`;
+  const clampedValue = Math.min(1, Math.max(0, value));
+  return `${Math.round(clampedValue * 100)}%`;
 }
 
 function ResultImage({ result }: { result: TryOnResult }) {
@@ -52,8 +55,16 @@ export function TryOnResultView() {
       setResponse(null);
       setError("");
 
-      if (!jobId) {
+      const normalizedJobId = jobId?.trim() ?? "";
+
+      if (!normalizedJobId) {
         setError("Не указан job_id для результата примерки.");
+        setIsLoading(false);
+        return;
+      }
+
+      if (!safeJobIdPattern.test(normalizedJobId)) {
+        setError("job_id имеет недопустимый формат.");
         setIsLoading(false);
         return;
       }
@@ -67,7 +78,7 @@ export function TryOnResultView() {
 
       try {
         const client = new WebApiClient(baseUrl);
-        const result = await client.getJobResult(jobId);
+        const result = await client.getJobResult(normalizedJobId);
 
         if (isMounted) {
           setResponse(result);
@@ -178,8 +189,8 @@ export function TryOnResultView() {
             </div>
 
             <div className="mt-6 grid gap-4">
-              {result.quality_report.checks.map((check) => (
-                <div className="rounded-[1.5rem] bg-white px-5 py-4 text-[0.95rem]" key={check.name}>
+              {result.quality_report.checks.map((check, index) => (
+                <div className="rounded-[1.5rem] bg-white px-5 py-4 text-[0.95rem]" key={`${check.name}-${index}`}>
                   <div className="flex items-center justify-between gap-3">
                     <strong>{check.name}</strong>
                     <span className="text-sm font-semibold text-[#2f2570]">{percent(check.confidence)}</span>
@@ -194,8 +205,8 @@ export function TryOnResultView() {
               <div className="mt-6 rounded-[1.5rem] bg-white/70 px-5 py-4 text-[0.9rem] text-[var(--text-secondary)]">
                 <strong className="block text-[var(--text-primary)]">Limitations</strong>
                 <ul className="mt-3 grid gap-2">
-                  {result.quality_report.limitations.map((limitation) => (
-                    <li key={limitation}>{limitation}</li>
+                  {result.quality_report.limitations.map((limitation, index) => (
+                    <li key={`${limitation}-${index}`}>{limitation}</li>
                   ))}
                 </ul>
               </div>
