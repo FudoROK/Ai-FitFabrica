@@ -155,6 +155,14 @@ class Settings(BaseSettings):
         default=None,
         validation_alias=AliasChoices("STATUS_ENDPOINT_TOKEN"),
     )
+    try_on_allowed_content_types: Annotated[list[str], NoDecode] = Field(
+        default_factory=lambda: ["image/jpeg", "image/png", "image/webp"],
+        validation_alias=AliasChoices("TRY_ON_ALLOWED_CONTENT_TYPES"),
+    )
+    try_on_max_upload_bytes: int = Field(
+        default=10 * 1024 * 1024,
+        validation_alias=AliasChoices("TRY_ON_MAX_UPLOAD_BYTES"),
+    )
 
     # LLM
     llm_provider: str = Field("vertex", validation_alias=AliasChoices("LLM_PROVIDER"))
@@ -251,6 +259,17 @@ class Settings(BaseSettings):
     def _parse_service_account_allowlist(cls, value):
         if value in (None, "", []):
             return []
+        if isinstance(value, str):
+            return [part.strip().lower() for part in value.split(",") if part.strip()]
+        if isinstance(value, (list, tuple, set)):
+            return [str(item).strip().lower() for item in value if str(item).strip()]
+        return [str(value).strip().lower()]
+
+    @field_validator("try_on_allowed_content_types", mode="before")
+    @classmethod
+    def _parse_try_on_content_types(cls, value):
+        if value in (None, "", []):
+            return ["image/jpeg", "image/png", "image/webp"]
         if isinstance(value, str):
             return [part.strip().lower() for part in value.split(",") if part.strip()]
         if isinstance(value, (list, tuple, set)):
