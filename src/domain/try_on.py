@@ -3,11 +3,9 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from enum import StrEnum
+from typing import Literal
+
 from pydantic import BaseModel, ConfigDict, Field
-
-
-JsonPrimitive = str | int | float | bool | None
-JsonValue = JsonPrimitive | list[JsonPrimitive] | dict[str, JsonPrimitive | list[JsonPrimitive]]
 
 
 def utc_now() -> datetime:
@@ -66,6 +64,7 @@ class TryOnInputMetadata(BaseModel):
     filename: str = Field(min_length=1)
     content_type: str = Field(min_length=1)
     size_bytes: int = Field(ge=0)
+    sha256: str = Field(min_length=64, max_length=64)
 
 
 class TryOnStatusEvent(BaseModel):
@@ -74,6 +73,7 @@ class TryOnStatusEvent(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     status: TryOnJobStatus
+    stage: str = Field(min_length=1)
     message: str = Field(min_length=1)
     occurred_at: datetime = Field(default_factory=utc_now)
 
@@ -83,10 +83,10 @@ class TryOnCostEvent(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    workflow_type: TryOnWorkflowType = TryOnWorkflowType.TRY_ON
+    event_type: str = Field(min_length=1)
+    estimated_units: int = Field(ge=0)
     charge_status: TryOnChargeStatus = TryOnChargeStatus.NOT_CHARGED
-    credits_charged: int = Field(default=0, ge=0)
-    message: str = Field(default="Sandbox job was not charged.", min_length=1)
+    charged_credits: int = Field(ge=0)
     occurred_at: datetime = Field(default_factory=utc_now)
 
 
@@ -96,9 +96,9 @@ class TryOnQualityCheck(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     name: str = Field(min_length=1)
-    passed: bool
+    status: Literal["passed", "warning", "failed"]
     confidence: float = Field(ge=0.0, le=1.0)
-    notes: list[str] = Field(default_factory=list)
+    message: str = Field(min_length=1)
 
 
 class TryOnQualityReport(BaseModel):
@@ -106,10 +106,10 @@ class TryOnQualityReport(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    passed: bool
+    verdict: Literal["pass", "repair_recommended", "reject"]
+    confidence: float = Field(ge=0.0, le=1.0)
     checks: list[TryOnQualityCheck] = Field(default_factory=list)
     limitations: list[str] = Field(default_factory=list)
-    created_at: datetime = Field(default_factory=utc_now)
 
 
 class TryOnResultImage(BaseModel):
@@ -117,10 +117,9 @@ class TryOnResultImage(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
+    kind: Literal["sandbox_placeholder"]
     url: str = Field(min_length=1)
-    content_type: str = Field(min_length=1)
-    width: int | None = Field(default=None, gt=0)
-    height: int | None = Field(default=None, gt=0)
+    alt: str = Field(min_length=1)
 
 
 class TryOnResult(BaseModel):
@@ -129,10 +128,12 @@ class TryOnResult(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     job_id: str = Field(min_length=1)
-    image: TryOnResultImage
+    workflow_type: TryOnWorkflowType = TryOnWorkflowType.TRY_ON
+    result_image: TryOnResultImage
     quality_report: TryOnQualityReport
-    style_summary: str | None = None
-    created_at: datetime = Field(default_factory=utc_now)
+    stylist_note: str = Field(min_length=1)
+    input_metadata: list[TryOnInputMetadata] = Field(default_factory=list)
+    completed_at: datetime = Field(default_factory=utc_now)
 
 
 class TryOnError(BaseModel):
@@ -142,7 +143,7 @@ class TryOnError(BaseModel):
 
     code: TryOnErrorCode
     message: str = Field(min_length=1)
-    details: dict[str, JsonValue] = Field(default_factory=dict)
+    details: dict[str, object] = Field(default_factory=dict)
 
 
 class TryOnJob(BaseModel):
@@ -153,14 +154,13 @@ class TryOnJob(BaseModel):
     job_id: str = Field(min_length=1)
     workflow_type: TryOnWorkflowType = TryOnWorkflowType.TRY_ON
     status: TryOnJobStatus
-    inputs: list[TryOnInputMetadata] = Field(default_factory=list)
-    status_events: list[TryOnStatusEvent] = Field(default_factory=list)
-    cost_events: list[TryOnCostEvent] = Field(default_factory=list)
-    quality_report: TryOnQualityReport | None = None
-    result: TryOnResult | None = None
-    error: TryOnError | None = None
     created_at: datetime = Field(default_factory=utc_now)
     updated_at: datetime = Field(default_factory=utc_now)
+    input_metadata: list[TryOnInputMetadata] = Field(default_factory=list)
+    status_history: list[TryOnStatusEvent] = Field(default_factory=list)
+    cost_events: list[TryOnCostEvent] = Field(default_factory=list)
+    result: TryOnResult | None = None
+    error: TryOnError | None = None
 
 
 class TryOnJobCreatedResponse(BaseModel):
@@ -168,7 +168,12 @@ class TryOnJobCreatedResponse(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    job: TryOnJob
+    job_id: str = Field(min_length=1)
+    workflow_type: TryOnWorkflowType = TryOnWorkflowType.TRY_ON
+    status: TryOnJobStatus
+    input_metadata: list[TryOnInputMetadata] = Field(default_factory=list)
+    status_url: str = Field(min_length=1)
+    result_url: str = Field(min_length=1)
 
 
 class TryOnJobStatusResponse(BaseModel):
@@ -179,9 +184,8 @@ class TryOnJobStatusResponse(BaseModel):
     job_id: str = Field(min_length=1)
     workflow_type: TryOnWorkflowType = TryOnWorkflowType.TRY_ON
     status: TryOnJobStatus
-    status_events: list[TryOnStatusEvent] = Field(default_factory=list)
+    status_history: list[TryOnStatusEvent] = Field(default_factory=list)
     cost_events: list[TryOnCostEvent] = Field(default_factory=list)
-    error: TryOnError | None = None
 
 
 class TryOnResultResponse(BaseModel):
@@ -189,8 +193,10 @@ class TryOnResultResponse(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
+    status: Literal["completed"]
+    job_id: str = Field(min_length=1)
+    workflow_type: TryOnWorkflowType = TryOnWorkflowType.TRY_ON
     result: TryOnResult
-    cost_events: list[TryOnCostEvent] = Field(default_factory=list)
 
 
 class TryOnNotReadyResponse(BaseModel):
@@ -198,9 +204,11 @@ class TryOnNotReadyResponse(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
+    status: Literal["not_ready"]
     job_id: str = Field(min_length=1)
-    status: TryOnJobStatus
-    error: TryOnError
+    workflow_type: TryOnWorkflowType = TryOnWorkflowType.TRY_ON
+    current_status: TryOnJobStatus
+    status_url: str = Field(min_length=1)
 
 
 class TryOnErrorResponse(BaseModel):
