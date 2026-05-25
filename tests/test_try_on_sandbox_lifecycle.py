@@ -325,3 +325,11 @@ async def test_try_on_workflow_service_rejects_unsupported_content_type():
         )
 
     assert exc_info.value.error.code == "unsupported_content_type"
+
+
+@pytest.mark.anyio
+async def test_try_on_workflow_service_get_job_returns_none_for_missing_job():
+    """Service should leave missing-job response mapping to the route layer."""
+    service, _repository = _service()
+
+    assert await service.get_job("missing") is None

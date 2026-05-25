@@ -15,7 +15,7 @@ from src.use_cases.try_on.ports import TryOnGenerationPort
 class FakeTryOnGenerationAdapter(TryOnGenerationPort):
     """Return a deterministic placeholder result behind the generation port."""
 
-    async def generate(self, job_id: str, input_metadata: list[TryOnInputMetadata]) -> TryOnResult:
+    async def generate(self, *, job_id: str, input_metadata: list[TryOnInputMetadata]) -> TryOnResult:
         """Build the sandbox result without calling real AI generation infrastructure."""
         return TryOnResult(
             job_id=job_id,

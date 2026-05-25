@@ -108,16 +108,9 @@ class TryOnWorkflowService:
         await self._repository.save(job)
         return job
 
-    async def get_job(self, job_id: str) -> TryOnJob:
-        """Return a saved Try-On job or raise a typed not-found error."""
-        job = await self._repository.get(job_id)
-        if job is None:
-            raise self._validation_error(
-                TryOnErrorCode.JOB_NOT_FOUND,
-                "Try-On job was not found.",
-                {"job_id": job_id},
-            )
-        return job
+    async def get_job(self, job_id: str) -> TryOnJob | None:
+        """Return a saved Try-On job, or None when the repository has no match."""
+        return await self._repository.get(job_id)
 
     def _missing_fields(
         self,

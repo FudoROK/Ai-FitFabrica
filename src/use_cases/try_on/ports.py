@@ -21,6 +21,6 @@ class TryOnJobRepositoryPort(Protocol):
 class TryOnGenerationPort(Protocol):
     """Generation boundary used by the workflow service."""
 
-    async def generate(self, job_id: str, input_metadata: list[TryOnInputMetadata]) -> TryOnResult:
+    async def generate(self, *, job_id: str, input_metadata: list[TryOnInputMetadata]) -> TryOnResult:
         """Generate a Try-On result for validated input metadata."""
         ...
