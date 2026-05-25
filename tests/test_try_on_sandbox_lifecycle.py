@@ -1,6 +1,12 @@
+from io import BytesIO
+
 from fastapi.testclient import TestClient
 from pydantic import ValidationError
+import pytest
+from starlette.datastructures import UploadFile
 
+from src.adapters.try_on.fake_generation import FakeTryOnGenerationAdapter
+from src.adapters.try_on.in_memory_repository import InMemoryTryOnJobRepository
 from src.domain.try_on import (
     TryOnChargeStatus,
     TryOnCostEvent,
@@ -22,6 +28,11 @@ from src.domain.try_on import (
 )
 from src.main import app
 from src.settings import Settings
+from src.use_cases.try_on.workflow_service import (
+    TryOnUploadValidationConfig,
+    TryOnValidationError,
+    TryOnWorkflowService,
+)
 
 
 client = TestClient(app)
@@ -49,6 +60,69 @@ def test_try_on_rejects_unsupported_content_type():
     body = response.json()
     assert body["error"]["code"] == "unsupported_content_type"
     assert body["error"]["details"]["field"] == "human_photo"
+
+
+def test_try_on_job_creation_records_status_history_and_cost_events():
+    """Route lifecycle should expose completed status history and cost events."""
+    response = client.post(
+        "/api/try-on/jobs",
+        files={
+            "human_photo": ("human.png", b"human-image", "image/png"),
+            "garment_photo": ("garment.webp", b"garment-image", "image/webp"),
+        },
+    )
+
+    assert response.status_code == 201
+    created = response.json()
+    status_response = client.get(created["status_url"])
+
+    assert status_response.status_code == 200
+    body = status_response.json()
+    assert body["status"] == "completed"
+    assert [event["status"] for event in body["status_history"]] == [
+        "accepted",
+        "validating_inputs",
+        "generating",
+        "quality_checking",
+        "completed",
+    ]
+    assert body["cost_events"] == [
+        {
+            "event_type": "try_on_sandbox_generation",
+            "estimated_units": 1,
+            "charge_status": "not_charged",
+            "charged_credits": 0,
+            "occurred_at": body["cost_events"][0]["occurred_at"],
+        }
+    ]
+
+
+def test_try_on_result_contract_is_structurally_realistic():
+    """Route result should expose a realistic completed sandbox result contract."""
+    create_response = client.post(
+        "/api/try-on/jobs",
+        files={
+            "human_photo": ("human.jpg", b"human-image", "image/jpeg"),
+            "garment_photo": ("garment.png", b"garment-image", "image/png"),
+        },
+    )
+
+    assert create_response.status_code == 201
+    result_response = client.get(create_response.json()["result_url"])
+
+    assert result_response.status_code == 200
+    body = result_response.json()
+    result = body["result"]
+    assert body["status"] == "completed"
+    assert result["result_image"] == {
+        "kind": "sandbox_placeholder",
+        "url": "/images/shared/try-on-sandbox-result.webp",
+        "alt": "Sandbox Try-On result preview",
+    }
+    assert result["quality_report"]["verdict"] == "pass"
+    assert result["quality_report"]["checks"][0]["name"] == "face_preservation"
+    assert result["stylist_note"]
+    assert [item["role"] for item in result["input_metadata"]] == ["human_photo", "garment_photo"]
 
 
 def test_try_on_domain_contracts_match_planned_shapes():
@@ -191,3 +265,63 @@ def test_try_on_input_metadata_rejects_non_hex_sha256():
         assert "sha256" in str(exc)
     else:
         raise AssertionError("sha256 must reject non-hex values")
+
+
+def _upload_file(filename: str, content: bytes, content_type: str) -> UploadFile:
+    """Build an in-memory UploadFile for direct workflow service tests."""
+    return UploadFile(filename=filename, file=BytesIO(content), headers={"content-type": content_type})
+
+
+def _service() -> tuple[TryOnWorkflowService, InMemoryTryOnJobRepository]:
+    """Build the Try-On workflow service with in-memory sandbox adapters."""
+    repository = InMemoryTryOnJobRepository()
+    service = TryOnWorkflowService(
+        repository=repository,
+        generator=FakeTryOnGenerationAdapter(),
+        validation=TryOnUploadValidationConfig(
+            allowed_content_types={"image/jpeg", "image/png", "image/webp"},
+            max_upload_bytes=1024,
+        ),
+    )
+    return service, repository
+
+
+@pytest.mark.anyio
+async def test_try_on_workflow_service_creates_completed_job_and_persists_it():
+    """Service should validate two uploads, complete the workflow, and persist the job."""
+    service, repository = _service()
+
+    job = await service.create_job(
+        human_photo=_upload_file("human.png", b"human-image", "image/png"),
+        garment_photo=_upload_file("garment.webp", b"garment-image", "image/webp"),
+    )
+
+    assert job.status == TryOnJobStatus.COMPLETED
+    assert [event.status for event in job.status_history] == [
+        TryOnJobStatus.ACCEPTED,
+        TryOnJobStatus.VALIDATING_INPUTS,
+        TryOnJobStatus.GENERATING,
+        TryOnJobStatus.QUALITY_CHECKING,
+        TryOnJobStatus.COMPLETED,
+    ]
+    assert job.cost_events[0].event_type == "try_on_sandbox_generation"
+    assert job.cost_events[0].charge_status == TryOnChargeStatus.NOT_CHARGED
+    assert job.cost_events[0].charged_credits == 0
+    assert job.result is not None
+    assert job.result.quality_report.verdict == "pass"
+    assert job.result.quality_report.checks[0].name == "face_preservation"
+    assert await repository.get(job.job_id) == job
+
+
+@pytest.mark.anyio
+async def test_try_on_workflow_service_rejects_unsupported_content_type():
+    """Service should reject unsupported upload content types with a typed error."""
+    service, _repository = _service()
+
+    with pytest.raises(TryOnValidationError) as exc_info:
+        await service.create_job(
+            human_photo=_upload_file("human.txt", b"human-image", "text/plain"),
+            garment_photo=_upload_file("garment.webp", b"garment-image", "image/webp"),
+        )
+
+    assert exc_info.value.error.code == "unsupported_content_type"
