@@ -161,6 +161,7 @@ class Settings(BaseSettings):
     )
     try_on_max_upload_bytes: int = Field(
         default=10 * 1024 * 1024,
+        gt=0,
         validation_alias=AliasChoices("TRY_ON_MAX_UPLOAD_BYTES"),
     )
 
@@ -267,14 +268,18 @@ class Settings(BaseSettings):
 
     @field_validator("try_on_allowed_content_types", mode="before")
     @classmethod
-    def _parse_try_on_content_types(cls, value):
+    def _parse_try_on_content_types(cls, value: object) -> list[str]:
+        """Parse comma-separated Try-On upload MIME types with default fallback for blank input."""
         if value in (None, "", []):
             return ["image/jpeg", "image/png", "image/webp"]
         if isinstance(value, str):
-            return [part.strip().lower() for part in value.split(",") if part.strip()]
+            parsed = [part.strip().lower() for part in value.split(",") if part.strip()]
+            return parsed or ["image/jpeg", "image/png", "image/webp"]
         if isinstance(value, (list, tuple, set)):
-            return [str(item).strip().lower() for item in value if str(item).strip()]
-        return [str(value).strip().lower()]
+            parsed = [str(item).strip().lower() for item in value if str(item).strip()]
+            return parsed or ["image/jpeg", "image/png", "image/webp"]
+        parsed = [str(value).strip().lower()] if str(value).strip() else []
+        return parsed or ["image/jpeg", "image/png", "image/webp"]
 
     @field_validator("crm_provider")
     @classmethod

@@ -1,4 +1,5 @@
 from fastapi.testclient import TestClient
+from pydantic import ValidationError
 
 from src.domain.try_on import (
     TryOnChargeStatus,
@@ -20,6 +21,7 @@ from src.domain.try_on import (
     utc_now,
 )
 from src.main import app
+from src.settings import Settings
 
 
 client = TestClient(app)
@@ -147,3 +149,45 @@ def test_try_on_domain_contracts_match_planned_shapes():
     assert status_response.status_history[0].stage == "accepted"
     assert result_response.result.result_image.kind == "sandbox_placeholder"
     assert not_ready_response.current_status == TryOnJobStatus.GENERATING
+
+
+def test_try_on_settings_content_types_fallback_and_positive_upload_limit():
+    settings = Settings(
+        _env_file=None,
+        telegram_bot_token="token",
+        GCP_PROJECT_ID="project",
+        PUBSUB_TOPIC_NAME="topic",
+        TRY_ON_ALLOWED_CONTENT_TYPES=",",
+    )
+
+    assert settings.try_on_allowed_content_types == ["image/jpeg", "image/png", "image/webp"]
+
+    try:
+        Settings(
+            _env_file=None,
+            telegram_bot_token="token",
+            GCP_PROJECT_ID="project",
+            PUBSUB_TOPIC_NAME="topic",
+            TRY_ON_MAX_UPLOAD_BYTES=0,
+        )
+    except ValidationError as exc:
+        error = exc.errors()[0]
+        assert error["loc"] == ("TRY_ON_MAX_UPLOAD_BYTES",)
+        assert error["type"] == "greater_than"
+    else:
+        raise AssertionError("TRY_ON_MAX_UPLOAD_BYTES=0 must be rejected")
+
+
+def test_try_on_input_metadata_rejects_non_hex_sha256():
+    try:
+        TryOnInputMetadata(
+            role=TryOnUploadRole.HUMAN_PHOTO,
+            filename="human.png",
+            content_type="image/png",
+            size_bytes=128,
+            sha256="z" * 64,
+        )
+    except ValidationError as exc:
+        assert "sha256" in str(exc)
+    else:
+        raise AssertionError("sha256 must reject non-hex values")

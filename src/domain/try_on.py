@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from enum import StrEnum
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 def utc_now() -> datetime:
@@ -65,6 +65,14 @@ class TryOnInputMetadata(BaseModel):
     content_type: str = Field(min_length=1)
     size_bytes: int = Field(ge=0)
     sha256: str = Field(min_length=64, max_length=64)
+
+    @field_validator("sha256")
+    @classmethod
+    def _validate_sha256_hex(cls, value: str) -> str:
+        """Require a full SHA-256 digest encoded as 64 hexadecimal characters."""
+        if not all(char in "0123456789abcdefABCDEF" for char in value):
+            raise ValueError("sha256 must be 64 hexadecimal characters")
+        return value
 
 
 class TryOnStatusEvent(BaseModel):
