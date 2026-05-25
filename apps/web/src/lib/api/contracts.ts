@@ -21,7 +21,7 @@ export type TryOnJobStatus =
   | "failed";
 
 export type TryOnInputMetadata = {
-  role: string;
+  role: "human_photo" | "garment_photo";
   filename: string;
   content_type: string;
   size_bytes: number;
@@ -91,13 +91,15 @@ export type TryOnJobStatusResponse = {
 export type TryOnResultResponse =
   | {
       status: "completed";
+      job_id: string;
+      workflow_type: TryOnWorkflowType;
       result: TryOnResult;
     }
   | {
       status: "not_ready";
       job_id: string;
       workflow_type: TryOnWorkflowType;
-      message: string;
+      current_status: TryOnJobStatus;
       status_url: string;
     };
 
