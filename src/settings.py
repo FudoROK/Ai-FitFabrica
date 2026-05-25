@@ -102,6 +102,10 @@ class Settings(BaseSettings):
     environment: str = Field("prod", validation_alias=AliasChoices("ENVIRONMENT", "APP_ENV", "ENV"))
     log_level: str = "INFO"
     bot_key: str = "ai_assistant_skeleton"
+    cors_allowed_origins: Annotated[list[str], NoDecode] = Field(
+        default_factory=list,
+        validation_alias=AliasChoices("CORS_ALLOWED_ORIGINS"),
+    )
 
     # Integration providers
     crm_provider: str = Field("none", validation_alias=AliasChoices("CRM_PROVIDER"))
@@ -251,6 +255,18 @@ class Settings(BaseSettings):
         if value:
             return value
         return info.data.get("pubsub_topic_name")
+
+    @field_validator("cors_allowed_origins", mode="before")
+    @classmethod
+    def _parse_cors_allowed_origins(cls, value: object) -> list[str]:
+        """Parse comma-separated frontend origins allowed to call the API from browsers."""
+        if value in (None, "", []):
+            return []
+        if isinstance(value, str):
+            return [part.strip().rstrip("/") for part in value.split(",") if part.strip()]
+        if isinstance(value, (list, tuple, set)):
+            return [str(item).strip().rstrip("/") for item in value if str(item).strip()]
+        return [str(value).strip().rstrip("/")] if str(value).strip() else []
 
     @field_validator(
         "memory_summary_task_allowed_service_accounts",
