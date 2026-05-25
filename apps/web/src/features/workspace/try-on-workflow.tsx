@@ -13,10 +13,7 @@ type UploadRole = "human_photo" | "garment_photo";
 type SelectedImage = { error: string; file: File | null; previewUrl: string };
 type WorkflowState = "idle" | "submitting" | "status_loaded" | "completed" | "error";
 type UploadCardProps = {
-  description: string;
-  image: SelectedImage;
-  label: string;
-  name: UploadRole;
+  description: string; disabled: boolean; image: SelectedImage; label: string; name: UploadRole;
   onChange: (role: UploadRole, file: File | null) => void;
 };
 
@@ -24,6 +21,7 @@ const acceptedImageTypes = ["image/jpeg", "image/png", "image/webp"] as const;
 const acceptedImageTypesLabel = "JPEG, PNG или WebP, до 10 МБ";
 const maxFileSizeBytes = 10 * 1024 * 1024;
 const emptyImage: SelectedImage = { error: "", file: null, previewUrl: "" };
+
 function getApiBaseUrl(): string {
   return process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 }
@@ -32,38 +30,39 @@ function validateImageFile(file: File | null): string {
   if (!file) {
     return "Выберите файл изображения.";
   }
-
   if (file.size === 0) {
     return "Файл пустой. Выберите другое изображение.";
   }
-
   if (!acceptedImageTypes.includes(file.type as (typeof acceptedImageTypes)[number])) {
     return "Поддерживаются только JPEG, PNG или WebP.";
   }
-
   if (file.size > maxFileSizeBytes) {
-    return "Максимальный размер файла - 10MB.";
+    return "Максимальный размер файла - 10 МБ.";
   }
-
   return "";
 }
 
 function formatStatusTime(value: string): string {
   const date = new Date(value);
-
   if (Number.isNaN(date.getTime())) {
     return value;
   }
-
   return date.toLocaleString("ru-RU", { day: "2-digit", hour: "2-digit", minute: "2-digit", month: "2-digit" });
 }
 
-function UploadCard({ description, image, label, name, onChange }: UploadCardProps) {
+function UploadCard({ description, disabled, image, label, name, onChange }: UploadCardProps) {
   return (
-    <label className="upload-card flex w-full max-w-[220px] cursor-pointer flex-col items-center justify-center border-2 border-dashed border-[#d8c3a5] bg-[var(--surface)] p-4 text-center transition hover:bg-[var(--surface-alt)]">
+    <label
+      aria-disabled={disabled}
+      className={[
+        "upload-card flex w-full max-w-[220px] flex-col items-center justify-center border-2 border-dashed border-[#d8c3a5] bg-[var(--surface)] p-4 text-center transition",
+        disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer hover:bg-[var(--surface-alt)]"
+      ].join(" ")}
+    >
       <input
         accept="image/jpeg,image/png,image/webp"
         className="sr-only"
+        disabled={disabled}
         name={name}
         onChange={(event: ChangeEvent<HTMLInputElement>) => onChange(name, event.target.files?.[0] ?? null)}
         type="file"
@@ -72,11 +71,7 @@ function UploadCard({ description, image, label, name, onChange }: UploadCardPro
         <span className="relative block h-[190px] w-full overflow-hidden rounded-[1.5rem]">
           <Image alt={label} className="object-cover" fill src={image.previewUrl} unoptimized />
         </span>
-      ) : (
-        <div className="flex h-[190px] w-full items-center justify-center rounded-[1.5rem] bg-[var(--ai-soft)] text-[2.5rem] text-[var(--ai)]">
-          +
-        </div>
-      )}
+      ) : <div className="flex h-[190px] w-full items-center justify-center rounded-[1.5rem] bg-[var(--ai-soft)] text-[2.5rem] text-[var(--ai)]">+</div>}
       <h2 className="upload-card-title mt-5 font-semibold">{label}</h2>
       <p className="upload-card-description mt-2 text-[var(--text-secondary)]">{description}</p>
       {image.file ? <p className="mt-2 max-w-full truncate text-[0.78rem] font-medium text-[var(--text-muted)]">{image.file.name}</p> : null}
@@ -90,22 +85,17 @@ function StatusHistory({ items }: { items: TryOnStatusEvent[] }) {
     return (
       <div className="rounded-[1.2rem] bg-[var(--background)] p-4">
         <strong className="block text-[0.95rem]">Ожидание запуска</strong>
-        <p className="mt-1 text-[0.85rem] leading-6 text-[var(--text-secondary)]">
-          После отправки бэкенд вернет историю статусов задачи.
-        </p>
+        <p className="mt-1 text-[0.85rem] leading-6 text-[var(--text-secondary)]">После отправки бэкенд вернет историю статусов задачи.</p>
       </div>
     );
   }
-
   return (
     <>
       {items.map((item) => (
         <div className="rounded-[1.2rem] bg-[var(--background)] p-4" key={`${item.status}-${item.occurred_at}`}>
           <div className="flex items-start justify-between gap-3">
             <strong className="block text-[0.95rem]">{item.stage}</strong>
-            <span className="rounded-full bg-[var(--ai-soft)] px-2 py-1 text-[0.7rem] font-semibold text-[var(--ai)]">
-              {item.status}
-            </span>
+            <span className="rounded-full bg-[var(--ai-soft)] px-2 py-1 text-[0.7rem] font-semibold text-[var(--ai)]">{item.status}</span>
           </div>
           <p className="mt-2 text-[0.85rem] leading-6 text-[var(--text-secondary)]">{item.message}</p>
           <p className="mt-2 text-[0.72rem] font-medium text-[var(--text-muted)]">{formatStatusTime(item.occurred_at)}</p>
@@ -124,7 +114,8 @@ export function TryOnWorkflow() {
   const [createdJobId, setCreatedJobId] = useState("");
   const [error, setError] = useState("");
   const isSubmitting = workflowState === "submitting";
-  const canSubmit = Boolean(humanPhoto.file && garmentPhoto.file) && !humanPhoto.error && !garmentPhoto.error && !isSubmitting;
+  const resultHref = createdJobId ? `/workspace/try-on/result?job_id=${encodeURIComponent(createdJobId)}` : "";
+  const canSubmit = Boolean(humanPhoto.file && garmentPhoto.file) && !humanPhoto.error && !garmentPhoto.error && !isSubmitting && !createdJobId;
 
   useEffect(() => {
     return () => {
@@ -149,26 +140,25 @@ export function TryOnWorkflow() {
       file: errorMessage ? null : file,
       previewUrl: errorMessage || !file ? "" : URL.createObjectURL(file)
     };
-
     if (role === "human_photo") {
       if (humanPhoto.previewUrl) {
         URL.revokeObjectURL(humanPhoto.previewUrl);
       }
-
       setHumanPhoto(nextImage);
       return;
     }
-
     if (garmentPhoto.previewUrl) {
       URL.revokeObjectURL(garmentPhoto.previewUrl);
     }
-
     setGarmentPhoto(nextImage);
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
+    if (createdJobId) {
+      return;
+    }
     setStatus(null);
 
     const humanError = validateImageFile(humanPhoto.file);
@@ -180,44 +170,35 @@ export function TryOnWorkflow() {
       setWorkflowState("error");
       return;
     }
-
     const baseUrl = getApiBaseUrl();
-
     if (!baseUrl) {
       setError("Не настроен NEXT_PUBLIC_API_BASE_URL. Укажите backend base URL для создания примерки.");
       setWorkflowState("error");
       return;
     }
-
     if (!humanPhoto.file || !garmentPhoto.file) {
       setError("Выберите фото человека и фото одежды.");
       setWorkflowState("error");
       return;
     }
-
     setWorkflowState("submitting");
-
     try {
       const formData = new FormData();
       formData.append("human_photo", humanPhoto.file);
       formData.append("garment_photo", garmentPhoto.file);
-
       const client = new WebApiClient(baseUrl);
       const created = await client.createTryOnJob(formData);
       setCreatedJobId(created.job_id);
-
       const currentStatus = await client.getJobStatus(created.job_id);
       setStatus(currentStatus);
-
       if (currentStatus.status === "completed") {
         setWorkflowState("completed");
         router.push(`/workspace/try-on/result?job_id=${encodeURIComponent(created.job_id)}`);
         return;
       }
-
       setWorkflowState("status_loaded");
     } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : "Не удалось создать job примерки.");
+      setError(requestError instanceof Error ? requestError.message : "Не удалось создать задачу примерки.");
       setWorkflowState("error");
     }
   }
@@ -242,8 +223,8 @@ export function TryOnWorkflow() {
         <form className="tryon-layout grid h-full min-w-0 gap-5 overflow-hidden" onSubmit={handleSubmit}>
           <div className="min-h-0 overflow-y-auto overflow-x-hidden">
             <div className="grid gap-5">
-              <UploadCard description={acceptedImageTypesLabel} image={humanPhoto} label="Фото человека" name="human_photo" onChange={updateImage} />
-              <UploadCard description={acceptedImageTypesLabel} image={garmentPhoto} label="Фото одежды" name="garment_photo" onChange={updateImage} />
+              <UploadCard description={acceptedImageTypesLabel} disabled={isSubmitting} image={humanPhoto} label="Фото человека" name="human_photo" onChange={updateImage} />
+              <UploadCard description={acceptedImageTypesLabel} disabled={isSubmitting} image={garmentPhoto} label="Фото одежды" name="garment_photo" onChange={updateImage} />
             </div>
           </div>
 
@@ -263,8 +244,13 @@ export function TryOnWorkflow() {
                 </p>
                 {workflowState === "status_loaded" && status ? (
                   <p className="mt-5 rounded-2xl bg-[var(--success-soft)] px-5 py-4 text-sm font-medium text-[var(--success)]">
-                    Статус получен: {status.status}. Если бэкенд еще работает, продолжайте отслеживание на странице результата.
+                    Статус получен: {status.status}. Откройте страницу результата, чтобы продолжить отслеживание.
                   </p>
+                ) : null}
+                {resultHref ? (
+                  <Link className="site-pill-button mt-5" href={resultHref}>
+                    Открыть задачу
+                  </Link>
                 ) : null}
                 {error ? <p className="mt-5 rounded-2xl bg-[#fce8e6] px-5 py-4 text-sm font-medium text-[var(--error)]">{error}</p> : null}
               </div>
@@ -281,15 +267,20 @@ export function TryOnWorkflow() {
               </div>
               <div className="mt-6">
                 <div className="mb-4 flex items-center justify-between gap-4 text-[0.95rem]">
-                  <span className="text-[var(--text-secondary)]">Списание в песочнице:</span>
-                  <strong>0 кредитов</strong>
+                  <span className="text-[var(--text-secondary)]">Песочница:</span>
+                  <strong>списание не выполняется</strong>
                 </div>
                 <SiteButton className="w-full" disabled={!canSubmit} type="submit" variant="violet">
                   {isSubmitting ? "Создаем задачу..." : "Создать примерку"}
                 </SiteButton>
                 <p className="mt-3 text-center text-[0.82rem] font-medium text-[var(--text-muted)]">
-                  {canSubmit ? "Файлы готовы к отправке" : "Загрузите оба изображения для начала"}
+                  {createdJobId ? "Задача уже создана, повторная отправка заблокирована" : canSubmit ? "Файлы готовы к отправке" : "Загрузите оба изображения для начала"}
                 </p>
+                {resultHref ? (
+                  <SiteButton className="mt-4 w-full" href={resultHref} variant="soft">
+                    Перейти к статусу
+                  </SiteButton>
+                ) : null}
               </div>
             </div>
           </aside>
