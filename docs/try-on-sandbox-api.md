@@ -35,6 +35,8 @@ The sandbox API remains stable while storage is selected server-side.
 - Stored upload references are internal backend state and are not exposed as public result URLs.
 - The sandbox still uses the fake generation adapter; this storage foundation does not call Vertex or production image generation.
 
+See `docs/try-on-durable-storage-activation.md` for the operator checklist, IAM boundary, dry-run command, and rollback procedure.
+
 ## POST /api/try-on/jobs
 
 Creates a backend-owned Try-On sandbox job.
@@ -204,6 +206,7 @@ Known error codes:
 - `job_not_found`
 - `result_not_ready`
 - `job_failed`
+- `storage_unavailable`
 
 ## Frontend Contract
 

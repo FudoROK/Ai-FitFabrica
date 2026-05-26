@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import re
+import logging
 from functools import partial
 from typing import Protocol
 
@@ -10,6 +11,9 @@ from google.cloud import storage
 
 from src.domain.try_on import TryOnStoredInput, TryOnUploadRole
 from src.use_cases.try_on.ports import TryOnFileStoragePort
+from src.use_cases.try_on.storage_errors import TryOnStorageError
+
+logger = logging.getLogger(__name__)
 
 
 class GcsBlob(Protocol):
@@ -60,7 +64,18 @@ class GcsTryOnFileStorage(TryOnFileStoragePort):
         object_name = self._object_name(job_id=job_id, role=role, filename=filename)
         blob = self._bucket.blob(object_name)
         upload = partial(blob.upload_from_string, payload, content_type=content_type)
-        await to_thread.run_sync(upload)
+        try:
+            await to_thread.run_sync(upload)
+        except Exception as exc:
+            logger.exception(
+                "Try-On GCS upload failed.",
+                extra={"try_on_storage_backend": "gcs", "try_on_storage_operation": "save_upload"},
+            )
+            raise TryOnStorageError(
+                backend="gcs",
+                operation="save_upload",
+                public_message="Try-On upload storage is temporarily unavailable.",
+            ) from exc
         return TryOnStoredInput(
             role=role,
             storage_backend="gcs",

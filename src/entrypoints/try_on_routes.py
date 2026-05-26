@@ -25,6 +25,7 @@ from src.domain.try_on import (
 )
 from src.settings import Settings
 from src.use_cases.try_on.ports import TryOnFileStoragePort, TryOnJobRepositoryPort
+from src.use_cases.try_on.storage_errors import TryOnStorageError
 from src.use_cases.try_on.workflow_service import (
     TryOnUploadValidationConfig,
     TryOnValidationError,
@@ -129,6 +130,8 @@ async def create_try_on_job(
         )
     except TryOnValidationError as exc:
         return _error_response(422, exc.error)
+    except TryOnStorageError as exc:
+        return _error_response(503, exc.to_try_on_error())
 
     return TryOnJobCreatedResponse(
         job_id=job.job_id,
@@ -146,7 +149,10 @@ async def get_try_on_job_status(
     settings: Annotated[Settings, Depends(_settings)],
 ) -> TryOnJobStatusResponse | JSONResponse:
     """Return the status history and sandbox cost events for a Try-On job."""
-    job = await _service(settings).get_job(job_id)
+    try:
+        job = await _service(settings).get_job(job_id)
+    except TryOnStorageError as exc:
+        return _error_response(503, exc.to_try_on_error())
     if job is None:
         return _error_response(404, _job_not_found_error(job_id))
 
@@ -165,7 +171,10 @@ async def get_try_on_job_result(
     settings: Annotated[Settings, Depends(_settings)],
 ) -> TryOnResultResponse | TryOnNotReadyResponse | JSONResponse:
     """Return a completed Try-On result or a typed lifecycle response."""
-    job = await _service(settings).get_job(job_id)
+    try:
+        job = await _service(settings).get_job(job_id)
+    except TryOnStorageError as exc:
+        return _error_response(503, exc.to_try_on_error())
     if job is None:
         return _error_response(404, _job_not_found_error(job_id))
     if job.status == TryOnJobStatus.FAILED:

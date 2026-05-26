@@ -61,6 +61,7 @@ class TryOnErrorCode(StrEnum):
     JOB_NOT_FOUND = "job_not_found"
     RESULT_NOT_READY = "result_not_ready"
     JOB_FAILED = "job_failed"
+    STORAGE_UNAVAILABLE = "storage_unavailable"
 
 
 class TryOnInputMetadata(BaseModel):
