@@ -5,9 +5,9 @@ import logging
 import os
 from dataclasses import dataclass
 from functools import lru_cache
-from typing import Annotated, Optional
+from typing import Annotated, Literal, Optional
 
-from pydantic import AliasChoices, Field, field_validator
+from pydantic import AliasChoices, Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 from .utils.log_redaction import RedactingLogFilter, install_redaction_logging_policy
@@ -168,6 +168,11 @@ class Settings(BaseSettings):
         gt=0,
         validation_alias=AliasChoices("TRY_ON_MAX_UPLOAD_BYTES"),
     )
+    try_on_file_storage_backend: Literal["in_memory", "gcs"] = "in_memory"
+    try_on_job_repository_backend: Literal["in_memory", "firestore"] = "in_memory"
+    try_on_gcs_bucket_name: str | None = None
+    try_on_gcs_upload_prefix: str = "try-on/uploads"
+    try_on_firestore_collection: str = "try_on_jobs"
 
     # LLM
     llm_provider: str = Field("vertex", validation_alias=AliasChoices("LLM_PROVIDER"))
@@ -296,6 +301,23 @@ class Settings(BaseSettings):
             return parsed or ["image/jpeg", "image/png", "image/webp"]
         parsed = [str(value).strip().lower()] if str(value).strip() else []
         return parsed or ["image/jpeg", "image/png", "image/webp"]
+
+    @model_validator(mode="after")
+    def _validate_try_on_storage_settings(self) -> "Settings":
+        """Validate Try-On storage adapter settings before app startup."""
+        bucket_name = (self.try_on_gcs_bucket_name or "").strip()
+        firestore_collection = self.try_on_firestore_collection.strip()
+        upload_prefix = self.try_on_gcs_upload_prefix.strip("/")
+
+        if self.try_on_file_storage_backend == "gcs" and not bucket_name:
+            raise ValueError("try_on_gcs_bucket_name is required when try_on_file_storage_backend is gcs")
+        if self.try_on_job_repository_backend == "firestore" and not firestore_collection:
+            raise ValueError(
+                "try_on_firestore_collection is required when try_on_job_repository_backend is firestore"
+            )
+        if not upload_prefix:
+            raise ValueError("try_on_gcs_upload_prefix must contain at least one path segment")
+        return self
 
     @field_validator("crm_provider")
     @classmethod

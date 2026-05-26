@@ -6,6 +6,7 @@ import pytest
 from starlette.datastructures import UploadFile
 
 from src.adapters.try_on.fake_generation import FakeTryOnGenerationAdapter
+from src.adapters.try_on.in_memory_file_storage import InMemoryTryOnFileStorage
 from src.adapters.try_on.in_memory_repository import InMemoryTryOnJobRepository
 from src.domain.try_on import (
     TryOnChargeStatus,
@@ -156,6 +157,32 @@ def test_try_on_result_contract_is_structurally_realistic():
     assert result["quality_report"]["checks"][0]["name"] == "face_preservation"
     assert result["stylist_note"]
     assert [item["role"] for item in result["input_metadata"]] == ["human_photo", "garment_photo"]
+
+
+def test_try_on_public_responses_do_not_expose_storage_references():
+    """Storage object references must stay internal to the backend job aggregate."""
+    create_response = client.post(
+        "/api/try-on/jobs",
+        files={
+            "human_photo": ("human.jpg", b"human-image", "image/jpeg"),
+            "garment_photo": ("garment.png", b"garment-image", "image/png"),
+        },
+    )
+
+    assert create_response.status_code == 201
+    created = create_response.json()
+    status_response = client.get(created["status_url"])
+    result_response = client.get(created["result_url"])
+
+    assert status_response.status_code == 200
+    assert result_response.status_code == 200
+    public_bodies = [created, status_response.json(), result_response.json()]
+    serialized = " ".join(str(body) for body in public_bodies)
+
+    assert "stored_inputs" not in serialized
+    assert "memory://try-on/" not in serialized
+    assert "bucket_name" not in serialized
+    assert "object_name" not in serialized
 
 
 def test_try_on_pending_sandbox_job_returns_not_ready_result():
@@ -379,6 +406,7 @@ def _service() -> tuple[TryOnWorkflowService, InMemoryTryOnJobRepository]:
     service = TryOnWorkflowService(
         repository=repository,
         generator=FakeTryOnGenerationAdapter(),
+        file_storage=InMemoryTryOnFileStorage(),
         validation_config=TryOnUploadValidationConfig(
             allowed_content_types={"image/jpeg", "image/png", "image/webp"},
             max_upload_bytes=1024,

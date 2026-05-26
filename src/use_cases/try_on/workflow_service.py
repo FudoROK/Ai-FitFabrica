@@ -17,12 +17,13 @@ from src.domain.try_on import (
     TryOnJobStatus,
     TryOnResult,
     TryOnSandboxLifecycleMode,
+    TryOnStoredInput,
     TryOnStatusEvent,
     TryOnUploadRole,
     TryOnWorkflowType,
     utc_now,
 )
-from src.use_cases.try_on.ports import TryOnGenerationPort, TryOnJobRepositoryPort
+from src.use_cases.try_on.ports import TryOnFileStoragePort, TryOnGenerationPort, TryOnJobRepositoryPort
 
 
 @dataclass(frozen=True)
@@ -31,6 +32,14 @@ class TryOnUploadValidationConfig:
 
     allowed_content_types: set[str]
     max_upload_bytes: int
+
+
+@dataclass(frozen=True)
+class ValidatedTryOnUpload:
+    """Validated upload bytes and sanitized metadata for one Try-On input."""
+
+    metadata: TryOnInputMetadata
+    payload: bytes
 
 
 class TryOnValidationError(Exception):
@@ -49,11 +58,13 @@ class TryOnWorkflowService:
         self,
         repository: TryOnJobRepositoryPort,
         generator: TryOnGenerationPort,
+        file_storage: TryOnFileStoragePort,
         validation_config: TryOnUploadValidationConfig,
     ) -> None:
         """Create the workflow service with explicit ports and validation rules."""
         self._repository = repository
         self._generator = generator
+        self._file_storage = file_storage
         self._validation = validation_config
 
     async def create_job(
@@ -75,11 +86,23 @@ class TryOnWorkflowService:
             self._status_event(TryOnJobStatus.ACCEPTED, "Job accepted."),
             self._status_event(TryOnJobStatus.VALIDATING_INPUTS, "Validating input files."),
         ]
-        input_metadata = [
-            await self._extract_metadata(TryOnUploadRole.HUMAN_PHOTO, human_photo),
-            await self._extract_metadata(TryOnUploadRole.GARMENT_PHOTO, garment_photo),
+        validated_uploads = [
+            await self._validate_upload(TryOnUploadRole.HUMAN_PHOTO, human_photo),
+            await self._validate_upload(TryOnUploadRole.GARMENT_PHOTO, garment_photo),
         ]
+        input_metadata = [validated.metadata for validated in validated_uploads]
         job_id = f"try_on_{uuid4().hex}"
+        stored_inputs = [
+            await self._file_storage.save_upload(
+                job_id=job_id,
+                role=validated.metadata.role,
+                filename=validated.metadata.filename,
+                content_type=validated.metadata.content_type,
+                payload=validated.payload,
+                sha256_hex=validated.metadata.sha256,
+            )
+            for validated in validated_uploads
+        ]
 
         status_history.append(self._status_event(TryOnJobStatus.GENERATING, "Generating sandbox result."))
         if lifecycle_mode == TryOnSandboxLifecycleMode.PENDING:
@@ -87,6 +110,7 @@ class TryOnWorkflowService:
                 job_id=job_id,
                 status=TryOnJobStatus.GENERATING,
                 input_metadata=input_metadata,
+                stored_inputs=stored_inputs,
                 status_history=status_history,
                 result=None,
                 error=None,
@@ -105,6 +129,7 @@ class TryOnWorkflowService:
                 job_id=job_id,
                 status=TryOnJobStatus.FAILED,
                 input_metadata=input_metadata,
+                stored_inputs=stored_inputs,
                 status_history=status_history,
                 result=None,
                 error=error,
@@ -122,6 +147,7 @@ class TryOnWorkflowService:
             job_id=job_id,
             status=TryOnJobStatus.COMPLETED,
             input_metadata=input_metadata,
+            stored_inputs=stored_inputs,
             status_history=status_history,
             result=result,
             error=None,
@@ -138,6 +164,7 @@ class TryOnWorkflowService:
         job_id: str,
         status: TryOnJobStatus,
         input_metadata: list[TryOnInputMetadata],
+        stored_inputs: list[TryOnStoredInput],
         status_history: list[TryOnStatusEvent],
         result: TryOnResult | None,
         error: TryOnError | None,
@@ -152,6 +179,7 @@ class TryOnWorkflowService:
             created_at=now,
             updated_at=now,
             input_metadata=input_metadata,
+            stored_inputs=stored_inputs,
             status_history=status_history,
             cost_events=[
                 TryOnCostEvent(
@@ -178,8 +206,8 @@ class TryOnWorkflowService:
             fields.append(TryOnUploadRole.GARMENT_PHOTO.value)
         return fields
 
-    async def _extract_metadata(self, role: TryOnUploadRole, upload: UploadFile | None) -> TryOnInputMetadata:
-        """Read and validate upload bytes before returning sanitized metadata."""
+    async def _validate_upload(self, role: TryOnUploadRole, upload: UploadFile | None) -> ValidatedTryOnUpload:
+        """Read and validate upload bytes before returning metadata and payload."""
         if upload is None:
             raise self._validation_error(
                 TryOnErrorCode.MISSING_REQUIRED_FILE,
@@ -220,13 +248,14 @@ class TryOnWorkflowService:
                 },
             )
 
-        return TryOnInputMetadata(
+        metadata = TryOnInputMetadata(
             role=role,
             filename=upload.filename or role.value,
             content_type=content_type,
             size_bytes=size_bytes,
             sha256=sha256(payload).hexdigest(),
         )
+        return ValidatedTryOnUpload(metadata=metadata, payload=payload)
 
     def _status_event(self, status: TryOnJobStatus, message: str) -> TryOnStatusEvent:
         """Build a status event with the canonical stage value."""

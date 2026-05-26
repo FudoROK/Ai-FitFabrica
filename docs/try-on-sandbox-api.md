@@ -1,6 +1,6 @@
 # Try-On Sandbox API Contract
 
-This document records the current AI FitFabrica Try-On sandbox API before durable storage and real generation adapters are introduced.
+This document records the current AI FitFabrica Try-On sandbox API before real generation adapters are introduced.
 
 The sandbox is backend-owned. The web client uploads files, creates a job, polls status/result endpoints, and renders the response. The browser must not call AI providers, calculate credits, or decide workflow repair/retry rules.
 
@@ -13,17 +13,27 @@ Included:
 - Typed status polling.
 - Typed result polling.
 - Sandbox-only async lifecycle modes for frontend verification.
+- Backend-selected storage adapters for job and upload persistence.
 - Deterministic fake generation for completed jobs.
 - Sandbox cost event with no real credit charge.
 
 Excluded:
 
-- No GCS file storage.
-- No Firestore job persistence.
+- No live GCS or Firestore resource usage unless backend settings explicitly select those adapters.
 - No Vertex, Gemini, Imagen, or real AI generation.
 - No real credits deduction.
 - No marketplace search.
-- No durable job history after backend restart.
+- No durable job history after backend restart in default in-memory mode.
+
+## Storage Backend
+
+The sandbox API remains stable while storage is selected server-side.
+
+- Default local/test mode uses in-memory job and file storage.
+- `try_on_file_storage_backend=gcs` enables GCS upload persistence only when `try_on_gcs_bucket_name` is configured.
+- `try_on_job_repository_backend=firestore` enables Firestore job persistence only when `try_on_firestore_collection` is configured.
+- Stored upload references are internal backend state and are not exposed as public result URLs.
+- The sandbox still uses the fake generation adapter; this storage foundation does not call Vertex or production image generation.
 
 ## POST /api/try-on/jobs
 

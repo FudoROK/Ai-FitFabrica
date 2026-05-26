@@ -83,6 +83,30 @@ class TryOnInputMetadata(BaseModel):
         return value
 
 
+class TryOnStoredInput(BaseModel):
+    """Backend-owned storage reference for a persisted Try-On input file."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    role: TryOnUploadRole
+    storage_backend: Literal["in_memory", "gcs"]
+    uri: str = Field(min_length=1)
+    bucket_name: str | None = None
+    object_name: str | None = None
+    content_type: str = Field(min_length=1)
+    size_bytes: int = Field(ge=1)
+    sha256: str = Field(min_length=64, max_length=64)
+    created_at: datetime = Field(default_factory=utc_now)
+
+    @field_validator("sha256")
+    @classmethod
+    def _validate_sha256_hex(cls, value: str) -> str:
+        """Require a full SHA-256 digest encoded as 64 hexadecimal characters."""
+        if not all(char in "0123456789abcdefABCDEF" for char in value):
+            raise ValueError("sha256 must be 64 hexadecimal characters")
+        return value
+
+
 class TryOnStatusEvent(BaseModel):
     """Append-only status transition event for a Try-On job."""
 
@@ -173,6 +197,7 @@ class TryOnJob(BaseModel):
     created_at: datetime = Field(default_factory=utc_now)
     updated_at: datetime = Field(default_factory=utc_now)
     input_metadata: list[TryOnInputMetadata] = Field(default_factory=list)
+    stored_inputs: list[TryOnStoredInput] = Field(default_factory=list)
     status_history: list[TryOnStatusEvent] = Field(default_factory=list)
     cost_events: list[TryOnCostEvent] = Field(default_factory=list)
     result: TryOnResult | None = None

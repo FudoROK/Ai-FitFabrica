@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Protocol
 
-from src.domain.try_on import TryOnInputMetadata, TryOnJob, TryOnResult
+from src.domain.try_on import TryOnInputMetadata, TryOnJob, TryOnResult, TryOnStoredInput, TryOnUploadRole
 
 
 class TryOnJobRepositoryPort(Protocol):
@@ -15,6 +15,23 @@ class TryOnJobRepositoryPort(Protocol):
 
     async def get(self, job_id: str) -> TryOnJob | None:
         """Return a Try-On job by identifier, if it exists."""
+        ...
+
+
+class TryOnFileStoragePort(Protocol):
+    """Port for persisting validated Try-On upload bytes."""
+
+    async def save_upload(
+        self,
+        *,
+        job_id: str,
+        role: TryOnUploadRole,
+        filename: str,
+        content_type: str,
+        payload: bytes,
+        sha256_hex: str,
+    ) -> TryOnStoredInput:
+        """Persist upload bytes and return a backend-owned storage reference."""
         ...
 
 

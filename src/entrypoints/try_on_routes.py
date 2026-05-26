@@ -8,6 +8,9 @@ from fastapi import APIRouter, Depends, File, Form, Request, UploadFile
 from fastapi.responses import JSONResponse
 
 from src.adapters.try_on.fake_generation import FakeTryOnGenerationAdapter
+from src.adapters.try_on.firestore_repository import FirestoreTryOnJobRepository
+from src.adapters.try_on.gcs_file_storage import GcsTryOnFileStorage
+from src.adapters.try_on.in_memory_file_storage import InMemoryTryOnFileStorage
 from src.adapters.try_on.in_memory_repository import InMemoryTryOnJobRepository
 from src.domain.try_on import (
     TryOnError,
@@ -21,6 +24,7 @@ from src.domain.try_on import (
     TryOnSandboxLifecycleMode,
 )
 from src.settings import Settings
+from src.use_cases.try_on.ports import TryOnFileStoragePort, TryOnJobRepositoryPort
 from src.use_cases.try_on.workflow_service import (
     TryOnUploadValidationConfig,
     TryOnValidationError,
@@ -31,9 +35,46 @@ router = APIRouter()
 
 
 @lru_cache(maxsize=1)
-def _repository() -> InMemoryTryOnJobRepository:
+def _in_memory_repository() -> InMemoryTryOnJobRepository:
     """Return the process-local non-durable Try-On job repository."""
     return InMemoryTryOnJobRepository()
+
+
+@lru_cache(maxsize=1)
+def _in_memory_file_storage() -> InMemoryTryOnFileStorage:
+    """Return the process-local non-durable Try-On file storage."""
+    return InMemoryTryOnFileStorage()
+
+
+@lru_cache(maxsize=8)
+def _firestore_repository(collection_name: str) -> FirestoreTryOnJobRepository:
+    """Return a cached Firestore repository for the configured collection."""
+    return FirestoreTryOnJobRepository.from_collection_name(collection_name)
+
+
+@lru_cache(maxsize=8)
+def _gcs_file_storage(bucket_name: str, upload_prefix: str) -> GcsTryOnFileStorage:
+    """Return a cached GCS file storage adapter for the configured bucket."""
+    return GcsTryOnFileStorage.from_bucket_name(bucket_name=bucket_name, upload_prefix=upload_prefix)
+
+
+def _repository(settings: Settings) -> TryOnJobRepositoryPort:
+    """Select the Try-On job repository adapter from settings."""
+    if settings.try_on_job_repository_backend == "firestore":
+        return _firestore_repository(settings.try_on_firestore_collection)
+    return _in_memory_repository()
+
+
+def _file_storage(settings: Settings) -> TryOnFileStoragePort:
+    """Select the Try-On file storage adapter from settings."""
+    if settings.try_on_file_storage_backend == "gcs":
+        if settings.try_on_gcs_bucket_name is None:
+            raise RuntimeError("try_on_gcs_bucket_name is required for GCS Try-On storage")
+        return _gcs_file_storage(
+            bucket_name=settings.try_on_gcs_bucket_name,
+            upload_prefix=settings.try_on_gcs_upload_prefix,
+        )
+    return _in_memory_file_storage()
 
 
 def _settings(request: Request) -> Settings:
@@ -42,10 +83,11 @@ def _settings(request: Request) -> Settings:
 
 
 def _service(settings: Settings) -> TryOnWorkflowService:
-    """Create a Try-On workflow service using sandbox-only adapters."""
+    """Create a Try-On workflow service using configured persistence adapters."""
     return TryOnWorkflowService(
-        repository=_repository(),
+        repository=_repository(settings),
         generator=FakeTryOnGenerationAdapter(),
+        file_storage=_file_storage(settings),
         validation_config=TryOnUploadValidationConfig(
             allowed_content_types=set(settings.try_on_allowed_content_types),
             max_upload_bytes=settings.try_on_max_upload_bytes,
