@@ -158,6 +158,74 @@ def test_try_on_result_contract_is_structurally_realistic():
     assert [item["role"] for item in result["input_metadata"]] == ["human_photo", "garment_photo"]
 
 
+def test_try_on_pending_sandbox_job_returns_not_ready_result():
+    """Sandbox should expose a non-completed job path for async frontend polling."""
+    create_response = client.post(
+        "/api/try-on/jobs",
+        data={"sandbox_lifecycle_mode": "pending"},
+        files={
+            "human_photo": ("human.jpg", b"human-image", "image/jpeg"),
+            "garment_photo": ("garment.png", b"garment-image", "image/png"),
+        },
+    )
+
+    assert create_response.status_code == 201
+    created = create_response.json()
+    assert created["status"] == "generating"
+
+    result_response = client.get(created["result_url"])
+
+    assert result_response.status_code == 202
+    body = result_response.json()
+    assert body == {
+        "status": "not_ready",
+        "job_id": created["job_id"],
+        "workflow_type": "try_on",
+        "current_status": "generating",
+        "status_url": created["status_url"],
+    }
+
+    status_response = client.get(created["status_url"])
+    assert status_response.status_code == 200
+    status_body = status_response.json()
+    assert status_body["status"] == "generating"
+    assert [event["status"] for event in status_body["status_history"]] == [
+        "accepted",
+        "validating_inputs",
+        "generating",
+    ]
+    assert status_body["cost_events"][0]["charge_status"] == "not_charged"
+
+
+def test_try_on_failed_sandbox_job_returns_typed_result_error():
+    """Sandbox should expose a failed job path for frontend error handling."""
+    create_response = client.post(
+        "/api/try-on/jobs",
+        data={"sandbox_lifecycle_mode": "failed"},
+        files={
+            "human_photo": ("human.jpg", b"human-image", "image/jpeg"),
+            "garment_photo": ("garment.png", b"garment-image", "image/png"),
+        },
+    )
+
+    assert create_response.status_code == 201
+    created = create_response.json()
+    assert created["status"] == "failed"
+
+    result_response = client.get(created["result_url"])
+
+    assert result_response.status_code == 409
+    body = result_response.json()
+    assert body["error"]["code"] == "job_failed"
+    assert body["error"]["details"]["job_id"] == created["job_id"]
+
+    status_response = client.get(created["status_url"])
+    assert status_response.status_code == 200
+    status_body = status_response.json()
+    assert status_body["status"] == "failed"
+    assert status_body["status_history"][-1]["status"] == "failed"
+
+
 def test_try_on_domain_contracts_match_planned_shapes():
     human_metadata = TryOnInputMetadata(
         role=TryOnUploadRole.HUMAN_PHOTO,

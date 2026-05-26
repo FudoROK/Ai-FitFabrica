@@ -4,7 +4,7 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, File, Request, UploadFile
+from fastapi import APIRouter, Depends, File, Form, Request, UploadFile
 from fastapi.responses import JSONResponse
 
 from src.adapters.try_on.fake_generation import FakeTryOnGenerationAdapter
@@ -18,6 +18,7 @@ from src.domain.try_on import (
     TryOnJobStatusResponse,
     TryOnNotReadyResponse,
     TryOnResultResponse,
+    TryOnSandboxLifecycleMode,
 )
 from src.settings import Settings
 from src.use_cases.try_on.workflow_service import (
@@ -72,10 +73,18 @@ async def create_try_on_job(
     settings: Annotated[Settings, Depends(_settings)],
     human_photo: Annotated[UploadFile | None, File()] = None,
     garment_photo: Annotated[UploadFile | None, File()] = None,
+    sandbox_lifecycle_mode: Annotated[
+        TryOnSandboxLifecycleMode,
+        Form(description="Sandbox-only lifecycle mode for exercising async clients."),
+    ] = TryOnSandboxLifecycleMode.COMPLETE,
 ) -> TryOnJobCreatedResponse | JSONResponse:
     """Create and complete a sandbox Try-On job from two uploaded images."""
     try:
-        job = await _service(settings).create_job(human_photo=human_photo, garment_photo=garment_photo)
+        job = await _service(settings).create_job(
+            human_photo=human_photo,
+            garment_photo=garment_photo,
+            lifecycle_mode=sandbox_lifecycle_mode,
+        )
     except TryOnValidationError as exc:
         return _error_response(422, exc.error)
 

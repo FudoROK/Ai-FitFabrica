@@ -30,6 +30,14 @@ class TryOnJobStatus(StrEnum):
     FAILED = "failed"
 
 
+class TryOnSandboxLifecycleMode(StrEnum):
+    """Sandbox-only lifecycle modes for exercising async client behavior."""
+
+    COMPLETE = "complete"
+    PENDING = "pending"
+    FAILED = "failed"
+
+
 class TryOnUploadRole(StrEnum):
     """Required upload roles accepted by the Try-On sandbox."""
 
