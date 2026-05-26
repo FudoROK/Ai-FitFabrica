@@ -61,7 +61,7 @@ export default function HomePage() {
         <p className="mx-auto mt-4 max-w-[640px] text-[1.25rem] leading-8 text-[var(--text-secondary)]">
           Загрузите свое фото и начните виртуальную примерку прямо сейчас.
         </p>
-        <SiteButton className="mt-10" href="/workspace/try-on/new" icon="auto_awesome" variant="violet">
+        <SiteButton className="mt-10" href="/workspace/new-fitting" icon="auto_awesome" variant="violet">
           Начать примерку
         </SiteButton>
       </section>

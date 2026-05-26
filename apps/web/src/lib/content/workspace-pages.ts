@@ -7,7 +7,7 @@ export const workspacePages: Record<string, WorkspacePageContent> = {
     lead:
       "Рабочее пространство собрано вокруг активных процессов: примерка, карточки товара, brand profile и AI-проверки.",
     actions: [
-      { href: "/workspace/try-on/new", label: "Создать новый сценарий", variant: "primary" },
+      { href: "/workspace/new-fitting", label: "Создать новый сценарий", variant: "primary" },
       { href: "/workspace/history", label: "Открыть историю", variant: "secondary" }
     ],
     status: [
@@ -203,7 +203,7 @@ export const workspacePages: Record<string, WorkspacePageContent> = {
     lead:
       "Этот экран больше не изображает каталог через скрин. Он подготовлен под реальный список альтернатив и фильтры backend-поиска.",
     actions: [
-      { href: "/workspace/try-on/new", label: "Начать новый поиск", variant: "primary" },
+      { href: "/workspace/new-fitting", label: "Начать новый поиск", variant: "primary" },
       { href: "/workspace/history", label: "Открыть историю", variant: "secondary" }
     ],
     status: [

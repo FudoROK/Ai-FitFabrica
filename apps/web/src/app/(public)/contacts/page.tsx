@@ -12,7 +12,7 @@ export default function ContactsPage() {
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--ai)]">Мгновенный старт</p>
             <h2 className="mt-5 font-[family-name:var(--font-manrope)] text-[3rem] font-bold leading-[0.96] tracking-[-0.05em]">Готовы попробовать прямо сейчас?</h2>
             <p className="mt-5 max-w-[560px] text-[1.15rem] leading-8 text-[var(--text-secondary)]">Оцените качество нашей нейросети, загрузив свое фото в разделе быстрой примерки.</p>
-            <SiteButton className="mt-8" href="/workspace/try-on/new">Начать примерку</SiteButton>
+            <SiteButton className="mt-8" href="/workspace/new-fitting">Начать примерку</SiteButton>
           </div>
           <div className="mt-14 grid gap-7 text-[1.12rem]">
             <div><strong className="block text-black">Email</strong><span className="text-[var(--text-secondary)]">hello@fitfabrica.ai</span></div>

@@ -34,7 +34,7 @@ export function PublicHeader() {
           <Link className={`text-sm font-semibold ${pathname === "/sign-in" ? "text-black" : "text-[var(--text-secondary)]"}`} href="/sign-in">
             Войти
           </Link>
-          <SiteButton href="/workspace/try-on/new" variant={isSignIn ? "secondary" : "primary"}>
+          <SiteButton href="/workspace/new-fitting" variant={isSignIn ? "secondary" : "primary"}>
             Начать примерку
           </SiteButton>
         </div>

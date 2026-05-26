@@ -7,7 +7,7 @@ export const publicPages: Record<string, PublicPageContent> = {
     lead:
       "FitFabrica помогает брендам и покупателям быстро проверять образы, собирать контент-пакеты и принимать решения без визуального шума и хаоса в процессе.",
     actions: [
-      { href: "/workspace/try-on/new", label: "Начать примерку", variant: "primary" },
+      { href: "/workspace/new-fitting", label: "Начать примерку", variant: "primary" },
       { href: "/business", label: "Для бизнеса", variant: "secondary" }
     ],
     metrics: [
@@ -61,7 +61,7 @@ export const publicPages: Record<string, PublicPageContent> = {
     lead:
       "Пользовательский поток FitFabrica помогает понять, как вещь выглядит на вас, что к ней подойдет и стоит ли искать альтернативу.",
     actions: [
-      { href: "/workspace/try-on/new", label: "Загрузить фото", variant: "primary" },
+      { href: "/workspace/new-fitting", label: "Загрузить фото", variant: "primary" },
       { href: "/workspace/similar", label: "Найти похожее дешевле", variant: "secondary" }
     ],
     metrics: [
@@ -106,7 +106,7 @@ export const publicPages: Record<string, PublicPageContent> = {
     cta: {
       title: "Начните с одной вещи",
       body: "Один аккуратный сценарий полезнее длинной витрины функций.",
-      action: { href: "/workspace/try-on/new", label: "Открыть примерку", variant: "primary" }
+      action: { href: "/workspace/new-fitting", label: "Открыть примерку", variant: "primary" }
     }
   },
   business: {
@@ -223,7 +223,7 @@ export const publicPages: Record<string, PublicPageContent> = {
     lead:
       "FitFabrica ведет пользователя от входных данных к результату через короткие, понятные этапы с проверками и следующими действиями.",
     actions: [
-      { href: "/workspace/try-on/new", label: "Открыть новый сценарий", variant: "primary" },
+      { href: "/workspace/new-fitting", label: "Открыть новый сценарий", variant: "primary" },
       { href: "/contacts", label: "Нужна консультация", variant: "secondary" }
     ],
     metrics: [
@@ -268,7 +268,7 @@ export const publicPages: Record<string, PublicPageContent> = {
     cta: {
       title: "Проверьте flow внутри workspace",
       body: "Рабочие страницы уже перестроены так, чтобы показывать ход процесса, а не скриншоты.",
-      action: { href: "/workspace/try-on/new", label: "Запустить flow", variant: "primary" }
+      action: { href: "/workspace/new-fitting", label: "Запустить flow", variant: "primary" }
     }
   }
 };

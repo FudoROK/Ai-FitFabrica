@@ -13,7 +13,7 @@ export default function ForYouPage() {
             Загрузите своё фото и виртуально примеряйте одежду любых брендов. Наш ИИ учитывает ваши пропорции, анализирует фасон и предлагает лучшие варианты.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
-            <SiteButton href="/workspace/try-on/new" icon="auto_awesome" variant="violet">Начать примерку</SiteButton>
+            <SiteButton href="/workspace/new-fitting" icon="auto_awesome" variant="violet">Начать примерку</SiteButton>
             <SiteButton href="/workspace/similar" icon="search" variant="secondary">Найти похожее дешевле</SiteButton>
           </div>
         </div>

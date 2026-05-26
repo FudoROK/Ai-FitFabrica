@@ -6,7 +6,7 @@ export type WorkspaceRoute = {
 
 export const workspaceRoutes: WorkspaceRoute[] = [
   { href: "/workspace", label: "Кабинет", icon: "dashboard" },
-  { href: "/workspace/try-on/new", label: "Новая примерка", icon: "add_a_photo" },
+  { href: "/workspace/new-fitting", label: "Новая примерка", icon: "add_a_photo" },
   { href: "/workspace/outfit-builder", label: "Подбор образа", icon: "auto_fix_high" },
   { href: "/workspace/similar", label: "Найти похожее", icon: "search" },
   { href: "/workspace/product-card", label: "Карточка товара", icon: "shopping_bag" },

@@ -18,7 +18,7 @@ function isRouteActive(currentPath: string, href: string): boolean {
     return true;
   }
 
-  if (href === "/workspace/try-on/new" && currentPath === "/workspace/try-on/result") {
+  if (href === "/workspace/new-fitting" && currentPath === "/workspace/try-on/result") {
     return true;
   }
 
@@ -88,7 +88,7 @@ export function WorkspaceSidebar({ currentPath }: WorkspaceSidebarProps) {
               </Link>
             </div>
 
-            <SiteButton className="mt-4 w-full" href="/workspace/try-on/new" variant="violet">
+            <SiteButton className="mt-4 w-full" href="/workspace/new-fitting" variant="violet">
               Новая примерка
             </SiteButton>
 

@@ -56,7 +56,7 @@ export const workspacePagesExtra: Record<string, WorkspacePageContent> = {
     lead:
       "Экран под будущую анкету предпочтений и параметры стиля. Сейчас он собран как enterprise-ready shell без фальшивых картинок.",
     actions: [
-      { href: "/workspace/try-on/new", label: "Вернуться к примерке", variant: "primary" },
+      { href: "/workspace/new-fitting", label: "Вернуться к примерке", variant: "primary" },
       { href: "/workspace/outfit-builder", label: "Перейти к образу", variant: "secondary" }
     ],
     status: [
@@ -203,7 +203,7 @@ export const workspacePagesExtra: Record<string, WorkspacePageContent> = {
     lead:
       "Вместо нарисованного списка система теперь имеет продуктовую структуру под реальные записи, фильтры и повторный запуск сценариев.",
     actions: [
-      { href: "/workspace/try-on/new", label: "Новый запуск", variant: "primary" },
+      { href: "/workspace/new-fitting", label: "Новый запуск", variant: "primary" },
       { href: "/workspace", label: "Вернуться на главную", variant: "secondary" }
     ],
     status: [

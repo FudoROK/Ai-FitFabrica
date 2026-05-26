@@ -113,7 +113,7 @@ export function TryOnResultView() {
             Результат недоступен
           </h1>
           <p className="mt-4 text-[var(--text-secondary)]">{error}</p>
-          <SiteButton className="mt-8" href="/workspace/try-on/new" variant="primary">
+          <SiteButton className="mt-8" href="/workspace/new-fitting" variant="primary">
             Создать новую примерку
           </SiteButton>
         </div>
@@ -135,7 +135,7 @@ export function TryOnResultView() {
             <p className="mt-3 break-all text-sm text-[var(--text-secondary)]">Status endpoint: {response.status_url}</p>
           ) : null}
           <div className="mt-8 flex flex-wrap gap-4">
-            <SiteButton href="/workspace/try-on/new" variant="secondary">
+            <SiteButton href="/workspace/new-fitting" variant="secondary">
               Вернуться к примерке
             </SiteButton>
             <SiteButton onClick={() => window.location.reload()} variant="violet">
@@ -158,7 +158,7 @@ export function TryOnResultView() {
           </h1>
           <p className="mt-3 text-[1.1rem] text-[var(--text-secondary)]">Job {result.job_id}</p>
         </div>
-        <SiteButton href="/workspace/try-on/new" variant="secondary">
+        <SiteButton href="/workspace/new-fitting" variant="secondary">
           Новая примерка
         </SiteButton>
       </div>
