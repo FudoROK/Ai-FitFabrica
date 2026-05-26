@@ -10,6 +10,10 @@ service-account.json
 
 # Frontend/package artifacts
 node_modules/
+apps/web/.next/
+apps/web/out/
+apps/web/tsconfig.tsbuildinfo
+.playwright-mcp/
 
 # Build/test artifacts
 .coverage
