@@ -6,8 +6,8 @@ import pytest
 
 from src.llm.core.result import LLMResult as CoreLLMResult
 from src.llm.vertex.vertex_schema_builder import build_vertex_response_schema
-from src.llm.tasks.primary_agent.primary_agent_reply_task import parse_provider_response
-from src.runtime_agents.primary_agent.primary_agent_request_factory import build_provider_request
+from src.llm.tasks.dialog_reply_task import parse_provider_response
+from src.runtime_agents.dialog_reply.dialog_reply_request_factory import build_provider_request
 from src.use_cases.dialog.generate_reply_use_case import GenerateReplyUseCase
 
 
@@ -49,7 +49,7 @@ def test_reply_parse_rejects_contract_regressions():
 def test_generate_reply_use_case_keeps_runtime_reply_contract_shape():
     class _LLMServiceStub:
         async def run(self, task, payload, meta):
-            assert task == "primary_agent_reply_task"
+            assert task == "dialog_reply_task"
             assert "user_text" in payload
             assert "context" in payload
             assert "runtime_envelope" in payload

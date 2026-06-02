@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from src.domain.contracts import AgentOutput
 from src.llm.core.request import LLMRequest
 from src.llm.providers import gemini_structured_provider as module
 from src.llm.providers.gemini_structured_provider import GeminiStructuredProvider
-from src.adk_agents.primary_agent.contracts import AgentOutput
 from src.runtime_agents.memory_agent.memory_response_parser import parse_provider_response as parse_memory_provider_response
 from src.runtime_agents.memory_agent.contracts import DailyMemoryContract, RollingMemoryContract
 
@@ -106,7 +106,7 @@ def test_gemini_structured_provider_direct_call_with_transport_schema(monkeypatc
     monkeypatch.setattr(module, "build_vertex_response_schema", lambda: {"type": "OBJECT", "properties": {}})
 
     provider = GeminiStructuredProvider(settings=_Settings(llm=_LLM()))
-    result = provider.generate(LLMRequest(task="primary_agent_reply_task", input='{"user_text":"hello"}'))
+    result = provider.generate(LLMRequest(task="dialog_reply_task", input='{"user_text":"hello"}'))
 
     assert result.status == "ok"
     expected = AgentOutput.model_validate({"reply_text": "ok", "system_payload": {}}).model_dump(mode="python")
@@ -126,7 +126,7 @@ def test_gemini_structured_provider_rejects_semantically_invalid_payload(monkeyp
     monkeypatch.setattr(module, "build_vertex_response_schema", lambda: {"type": "OBJECT"})
 
     provider = GeminiStructuredProvider(settings=_Settings(llm=_LLM()))
-    result = provider.generate(LLMRequest(task="primary_agent_reply_task", input="hello"))
+    result = provider.generate(LLMRequest(task="dialog_reply_task", input="hello"))
 
     assert result.status == "error"
     assert result.error is not None
@@ -208,3 +208,19 @@ def test_gemini_structured_provider_requires_schema_for_non_reply_tasks(monkeypa
     assert result.status == "error"
     assert result.error is not None
     assert result.error.type == "bad_request"
+
+
+def test_gemini_structured_provider_keeps_legacy_reply_task_alias(monkeypatch):
+    calls: dict[str, object] = {}
+    vertexai_stub = _VertexAiStub()
+    response = _Response('{"reply_text":"ok","system_payload":{}}')
+    generative_stub = _GenerativeModelsStub(calls, response)
+
+    monkeypatch.setattr(module, "vertexai", vertexai_stub)
+    monkeypatch.setattr(module, "generative_models", generative_stub)
+    monkeypatch.setattr(module, "build_vertex_response_schema", lambda: {"type": "OBJECT", "properties": {}})
+
+    provider = GeminiStructuredProvider(settings=_Settings(llm=_LLM()))
+    result = provider.generate(LLMRequest(task="dialog_reply_task", input='{"user_text":"hello"}'))
+
+    assert result.status == "ok"

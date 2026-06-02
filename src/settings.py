@@ -3,8 +3,8 @@ from __future__ import annotations
 
 import logging
 import os
-from dataclasses import dataclass
 from functools import lru_cache
+from dataclasses import dataclass
 from typing import Annotated, Literal, Optional
 
 from pydantic import AliasChoices, Field, field_validator, model_validator
@@ -66,13 +66,6 @@ def _ensure_redaction_logging_enforced() -> None:
 
 
 @dataclass(frozen=True)
-class TelegramSettings:
-    bot_token: str
-    api_base: str
-    webhook_secret: Optional[str]
-
-
-@dataclass(frozen=True)
 class LLMSettings:
     provider: str
     mode: str
@@ -101,7 +94,7 @@ class Settings(BaseSettings):
     app_port: int = 8080
     environment: str = Field("prod", validation_alias=AliasChoices("ENVIRONMENT", "APP_ENV", "ENV"))
     log_level: str = "INFO"
-    bot_key: str = "ai_assistant_skeleton"
+    bot_key: str = "fitfabrica_backend"
     cors_allowed_origins: Annotated[list[str], NoDecode] = Field(
         default_factory=list,
         validation_alias=AliasChoices("CORS_ALLOWED_ORIGINS"),
@@ -110,27 +103,29 @@ class Settings(BaseSettings):
     # Integration providers
     crm_provider: str = Field("none", validation_alias=AliasChoices("CRM_PROVIDER"))
     calendar_provider: str = Field("none", validation_alias=AliasChoices("CALENDAR_PROVIDER"))
-    messaging_provider: str = Field("telegram", validation_alias=AliasChoices("MESSAGING_PROVIDER"))
-
-    # Telegram
-    telegram_bot_token: str
-    telegram_api_base: str = "https://api.telegram.org"
-    telegram_webhook_secret: Optional[str] = None
+    messaging_provider: str = Field("none", validation_alias=AliasChoices("MESSAGING_PROVIDER"))
 
     # Pub/Sub + GCP
-    gcp_project_id: str = Field(..., validation_alias=AliasChoices("GCP_PROJECT_ID", "GOOGLE_CLOUD_PROJECT"))
+    gcp_project_id: str = Field(
+        ...,
+        validation_alias=AliasChoices("PROJECT_ID", "RUNTIME_PROJECT_ID", "GCP_PROJECT_ID", "GOOGLE_CLOUD_PROJECT"),
+    )
     maps_api_key: Optional[str] = Field(
         default=None,
         validation_alias=AliasChoices("MAPS_API_KEY"),
     )
-    pubsub_topic_name: str = Field(..., validation_alias=AliasChoices("PUBSUB_TOPIC_NAME", "PUBSUB_TOPIC_ID"))
+    pubsub_topic_name: str = Field(
+        ...,
+        validation_alias=AliasChoices("EVENT_TOPIC_NAME", "PUBSUB_TOPIC_NAME", "PUBSUB_TOPIC_ID"),
+    )
     pubsub_topic_id: Optional[str] = None
-    pubsub_push_service_account_email: Optional[str] = None
-    pubsub_push_audience: Optional[str] = None
 
     # Admin/memory jobs
     admin_chat_ids: list[int] = Field(default_factory=list)
-    memory_summary_enabled: bool = True
+    memory_summary_enabled: bool = Field(
+        default=True,
+        validation_alias=AliasChoices("MEMORY_SUMMARY_ENABLED"),
+    )
     enable_profile_runtime: bool = Field(
         default=True,
         validation_alias=AliasChoices("ENABLE_PROFILE_RUNTIME"),
@@ -168,11 +163,32 @@ class Settings(BaseSettings):
         gt=0,
         validation_alias=AliasChoices("TRY_ON_MAX_UPLOAD_BYTES"),
     )
-    try_on_file_storage_backend: Literal["in_memory", "gcs"] = "in_memory"
     try_on_job_repository_backend: Literal["in_memory", "firestore"] = "in_memory"
-    try_on_gcs_bucket_name: str | None = None
-    try_on_gcs_upload_prefix: str = "try-on/uploads"
     try_on_firestore_collection: str = "try_on_jobs"
+    try_on_generation_backend: Literal["sandbox_fake", "provider_runtime", "vertex_virtual_try_on"] = Field(
+        default="sandbox_fake",
+        validation_alias=AliasChoices("TRY_ON_GENERATION_BACKEND"),
+    )
+    enable_real_try_on_generation: bool = Field(
+        default=False,
+        validation_alias=AliasChoices("ENABLE_REAL_TRY_ON_GENERATION"),
+    )
+    try_on_vertex_failure_fallback_backend: Literal["none", "provider_runtime", "sandbox_fake"] = Field(
+        default="none",
+        validation_alias=AliasChoices("TRY_ON_VERTEX_FAILURE_FALLBACK_BACKEND"),
+    )
+    try_on_quality_verifier_backend: Literal["deterministic", "model_backed"] = Field(
+        default="model_backed",
+        validation_alias=AliasChoices("TRY_ON_QUALITY_VERIFIER_BACKEND"),
+    )
+    try_on_repair_backend: Literal["deterministic", "provider_runtime"] = Field(
+        default="provider_runtime",
+        validation_alias=AliasChoices("TRY_ON_REPAIR_BACKEND"),
+    )
+    try_on_stylist_backend: Literal["deterministic", "model_backed"] = Field(
+        default="model_backed",
+        validation_alias=AliasChoices("TRY_ON_STYLIST_BACKEND"),
+    )
 
     # LLM
     llm_provider: str = Field("vertex", validation_alias=AliasChoices("LLM_PROVIDER"))
@@ -182,6 +198,14 @@ class Settings(BaseSettings):
     # Vertex runtime
     vertex_project: Optional[str] = Field(default=None, validation_alias=AliasChoices("VERTEX_PROJECT"))
     vertex_location: Optional[str] = Field(default="us-central1", validation_alias=AliasChoices("VERTEX_LOCATION"))
+    vertex_virtual_try_on_location: Optional[str] = Field(
+        default="global",
+        validation_alias=AliasChoices("VERTEX_VIRTUAL_TRY_ON_LOCATION"),
+    )
+    vertex_virtual_try_on_model: str = Field(
+        default="virtual-try-on-001",
+        validation_alias=AliasChoices("VERTEX_VIRTUAL_TRY_ON_MODEL"),
+    )
     vertex_agent_resource: Optional[str] = Field(default=None, validation_alias=AliasChoices("VERTEX_AGENT_RESOURCE"))
     vertex_memory_daily_agent_resource: Optional[str] = Field(
         default=None,
@@ -194,7 +218,7 @@ class Settings(BaseSettings):
 
     # Runtime rate limiting
     enable_distributed_rate_limit: bool = True
-    rate_limit_backend: str = "firestore"
+    rate_limit_backend: str = Field(default="redis", validation_alias=AliasChoices("RATE_LIMIT_BACKEND"))
     rate_limit_max_events: int = 10
     rate_limit_window_seconds: int = 60
     rate_limit_fail_mode: str = "closed"
@@ -204,6 +228,99 @@ class Settings(BaseSettings):
     ingress_rate_limit_window_seconds: int = 60
     ingress_rate_limit_collection: str = "ingress_rate_limits"
     ingress_global_safety_cap_max_events: int = 2000
+
+    # Portable platform foundation
+    postgres_dsn: str | None = Field(default=None, validation_alias=AliasChoices("POSTGRES_DSN", "DATABASE_URL"))
+    postgres_pool_size: int = 10
+    postgres_max_overflow: int = 20
+    postgres_pool_timeout_seconds: int = 30
+    redis_url: str | None = Field(default=None, validation_alias=AliasChoices("REDIS_URL"))
+    redis_key_prefix: str = "fitfabrica"
+    object_storage_backend: Literal["in_memory", "s3"] = Field(
+        default="in_memory",
+        validation_alias=AliasChoices("OBJECT_STORAGE_BACKEND"),
+    )
+    object_storage_bucket_name: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("OBJECT_STORAGE_BUCKET_NAME"),
+    )
+    object_storage_region: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("OBJECT_STORAGE_REGION"),
+    )
+    object_storage_endpoint_url: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("OBJECT_STORAGE_ENDPOINT_URL"),
+    )
+    object_storage_access_key_id: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("OBJECT_STORAGE_ACCESS_KEY_ID"),
+    )
+    object_storage_secret_access_key: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("OBJECT_STORAGE_SECRET_ACCESS_KEY"),
+    )
+    object_storage_prefix: str = "fitfabrica"
+    object_storage_signed_url_ttl_seconds: int = Field(
+        default=900,
+        ge=60,
+        le=86400,
+        validation_alias=AliasChoices("OBJECT_STORAGE_SIGNED_URL_TTL_SECONDS"),
+    )
+    object_storage_tenant_prefix_mode: Literal["shared", "tenant_scoped"] = Field(
+        default="shared",
+        validation_alias=AliasChoices("OBJECT_STORAGE_TENANT_PREFIX_MODE"),
+    )
+    vector_backend: Literal["qdrant"] = Field(default="qdrant", validation_alias=AliasChoices("VECTOR_BACKEND"))
+    qdrant_url: str | None = Field(default=None, validation_alias=AliasChoices("QDRANT_URL"))
+    qdrant_api_key: str | None = Field(default=None, validation_alias=AliasChoices("QDRANT_API_KEY"))
+    qdrant_collection_prefix: str = "fitfabrica"
+    qdrant_request_timeout_seconds: float = 10.0
+    billing_core_enabled: bool = Field(
+        default=False,
+        validation_alias=AliasChoices("BILLING_CORE_ENABLED"),
+    )
+    default_person_credit_account_id: str = Field(
+        default="public-person",
+        validation_alias=AliasChoices("DEFAULT_PERSON_CREDIT_ACCOUNT_ID"),
+    )
+    default_business_credit_account_id: str = Field(
+        default="public-business",
+        validation_alias=AliasChoices("DEFAULT_BUSINESS_CREDIT_ACCOUNT_ID"),
+    )
+    try_on_base_credit_cost: int = Field(default=12, ge=0, validation_alias=AliasChoices("TRY_ON_BASE_CREDIT_COST"))
+    product_card_base_credit_cost: int = Field(
+        default=18,
+        ge=0,
+        validation_alias=AliasChoices("PRODUCT_CARD_BASE_CREDIT_COST"),
+    )
+    content_package_base_credit_cost: int = Field(
+        default=14,
+        ge=0,
+        validation_alias=AliasChoices("CONTENT_PACKAGE_BASE_CREDIT_COST"),
+    )
+    pricing_base_credit_cost: int = Field(default=6, ge=0, validation_alias=AliasChoices("PRICING_BASE_CREDIT_COST"))
+    operations_queue_backend: Literal["in_memory", "redis"] = Field(
+        default="in_memory",
+        validation_alias=AliasChoices("OPERATIONS_QUEUE_BACKEND"),
+    )
+    operations_queue_name: str = Field(
+        default="fitfabrica:workflow-queue",
+        validation_alias=AliasChoices("OPERATIONS_QUEUE_NAME"),
+    )
+    operations_worker_name: str = Field(
+        default="portable-worker",
+        validation_alias=AliasChoices("OPERATIONS_WORKER_NAME"),
+    )
+    operations_worker_poll_interval_seconds: float = Field(
+        default=1.0,
+        gt=0,
+        validation_alias=AliasChoices("OPERATIONS_WORKER_POLL_INTERVAL_SECONDS"),
+    )
+    allow_unsafe_try_on_vertex_fallback_in_production: bool = Field(
+        default=False,
+        validation_alias=AliasChoices("ALLOW_UNSAFE_TRY_ON_VERTEX_FALLBACK_IN_PRODUCTION"),
+    )
 
     # Processing lease / reclaim safety
     processing_lease_duration_seconds: int = 300
@@ -239,7 +356,7 @@ class Settings(BaseSettings):
     @classmethod
     def _project_required(cls, value: str) -> str:
         if not value:
-            raise ValueError("GCP project id must be provided")
+            raise ValueError("project id must be provided")
         return value
 
     @field_validator("admin_chat_ids", mode="before")
@@ -304,19 +421,61 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def _validate_try_on_storage_settings(self) -> "Settings":
-        """Validate Try-On storage adapter settings before app startup."""
-        bucket_name = (self.try_on_gcs_bucket_name or "").strip()
+        """Validate Try-On repository settings before app startup."""
         firestore_collection = self.try_on_firestore_collection.strip()
-        upload_prefix = self.try_on_gcs_upload_prefix.strip("/")
 
-        if self.try_on_file_storage_backend == "gcs" and not bucket_name:
-            raise ValueError("try_on_gcs_bucket_name is required when try_on_file_storage_backend is gcs")
         if self.try_on_job_repository_backend == "firestore" and not firestore_collection:
             raise ValueError(
                 "try_on_firestore_collection is required when try_on_job_repository_backend is firestore"
             )
-        if not upload_prefix:
-            raise ValueError("try_on_gcs_upload_prefix must contain at least one path segment")
+        return self
+
+    @model_validator(mode="after")
+    def _validate_portable_foundation_settings(self) -> "Settings":
+        """Validate portable infrastructure config without forcing local bootstrap credentials."""
+        object_storage_bucket_name = (self.object_storage_bucket_name or "").strip()
+        redis_url = (self.redis_url or "").strip()
+        qdrant_url = (self.qdrant_url or "").strip()
+        vertex_project = (self.vertex_project or "").strip()
+
+        if self.object_storage_backend == "s3" and not object_storage_bucket_name:
+            raise ValueError("object_storage_bucket_name is required when object_storage_backend is s3")
+        if self.try_on_generation_backend == "vertex_virtual_try_on" and not vertex_project:
+            raise ValueError("vertex_project is required when try_on_generation_backend is vertex_virtual_try_on")
+        if self.redis_url is not None and not redis_url:
+            raise ValueError("redis_url must not be blank when provided")
+        if self.qdrant_url is not None and not qdrant_url:
+            raise ValueError("qdrant_url must not be blank when provided")
+        return self
+
+    @model_validator(mode="after")
+    def _validate_try_on_activation_settings(self) -> "Settings":
+        """Guard the real Vertex Try-On rollout behind explicit activation settings."""
+        if self.try_on_generation_backend == "vertex_virtual_try_on" and not self.enable_real_try_on_generation:
+            raise ValueError(
+                "enable_real_try_on_generation must be true when try_on_generation_backend is vertex_virtual_try_on"
+            )
+        if self.enable_real_try_on_generation and self.try_on_generation_backend != "vertex_virtual_try_on":
+            raise ValueError(
+                "try_on_generation_backend must be vertex_virtual_try_on when enable_real_try_on_generation is true"
+            )
+        if not self.enable_real_try_on_generation:
+            return self
+
+        postgres_dsn = (self.postgres_dsn or "").strip()
+        redis_url = (self.redis_url or "").strip()
+        vertex_project = (self.vertex_project or "").strip()
+
+        if self.object_storage_backend != "s3":
+            raise ValueError("object_storage_backend must be s3 when enable_real_try_on_generation is true")
+        if not postgres_dsn:
+            raise ValueError("postgres_dsn is required when enable_real_try_on_generation is true")
+        if self.operations_queue_backend != "redis":
+            raise ValueError("operations_queue_backend must be redis when enable_real_try_on_generation is true")
+        if not redis_url:
+            raise ValueError("redis_url is required when enable_real_try_on_generation is true")
+        if not vertex_project:
+            raise ValueError("vertex_project is required when enable_real_try_on_generation is true")
         return self
 
     @field_validator("crm_provider")
@@ -339,16 +498,16 @@ class Settings(BaseSettings):
     @classmethod
     def _normalize_messaging_provider(cls, value: str) -> str:
         normalized = (value or "none").strip().lower()
-        if normalized not in {"telegram", "none"}:
-            raise ValueError("MESSAGING_PROVIDER must be one of: telegram, none")
+        if normalized != "none":
+            raise ValueError("MESSAGING_PROVIDER must be one of: none")
         return normalized
 
     @field_validator("rate_limit_backend")
     @classmethod
     def _normalize_rate_limit_backend(cls, value: str) -> str:
-        normalized = (value or "firestore").strip().lower()
-        if normalized not in {"firestore", "inmemory"}:
-            raise ValueError("RATE_LIMIT_BACKEND must be one of: firestore, inmemory")
+        normalized = (value or "redis").strip().lower()
+        if normalized not in {"redis", "inmemory"}:
+            raise ValueError("RATE_LIMIT_BACKEND must be one of: redis, inmemory")
         return normalized
 
     @field_validator("rate_limit_fail_mode")
@@ -397,14 +556,6 @@ class Settings(BaseSettings):
         return int(value)
 
     @property
-    def telegram(self) -> TelegramSettings:
-        return TelegramSettings(
-            bot_token=self.telegram_bot_token,
-            api_base=self.telegram_api_base,
-            webhook_secret=self.telegram_webhook_secret,
-        )
-
-    @property
     def llm(self) -> LLMSettings:
         return LLMSettings(
             provider=self.llm_provider,
@@ -433,6 +584,24 @@ def validate_settings(settings: Settings) -> None:
     if settings.llm.provider in {"vertex", "gemini_structured"}:
         if not settings.llm.vertex_project:
             missing.append("VERTEX_PROJECT (required when LLM_PROVIDER is vertex or gemini_structured)")
+
+    if settings.try_on_generation_backend == "vertex_virtual_try_on" and not settings.vertex_project:
+        missing.append("VERTEX_PROJECT (required when TRY_ON_GENERATION_BACKEND=vertex_virtual_try_on)")
+
+    if settings.try_on_generation_backend == "vertex_virtual_try_on" and not settings.enable_real_try_on_generation:
+        missing.append(
+            "ENABLE_REAL_TRY_ON_GENERATION=true (required when TRY_ON_GENERATION_BACKEND=vertex_virtual_try_on)"
+        )
+
+    if settings.enable_real_try_on_generation:
+        if settings.object_storage_backend != "s3":
+            missing.append("OBJECT_STORAGE_BACKEND=s3 (required when ENABLE_REAL_TRY_ON_GENERATION=true)")
+        if not (settings.postgres_dsn or "").strip():
+            missing.append("POSTGRES_DSN (required when ENABLE_REAL_TRY_ON_GENERATION=true)")
+        if settings.operations_queue_backend != "redis":
+            missing.append("OPERATIONS_QUEUE_BACKEND=redis (required when ENABLE_REAL_TRY_ON_GENERATION=true)")
+        if not (settings.redis_url or "").strip():
+            missing.append("REDIS_URL (required when ENABLE_REAL_TRY_ON_GENERATION=true)")
 
     if settings.llm.provider == "vertex" and not settings.llm.vertex_agent_resource:
         missing.append("VERTEX_AGENT_RESOURCE (required when LLM_PROVIDER=vertex)")
@@ -472,6 +641,18 @@ def validate_settings(settings: Settings) -> None:
             "RATE_LIMIT_FAIL_MODE=open is not allowed in production-like environments. "
             "Set RATE_LIMIT_FAIL_MODE=closed or explicitly set "
             "ALLOW_UNSAFE_RATE_LIMIT_FAIL_OPEN_IN_PRODUCTION=true to bypass this startup guard."
+        )
+
+    if (
+        _is_production_like_environment(settings.environment)
+        and settings.enable_real_try_on_generation
+        and settings.try_on_vertex_failure_fallback_backend != "none"
+        and not settings.allow_unsafe_try_on_vertex_fallback_in_production
+    ):
+        missing.append(
+            "TRY_ON_VERTEX_FAILURE_FALLBACK_BACKEND is not allowed in production-like environments when "
+            "ENABLE_REAL_TRY_ON_GENERATION=true. Set TRY_ON_VERTEX_FAILURE_FALLBACK_BACKEND=none or explicitly set "
+            "ALLOW_UNSAFE_TRY_ON_VERTEX_FALLBACK_IN_PRODUCTION=true to bypass this startup guard."
         )
 
     if missing:

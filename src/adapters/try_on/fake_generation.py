@@ -2,11 +2,13 @@
 from __future__ import annotations
 
 from src.domain.try_on import (
+    TryOnGenerationMode,
     TryOnInputMetadata,
     TryOnQualityCheck,
     TryOnQualityReport,
     TryOnResult,
     TryOnResultImage,
+    TryOnStoredInput,
     TryOnWorkflowType,
 )
 from src.use_cases.try_on.ports import TryOnGenerationPort
@@ -15,7 +17,15 @@ from src.use_cases.try_on.ports import TryOnGenerationPort
 class FakeTryOnGenerationAdapter(TryOnGenerationPort):
     """Return a deterministic placeholder result behind the generation port."""
 
-    async def generate(self, *, job_id: str, input_metadata: list[TryOnInputMetadata]) -> TryOnResult:
+    generation_mode = TryOnGenerationMode.SANDBOX_FAKE
+
+    async def generate(
+        self,
+        *,
+        job_id: str,
+        input_metadata: list[TryOnInputMetadata],
+        stored_inputs: list[TryOnStoredInput],
+    ) -> TryOnResult:
         """Build the sandbox result without calling real AI generation infrastructure."""
         return TryOnResult(
             job_id=job_id,

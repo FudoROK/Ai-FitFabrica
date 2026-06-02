@@ -69,7 +69,7 @@ src/
 │   │   ├── knowledge.py       # Контракты для базы знаний.
 │   │   ├── messaging.py       # Контракты для обмена сообщениями.
 │   │   ├── persistence.py     # Контракты для сохранения данных.
-│   │   ├── primary_agent_output_contract.py # Контракт вывода основного агента.
+│   │   ├── dialog_reply_output_contract.py # Контракт вывода backend reply runtime.
 │   │   └── __init__.py
 │   ├── crm/                   # Модели и логика, связанные с CRM в домене.
 │   │   ├── generic/           # Общие/универсальные модели CRM.
@@ -98,10 +98,8 @@ src/
 │   ├── payloads.py            # Определения моделей данных для запросов и ответов (DTO).
 │   ├── policies.py            # Политики безопасности и авторизации.
 │   ├── pubsub_pipeline.py     # Обработчик пайплайна Pub/Sub.
-│   ├── pubsub_routes.py       # Маршруты для обработки сообщений Pub/Sub.
 │   ├── runtime_dependencies.py # Конфигурация зависимостей времени выполнения.
 │   ├── status_routes.py       # Маршруты для проверки статуса приложения.
-│   └── telegram_webhook_routes.py # Маршруты для вебхуков Telegram.
 ├── identity_core/             # Ядро системы идентификации.
 │   ├── __init__.py
 │   ├── contracts/             # Контракты для взаимодействия с сервисами идентификации.
@@ -440,7 +438,7 @@ src/
 *   **`persistence.py`**:
     *   **Назначение**: Контракт для общего механизма сохранения данных (например, `IRepository` с методами `get`, `save`).
     *   **Что в нем**: Общие интерфейсы для репозиториев.
-*   **`primary_agent_output_contract.py`**:
+*   **`dialog_reply_output_contract.py`**:
     *   **Назначение**: Контракт, описывающий ожидаемую структуру вывода от основного агента.
     *   **Что в нем**: Модели Pydantic для вывода основного агента.
 *   **`crm/`**:
@@ -512,7 +510,6 @@ src/
 *   **`pubsub_pipeline.py`**:
     *   **Назначение**: Обработчик для основного пайплайна, инициируемого сообщениями Google Pub/Sub.
     *   **Что в нем**: Функции, которые принимают сообщение Pub/Sub, нормализуют его и передают в use cases.
-*   **`pubsub_routes.py`**:
     *   **Назначение**: Определяет маршруты или функции-обработчики для сообщений, поступающих через Google Pub/Sub.
     *   **Что в нем**: Функции, декорированные для обработки конкретных тем Pub/Sub.
 *   **`runtime_dependencies.py`**:
@@ -521,7 +518,6 @@ src/
 *   **`status_routes.py`**:
     *   **Назначение**: Маршруты для проверки работоспособности.
     *   **Что в нем**: Простые GET-маршруты, возвращающие "OK" или информацию о состоянии системы.
-*   **`telegram_webhook_routes.py`**:
     *   **Назначение**: Маршруты для обработки вебхуков от Telegram.
     *   **Что в нем**: FastAPI-маршруты, принимающие POST-запросы от Telegram Bot API.
 
@@ -1001,3 +997,149 @@ src/
 
 *   **Назначение**: Общие вспомогательные утилиты и функции.
 *   **Что в нем**: Файлы с общими функциями.
+
+## Stage 1 Portable Foundation Additions
+
+- `src/adapters/database/sql` - SQLAlchemy base, engine, session factory, models, health probes, and Alembic metadata target.
+- `src/adapters/cache` - Redis client bootstrap for portable runtime coordination.
+- `src/adapters/storage` - neutral object storage contract plus in-memory and S3-compatible adapters.
+- `src/adapters/vector` - Qdrant client bootstrap and deterministic collection naming helpers.
+- `src/services/runtime/portable_infrastructure.py` - cached runtime bundle for SQL, Redis, object storage, and Qdrant handles.
+
+## Stage 2 Identity Core Additions
+
+- `src/adapters/database/sql/identity_models.py` - SQLAlchemy tables for canonical person, lead, channel identity, binding, and audit records.
+- `src/adapters/database/sql/identity_repositories.py` - SQL implementations of the identity-core repository protocols.
+- `src/adapters/database/sql/identity_audit.py` - SQL audit entry and recorder primitives for runtime identity resolution.
+- `src/entrypoints/runtime_dependencies.py` - identity repository bundle selection that prefers SQL when portable infrastructure is configured.
+
+## Stage 4 Vector Foundation Additions
+
+- `src/domain/vector_search.py` - typed vector namespaces, search queries, payload filters, and similarity-hit models.
+- `src/adapters/vector/namespaces.py` - approved vector namespace specs and collection settings.
+- `src/adapters/vector/qdrant_bootstrapper.py` - collection bootstrap behavior for missing Qdrant namespaces.
+- `src/adapters/vector/qdrant_filters.py` - typed payload-filter mapping for Qdrant searches.
+- `src/adapters/vector/qdrant_retriever.py` - the first reusable vector upsert/search adapter for garments and products.
+
+## Stage 5 Provider Abstraction Additions
+
+- `src/domain/provider_models.py` - typed backend-owned models for reasoning, embeddings, image generation, and image editing.
+- `src/domain/provider_ports.py` - provider-neutral ports used by backend runtime wiring.
+- `src/llm/provider_runtime.py` - central runtime bundle that selects active reasoning and agent adapters from settings.
+- `src/adapters/ai/vertex_virtual_try_on_client.py` - dedicated Google GenAI wrapper for the Vertex Virtual Try-On API.
+- `src/adapters/try_on/vertex_virtual_try_on_generation.py` - Try-On generation adapter that loads stored inputs, calls Vertex Virtual Try-On, and persists returned provider bytes.
+- `src/adapters/try_on/deterministic_quality_verifier.py` - backend-owned Try-On quality-verifier adapter that runs after generation and before result exposure.
+- `src/adapters/try_on/deterministic_repair_adapter.py` - backend-owned Try-On repair adapter that creates a repaired artifact variant before re-verification.
+- `src/adapters/try_on/model_backed_quality_verifier.py` - structured provider-backed quality-verifier adapter that turns backend verification facts into `pass / repair_recommended / reject` decisions.
+- `src/adapters/try_on/provider_repair_adapter.py` - provider-runtime-backed Try-On repair adapter that performs local image-editing correction and persists a repaired artifact variant.
+- `src/adapters/ai` - deterministic embedding and image stub adapters used for portable backend wiring.
+- `src/entrypoints/runtime_dependencies.py` - cached provider runtime wiring exposed through the composition root.
+
+## Stage 6 Try-On Rebase Additions
+
+- `src/adapters/database/sql/try_on_models.py` - SQLAlchemy tables for Try-On job roots, stored inputs, status events, cost events, results, and errors.
+- `src/adapters/database/sql/try_on_serialization.py` - focused mappers between Try-On SQL rows and the domain aggregate.
+- `src/adapters/database/sql/try_on_repositories.py` - SQL repository implementation for the Try-On aggregate.
+- `src/adapters/try_on/provider_generation.py` - provider-runtime-backed Try-On generation adapter that persists result artifacts through portable object storage.
+- `src/entrypoints/runtime_dependencies.py` - cached Try-On runtime bundle that prefers SQL persistence when portable SQL exists.
+- `src/entrypoints/try_on_routes.py` - thin FastAPI routes that consume the Try-On composition root.
+
+## Stage 7 Similar Search Foundation Additions
+
+- `src/domain/similar_search.py` - typed backend-owned models for similar-search requests, catalog hydration, query profiles, and ranked results.
+- `src/use_cases/similar_search/ports.py` - workflow-facing contracts for embeddings, vector retrieval, and catalog truth.
+- `src/use_cases/similar_search/query_preparation.py` - deterministic query-profile builder for retrieval input.
+- `src/use_cases/similar_search/ranking.py` - backend-owned ranking and cheaper-alternative selection logic.
+- `src/use_cases/similar_search/workflow_service.py` - orchestration for embeddings, Qdrant retrieval, PostgreSQL hydration, and structured result assembly.
+- `src/adapters/database/sql/catalog_models.py` - SQLAlchemy tables for products, marketplace offers, and price snapshots.
+- `src/adapters/database/sql/catalog_serialization.py` - row-to-domain mapping helpers for catalog hydration.
+- `src/adapters/database/sql/catalog_repositories.py` - SQL repository implementation for similar-search catalog access.
+- `src/entrypoints/similar_search_routes.py` - thin FastAPI route surface for backend-owned similar search.
+
+## Stage 8 Product-Card Workflow Additions
+
+- `src/domain/product_card.py` - typed backend-owned models for product-card requests, drafts, jobs, and versions.
+- `src/use_cases/product_card/ports.py` - workflow-facing contracts for storage, persistence, and generation adapters.
+- `src/use_cases/product_card/workflow_service.py` - orchestration for source-asset storage, draft generation, and persistence.
+- `src/use_cases/product_card/storage_errors.py` - backend-owned storage error boundary for product-card uploads.
+- `src/adapters/product_card/file_storage.py` - object-storage-backed source asset adapter for product-card workflows.
+- `src/adapters/product_card/fake_generation.py` - deterministic fake draft generator for product-card workflow tests and safe defaults.
+- `src/adapters/product_card/in_memory_repository.py` - in-memory persistence fallback when SQL is not configured.
+- `src/adapters/database/sql/product_card_models.py` - SQLAlchemy tables for jobs, source assets, versions, and quality notes.
+- `src/adapters/database/sql/product_card_serialization.py` - row-to-domain mapping helpers for product-card persistence.
+- `src/adapters/database/sql/product_card_repositories.py` - SQL repository implementation for the product-card workflow.
+- `src/entrypoints/product_card_routes.py` - thin FastAPI route surface for backend-owned product-card creation.
+
+## Stage 8 Content-Package Workflow Additions
+
+- `src/domain/content_package.py` - typed backend-owned models for content-package requests, assets, jobs, and versions.
+- `src/use_cases/content_package/ports.py` - workflow-facing contracts for generation, artifact storage, and persistence adapters.
+- `src/use_cases/content_package/workflow_service.py` - orchestration for content-package generation, artifact storage, and persistence.
+- `src/adapters/content_package/artifact_storage.py` - object-storage-backed adapter for generated package artifacts.
+- `src/adapters/content_package/fake_generation.py` - deterministic fake generator for content-package assets.
+- `src/adapters/content_package/in_memory_repository.py` - in-memory persistence fallback when SQL is not configured.
+- `src/adapters/database/sql/content_package_models.py` - SQLAlchemy tables for content-package jobs, versions, and artifact references.
+- `src/adapters/database/sql/content_package_serialization.py` - row-to-domain mapping helpers for content-package persistence.
+- `src/adapters/database/sql/content_package_repositories.py` - SQL repository implementation for the content-package workflow.
+- `src/entrypoints/content_package_routes.py` - thin FastAPI route surface for backend-owned content-package creation.
+
+## Stage 8 Pricing Workflow Additions
+
+- `src/domain/pricing.py` - typed backend-owned models for pricing requests, comparables, jobs, and recommendations.
+- `src/use_cases/pricing/ports.py` - workflow-facing contracts and pricing brief model for recommendation orchestration.
+- `src/use_cases/pricing/query_preparation.py` - deterministic preparation of pricing briefs from backend-owned input.
+- `src/use_cases/pricing/ranking.py` - backend-owned recommendation logic and market-band calculation.
+- `src/use_cases/pricing/workflow_service.py` - orchestration for comparable lookup, recommendation, and persistence.
+- `src/adapters/pricing/catalog_comparison_source.py` - catalog-backed comparable source using existing marketplace offer truth.
+- `src/adapters/pricing/in_memory_repository.py` - in-memory persistence fallback when SQL is not configured.
+- `src/adapters/pricing/in_memory_comparison_source.py` - in-memory comparable source fallback when SQL catalog truth is unavailable.
+- `src/adapters/database/sql/pricing_models.py` - SQLAlchemy tables for pricing jobs and recommendations.
+- `src/adapters/database/sql/pricing_serialization.py` - row-to-domain mapping helpers for pricing persistence.
+- `src/adapters/database/sql/pricing_repositories.py` - SQL repository implementation for the pricing workflow.
+- `src/domain/billing.py` - typed domain models for credit accounts, ledger events, and workflow charge requests.
+- `src/domain/operations.py` - typed domain models for queue jobs, worker leases, worker cycles, and operations health snapshots.
+- `src/use_cases/billing/policy.py` - backend-owned pricing and free retry/repair policy resolution.
+- `src/use_cases/billing/service.py` - orchestration layer for charges, refunds, adjustments, balances, and ledger reads.
+- `src/use_cases/operations/dispatch_service.py` - backend-owned enqueue orchestration for portable workflow dispatch.
+- `src/use_cases/operations/lease_service.py` - reusable worker lease acquire/renew/release logic.
+- `src/use_cases/operations/health_service.py` - queue and worker readiness aggregation.
+- `src/adapters/database/sql/billing_models.py` - SQLAlchemy tables for credit accounts, credit ledger events, and workflow pricing rules.
+- `src/adapters/database/sql/billing_repositories.py` - durable SQL repository for balances and idempotent ledger writes.
+- `src/adapters/database/sql/operations_models.py` - SQLAlchemy tables for durable queue jobs and worker leases.
+- `src/adapters/database/sql/operations_repositories.py` - durable SQL repository for queue jobs and leases.
+- `src/adapters/billing/in_memory_repository.py` - in-memory billing fallback used when portable SQL is unavailable.
+- `src/adapters/operations/in_memory_repository.py` - in-memory queue-job and lease fallback used when portable SQL is unavailable.
+- `src/adapters/queue/in_memory_queue.py` - local/test queue backend for workflow dispatch.
+- `src/adapters/queue/redis_queue.py` - Redis-backed queue backend for portable worker execution.
+- `src/entrypoints/credits_routes.py` - FastAPI routes for credit balances and ledger history.
+- `src/entrypoints/try_on_routes.py` - accepted-job Try-On route that dispatches worker execution for sandbox complete/failed modes.
+- `src/entrypoints/product_card_routes.py` - accepted-job product-card route that enqueues background execution through the worker contour.
+- `src/entrypoints/content_package_routes.py` - accepted-job content-package route that enqueues background execution through the worker contour.
+- `src/entrypoints/pricing_routes.py` - accepted-job pricing route that enqueues background execution through the worker contour.
+- `src/services/workers/worker_runtime.py` - portable worker loop for claiming queue jobs and recording outcomes.
+- `src/entrypoints/pricing_routes.py` - thin FastAPI route surface for backend-owned pricing recommendations.
+
+## Stage 11 FitFabrica Agent Topology Additions
+
+- `src/adk_agents/orchestrator_agent` - structured workflow-routing agent package.
+- `src/adk_agents/user_profile_agent` - structured B2C profile summarization agent package.
+- `src/adk_agents/business_profile_agent` - structured B2B profile summarization agent package.
+- `src/adk_agents/human_identity_agent` - structured human-preservation analysis agent package.
+- `src/adk_agents/garment_identity_agent` - structured garment-identity analysis agent package.
+- `src/adk_agents/material_texture_agent` - structured material and texture honesty agent package.
+- `src/adk_agents/try_on_agent` - structured Try-On instruction agent package.
+- `src/adk_agents/quality_verifier_agent` - structured quality-verdict interpretation agent package.
+- `src/adk_agents/repair_agent` - structured repair-instruction agent package.
+- `src/adk_agents/fashion_stylist_agent` - structured stylist-note agent package.
+- `src/adk_agents/marketplace_agent` - structured marketplace retrieval-guidance agent package.
+- `src/adk_agents/trend_agent` - structured trend-interpretation agent package.
+- `src/adk_agents/pricing_agent` - structured pricing-explanation agent package.
+- `src/adk_agents/product_card_agent` - structured product-card content drafting agent package.
+- `src/adk_agents/cost_credits_agent` - structured credits-explanation agent package.
+
+Support-only and compatibility contours:
+
+- `src/adk_agents/daily_memory_agent` and `src/adk_agents/rolling_memory_agent` remain infrastructure-support agents.
+- `src/runtime_agents/dialog_reply` is the canonical backend reply-runtime contour.
+- `src/runtime_agents/dialog_reply` is the canonical backend reply-runtime contour.
+- `src/adk_agents/daily_memory_agent_tmp20260425_024853` is not part of the active runtime surface.

@@ -2,6 +2,9 @@
 .env
 .env.*
 !.env.example
+!.env.portable-staging.example
+!.env.portable-remote-staging.example
+!.env.try-on-staging.example
 .idea/
 __pycache__/
 *.pyc
@@ -13,6 +16,7 @@ node_modules/
 apps/web/.next/
 apps/web/out/
 apps/web/tsconfig.tsbuildinfo
+.firebase/
 .playwright-mcp/
 .worktrees/
 
@@ -28,6 +32,8 @@ build/
 
 # secrets (never commit)
 .env
+.env.local
+.env.*.local
 service-account.json
 secrets/
 *.pem

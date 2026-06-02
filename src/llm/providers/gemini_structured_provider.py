@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 import importlib
 import importlib.util
 import json
@@ -9,6 +10,7 @@ from typing import Any, Optional
 
 from src.llm.vertex.vertex_schema_builder import build_vertex_response_schema
 from src.llm.vertex.vertex_schema_validator import validate_agent_output
+from src.llm.reply_task_contract import REPLY_RUNTIME_TASKS
 
 from ...settings import load_settings
 from ..vertex.vertex_errors import build_error_result, classify_provider_exception
@@ -16,10 +18,21 @@ from ..core.request import LLMRequest
 from ..core.result import LLMResult
 
 logger = logging.getLogger(__name__)
+_REPLY_RUNTIME_TASKS = REPLY_RUNTIME_TASKS
 
 _VERTEXAI_SPEC = importlib.util.find_spec("vertexai")
 vertexai = importlib.import_module("vertexai") if _VERTEXAI_SPEC is not None else None
 generative_models = importlib.import_module("vertexai.generative_models") if _VERTEXAI_SPEC is not None else None
+
+
+@dataclass(frozen=True)
+class _StructuredReasoningResult:
+    """Lightweight structured reasoning result returned by the Gemini provider."""
+
+    task: str
+    payload: dict[str, Any]
+    provider: str
+    model: str
 
 
 class GeminiStructuredProvider:
@@ -53,6 +66,28 @@ class GeminiStructuredProvider:
             error_type="unknown",
             message="Unknown Gemini structured generation failure",
             retriable=False,
+        )
+
+    def generate_structured(self, request: Any) -> _StructuredReasoningResult:
+        """Run a backend-owned structured reasoning request through the Gemini JSON path."""
+        llm_result = self.generate(
+            LLMRequest(
+                task=request.task,
+                input=request.prompt,
+                structured_output={
+                    "name": request.task,
+                    "schema": request.response_schema,
+                },
+            )
+        )
+        if llm_result.status != "ok" or not isinstance(llm_result.structured_data, dict):
+            message = llm_result.error.message_redacted if llm_result.error is not None else "structured reasoning failed"
+            raise RuntimeError(message)
+        return _StructuredReasoningResult(
+            task=request.task,
+            payload=llm_result.structured_data,
+            provider=llm_result.provider or self.provider_name,
+            model=llm_result.model or self.model,
         )
 
     def _generate_once(self, *, request: LLMRequest, started: float, retry_count: int) -> LLMResult:
@@ -223,7 +258,7 @@ class GeminiStructuredProvider:
         )
 
     def _validate_payload_for_task(self, *, request: LLMRequest, payload: dict[str, Any]) -> dict[str, Any]:
-        if request.task == "primary_agent_reply_task":
+        if request.task in _REPLY_RUNTIME_TASKS:
             ok, reason = validate_agent_output(payload)
             if not ok:
                 raise ValueError(f"invalid_output: {reason}")
@@ -259,7 +294,7 @@ class GeminiStructuredProvider:
 
     def _build_candidate_matcher(self, contract_kind: str):
         normalized = (contract_kind or "").strip()
-        if normalized == "primary_agent_reply_task":
+        if normalized in _REPLY_RUNTIME_TASKS:
             return self._is_reply_payload
         if normalized == "memory_daily_output":
             return self._is_memory_payload
@@ -357,7 +392,7 @@ class GeminiStructuredProvider:
                 "error_result": None,
             }
 
-        if request.task == "primary_agent_reply_task":
+        if request.task in _REPLY_RUNTIME_TASKS:
             return {
                 "response_schema": build_vertex_response_schema(),
                 "contract_kind": self._resolve_contract_kind(request, structured_output),

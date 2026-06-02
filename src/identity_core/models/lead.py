@@ -11,6 +11,7 @@ from .identity_core_primitives import JsonMap, LeadLifecycleState
 @dataclass(slots=True, frozen=True)
 class LeadRecord:
     lead_id: UUID
+    person_id: UUID
     lifecycle_state: LeadLifecycleState
     display_name: str | None
     metadata: JsonMap

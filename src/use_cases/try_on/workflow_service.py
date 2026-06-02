@@ -12,6 +12,7 @@ from src.domain.try_on import (
     TryOnCostEvent,
     TryOnError,
     TryOnErrorCode,
+    TryOnGenerationMode,
     TryOnInputMetadata,
     TryOnJob,
     TryOnJobStatus,
@@ -23,7 +24,9 @@ from src.domain.try_on import (
     TryOnWorkflowType,
     utc_now,
 )
+from src.domain.billing import BillingOwnerType
 from src.use_cases.try_on.ports import TryOnFileStoragePort, TryOnGenerationPort, TryOnJobRepositoryPort
+from src.use_cases.try_on.ports import TryOnQualityVerifierPort, TryOnRepairPort, TryOnStylistPort
 
 
 @dataclass(frozen=True)
@@ -60,20 +63,31 @@ class TryOnWorkflowService:
         generator: TryOnGenerationPort,
         file_storage: TryOnFileStoragePort,
         validation_config: TryOnUploadValidationConfig,
+        quality_verifier: TryOnQualityVerifierPort | None = None,
+        repair_adapter: TryOnRepairPort | None = None,
+        stylist_adapter: TryOnStylistPort | None = None,
+        billing_service=None,
+        billing_owner_id: str = "public-person",
+        billing_owner_type: BillingOwnerType = BillingOwnerType.PERSON,
     ) -> None:
         """Create the workflow service with explicit ports and validation rules."""
         self._repository = repository
         self._generator = generator
+        self._quality_verifier = quality_verifier
+        self._repair_adapter = repair_adapter
+        self._stylist_adapter = stylist_adapter
         self._file_storage = file_storage
         self._validation = validation_config
+        self._billing_service = billing_service
+        self._billing_owner_id = billing_owner_id
+        self._billing_owner_type = billing_owner_type
 
     async def create_job(
         self,
         human_photo: UploadFile | None,
         garment_photo: UploadFile | None,
-        lifecycle_mode: TryOnSandboxLifecycleMode = TryOnSandboxLifecycleMode.COMPLETE,
     ) -> TryOnJob:
-        """Validate uploads, complete the sandbox generation workflow, and save the job."""
+        """Validate uploads, persist an accepted job, and return it for background execution."""
         missing_fields = self._missing_fields(human_photo, garment_photo)
         if missing_fields:
             raise self._validation_error(
@@ -82,10 +96,6 @@ class TryOnWorkflowService:
                 {"fields": missing_fields},
             )
 
-        status_history = [
-            self._status_event(TryOnJobStatus.ACCEPTED, "Job accepted."),
-            self._status_event(TryOnJobStatus.VALIDATING_INPUTS, "Validating input files."),
-        ]
         validated_uploads = [
             await self._validate_upload(TryOnUploadRole.HUMAN_PHOTO, human_photo),
             await self._validate_upload(TryOnUploadRole.GARMENT_PHOTO, garment_photo),
@@ -103,57 +113,150 @@ class TryOnWorkflowService:
             )
             for validated in validated_uploads
         ]
-
-        status_history.append(self._status_event(TryOnJobStatus.GENERATING, "Generating sandbox result."))
-        if lifecycle_mode == TryOnSandboxLifecycleMode.PENDING:
-            job = self._build_job(
-                job_id=job_id,
-                status=TryOnJobStatus.GENERATING,
-                input_metadata=input_metadata,
-                stored_inputs=stored_inputs,
-                status_history=status_history,
-                result=None,
-                error=None,
-            )
-            await self._repository.save(job)
-            return job
-
-        if lifecycle_mode == TryOnSandboxLifecycleMode.FAILED:
-            error = TryOnError(
-                code=TryOnErrorCode.JOB_FAILED,
-                message="Try-On sandbox job failed before result generation.",
-                details={"job_id": job_id, "stage": "sandbox_generation"},
-            )
-            status_history.append(self._status_event(TryOnJobStatus.FAILED, "Try-On sandbox job failed."))
-            job = self._build_job(
-                job_id=job_id,
-                status=TryOnJobStatus.FAILED,
-                input_metadata=input_metadata,
-                stored_inputs=stored_inputs,
-                status_history=status_history,
-                result=None,
-                error=error,
-            )
-            await self._repository.save(job)
-            return job
-
-        result = await self._generator.generate(job_id=job_id, input_metadata=input_metadata)
-        status_history.append(
-            self._status_event(TryOnJobStatus.QUALITY_CHECKING, "Checking generated result quality.")
-        )
-        status_history.append(self._status_event(TryOnJobStatus.COMPLETED, "Try-On sandbox job completed."))
-
         job = self._build_job(
             job_id=job_id,
-            status=TryOnJobStatus.COMPLETED,
+            status=TryOnJobStatus.ACCEPTED,
             input_metadata=input_metadata,
             stored_inputs=stored_inputs,
-            status_history=status_history,
-            result=result,
+            status_history=[self._status_event(TryOnJobStatus.ACCEPTED, "Job accepted.")],
+            result=None,
             error=None,
         )
         await self._repository.save(job)
         return job
+
+    async def execute_job(
+        self,
+        *,
+        job_id: str,
+        lifecycle_mode: TryOnSandboxLifecycleMode = TryOnSandboxLifecycleMode.COMPLETE,
+    ) -> TryOnJob:
+        """Execute one persisted Try-On job through the background worker path."""
+        lifecycle_mode = TryOnSandboxLifecycleMode(lifecycle_mode)
+        job = await self._repository.get(job_id)
+        if job is None:
+            raise LookupError(f"Unknown Try-On job: {job_id}")
+
+        status_history = list(job.status_history)
+        cost_events = list(job.cost_events)
+        now = utc_now()
+
+        if lifecycle_mode == TryOnSandboxLifecycleMode.PENDING:
+            pending_job = job.model_copy(
+                update={
+                    "status": TryOnJobStatus.ACCEPTED,
+                    "updated_at": now,
+                    "status_history": status_history,
+                    "cost_events": cost_events or [self._cost_event()],
+                    "result": None,
+                    "error": None,
+                }
+            )
+            await self._repository.save(pending_job)
+            return pending_job
+
+        status_history.append(self._status_event(TryOnJobStatus.GENERATING, "Generating sandbox result."))
+        if lifecycle_mode == TryOnSandboxLifecycleMode.FAILED:
+            status_history.append(self._status_event(TryOnJobStatus.FAILED, "Try-On sandbox job failed."))
+            failed_job = job.model_copy(
+                update={
+                    "status": TryOnJobStatus.FAILED,
+                    "updated_at": utc_now(),
+                    "status_history": status_history,
+                    "cost_events": cost_events or [self._cost_event()],
+                    "result": None,
+                    "error": TryOnError(
+                        code=TryOnErrorCode.JOB_FAILED,
+                        message="Try-On sandbox job failed before result generation.",
+                        details={"job_id": job_id, "stage": "sandbox_generation"},
+                    ),
+                }
+            )
+            await self._repository.save(failed_job)
+            return failed_job
+
+        result = await self._generator.generate(
+            job_id=job.job_id,
+            input_metadata=job.input_metadata,
+            stored_inputs=job.stored_inputs,
+        )
+        status_history.append(
+            self._status_event(TryOnJobStatus.QUALITY_CHECKING, "Checking generated result quality.")
+        )
+        verified_report = (
+            await self._quality_verifier.verify(
+                job_id=job.job_id,
+                generation_mode=getattr(self._generator, "generation_mode", job.generation_mode),
+                input_metadata=job.input_metadata,
+                stored_inputs=job.stored_inputs,
+                result=result,
+            )
+            if self._quality_verifier is not None
+            else result.quality_report
+        )
+        result = result.model_copy(update={"quality_report": verified_report})
+        if verified_report.verdict == "repair_recommended" and self._repair_adapter is not None:
+            status_history.append(self._status_event(TryOnJobStatus.REPAIRING, "Repairing generated Try-On result."))
+            result = await self._repair_adapter.repair(
+                job_id=job.job_id,
+                generation_mode=getattr(self._generator, "generation_mode", job.generation_mode),
+                stored_inputs=job.stored_inputs,
+                result=result,
+                quality_report=verified_report,
+            )
+            verified_report = (
+                await self._quality_verifier.verify(
+                    job_id=job.job_id,
+                    generation_mode=getattr(self._generator, "generation_mode", job.generation_mode),
+                    input_metadata=job.input_metadata,
+                    stored_inputs=job.stored_inputs,
+                    result=result,
+                )
+                if self._quality_verifier is not None
+                else result.quality_report
+            )
+            result = result.model_copy(update={"quality_report": verified_report})
+        if verified_report.verdict != "pass":
+            status_history.append(self._status_event(TryOnJobStatus.FAILED, "Try-On result rejected by quality verifier."))
+            failed_job = job.model_copy(
+                update={
+                    "status": TryOnJobStatus.FAILED,
+                    "updated_at": utc_now(),
+                    "status_history": status_history,
+                    "cost_events": [self._cost_event(estimated_units=1, charged_credits=0)],
+                    "result": None,
+                    "error": TryOnError(
+                        code=TryOnErrorCode.JOB_FAILED,
+                        message="Try-On result was rejected by the quality verifier.",
+                        details={"job_id": job_id, "stage": "quality_verifier", "verdict": verified_report.verdict},
+                    ),
+                }
+            )
+            await self._repository.save(failed_job)
+            return failed_job
+        if self._stylist_adapter is not None:
+            stylist_note = await self._stylist_adapter.generate_note(
+                job_id=job.job_id,
+                generation_mode=getattr(self._generator, "generation_mode", job.generation_mode),
+                input_metadata=job.input_metadata,
+                stored_inputs=job.stored_inputs,
+                result=result,
+            )
+            result = result.model_copy(update={"stylist_note": stylist_note})
+        status_history.append(self._status_event(TryOnJobStatus.COMPLETED, "Try-On sandbox job completed."))
+        charged_credits = await self._charge_completed_job(job_id=job.job_id)
+        completed_job = job.model_copy(
+            update={
+                "status": TryOnJobStatus.COMPLETED,
+                "updated_at": utc_now(),
+                "status_history": status_history,
+                "cost_events": [self._cost_event(estimated_units=1, charged_credits=charged_credits)],
+                "result": result,
+                "error": None,
+            }
+        )
+        await self._repository.save(completed_job)
+        return completed_job
 
     async def get_job(self, job_id: str) -> TryOnJob | None:
         """Return a saved Try-On job, or None when the repository has no match."""
@@ -168,30 +271,37 @@ class TryOnWorkflowService:
         status_history: list[TryOnStatusEvent],
         result: TryOnResult | None,
         error: TryOnError | None,
+        charged_credits: int = 0,
     ) -> TryOnJob:
         """Build a Try-On job with common sandbox cost bookkeeping."""
         now = utc_now()
-        estimated_units = 1 if status == TryOnJobStatus.COMPLETED else 0
         return TryOnJob(
             job_id=job_id,
             workflow_type=TryOnWorkflowType.TRY_ON,
+            generation_mode=getattr(self._generator, "generation_mode", TryOnGenerationMode.SANDBOX_FAKE),
             status=status,
             created_at=now,
             updated_at=now,
             input_metadata=input_metadata,
             stored_inputs=stored_inputs,
             status_history=status_history,
-            cost_events=[
-                TryOnCostEvent(
-                    event_type="try_on_sandbox_generation",
-                    estimated_units=estimated_units,
-                    charge_status=TryOnChargeStatus.NOT_CHARGED,
-                    charged_credits=0,
-                )
-            ],
+            cost_events=[self._cost_event(estimated_units=1 if status == TryOnJobStatus.COMPLETED else 0, charged_credits=charged_credits)],
             result=result,
             error=error,
         )
+
+    async def _charge_completed_job(self, *, job_id: str) -> int:
+        """Charge the completed Try-On job through the billing core when configured."""
+        if self._billing_service is None:
+            return 0
+        ledger_event = await self._billing_service.charge_workflow(
+            owner_id=self._billing_owner_id,
+            owner_type=self._billing_owner_type,
+            workflow_type="try_on",
+            workflow_reference=job_id,
+            stage_name="completed",
+        )
+        return max(0, -ledger_event.credits_delta)
 
     def _missing_fields(
         self,
@@ -261,13 +371,22 @@ class TryOnWorkflowService:
         """Build a status event with the canonical stage value."""
         stages = {
             TryOnJobStatus.ACCEPTED: "accepted",
-            TryOnJobStatus.VALIDATING_INPUTS: "input_validation",
             TryOnJobStatus.GENERATING: "sandbox_generation",
             TryOnJobStatus.QUALITY_CHECKING: "quality_check",
+            TryOnJobStatus.REPAIRING: "repair",
             TryOnJobStatus.COMPLETED: "completed",
             TryOnJobStatus.FAILED: "failed",
         }
         return TryOnStatusEvent(status=status, stage=stages[status], message=message)
+
+    def _cost_event(self, *, estimated_units: int = 0, charged_credits: int = 0) -> TryOnCostEvent:
+        """Build the canonical cost event for one Try-On sandbox generation."""
+        return TryOnCostEvent(
+            event_type="try_on_sandbox_generation",
+            estimated_units=estimated_units,
+            charge_status=TryOnChargeStatus.CHARGED if charged_credits > 0 else TryOnChargeStatus.NOT_CHARGED,
+            charged_credits=charged_credits,
+        )
 
     def _validation_error(
         self,

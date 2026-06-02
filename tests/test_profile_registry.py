@@ -8,7 +8,7 @@ from src.llm.profiles import MemoryProfile, ProfileRegistry, ReplyProfile
 def test_profile_registry_resolves_reply_profile():
     registry = ProfileRegistry()
 
-    profile = registry.get_profile(flow="primary_agent_reply_task")
+    profile = registry.get_profile(flow="dialog_reply_task")
 
     assert isinstance(profile, ReplyProfile)
 

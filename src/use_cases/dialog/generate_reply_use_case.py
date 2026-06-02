@@ -31,7 +31,7 @@ class GenerateReplyUseCase:
         logger.info(
             "LLM_CONTEXT_BUILT",
             extra={
-                "task": "sales_reply_task",
+                "task": "dialog_reply_task",
                 "channel": channel,
                 "lead_id": lead_id,
                 "user_text": text,
@@ -59,7 +59,7 @@ class GenerateReplyUseCase:
             },
         )
         result = await self.llm_service.run(
-            task="primary_agent_reply_task",
+            task="dialog_reply_task",
             payload={
                 "user_text": text,
                 "context": normalized_context,
@@ -88,7 +88,7 @@ class GenerateReplyUseCase:
             reply_meta = _extract_reply_meta(data, getattr(result, "provider_metadata", None))
             return result, reply_text, system_payload, reply_meta
 
-        reply_profile = self.profile_registry.get_profile(flow="primary_agent_reply_task")
+        reply_profile = self.profile_registry.get_profile(flow="dialog_reply_task")
         logger.info("reply_profile_registry_selected", extra={"profile": type(reply_profile).__name__})
         typed_output = reply_profile.parse(data)
         logger.info("reply_profile_extraction", extra={"status": "success"})

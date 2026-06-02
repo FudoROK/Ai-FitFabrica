@@ -3,13 +3,14 @@ from __future__ import annotations
 from copy import deepcopy
 from typing import Any
 
-from src.domain.contracts.primary_agent_output_contract import AgentOutput
+from src.domain.contracts.dialog_reply_output_contract import AgentOutput
 from src.llm.contract_kinds import (
     MEMORY_DAILY_OUTPUT_KIND,
     MEMORY_ROLLING_OUTPUT_KIND,
     REPLY_AGENT_OUTPUT_KIND,
     canonicalize_contract_kind,
 )
+from src.llm.reply_task_contract import CANONICAL_DIALOG_REPLY_TASK, normalize_reply_runtime_task
 from src.runtime_agents.memory_agent.contracts.daily import DailyMemoryContract
 from src.runtime_agents.memory_agent.contracts.rolling import RollingMemoryContract
 
@@ -153,8 +154,8 @@ def _coerce_to_vertex_schema(schema: dict[str, Any]) -> dict[str, Any]:
 
 
 def _default_contract_kind_for_task(task_name: str) -> str | None:
-    normalized = task_name.strip()
-    if normalized == "primary_agent_reply_task":
+    normalized = normalize_reply_runtime_task(task_name)
+    if normalized == CANONICAL_DIALOG_REPLY_TASK:
         return REPLY_AGENT_OUTPUT_KIND
     if normalized == "memory_daily_sync_task":
         return MEMORY_DAILY_OUTPUT_KIND

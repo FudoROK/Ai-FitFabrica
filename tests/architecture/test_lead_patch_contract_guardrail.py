@@ -4,7 +4,7 @@ from typing import Iterable
 
 from src.domain.extraction import CANONICAL_PATCH_KEYS, LEAD_PATCH_SUPPORTED_FIELDS
 from src.llm.vertex.vertex_schema_validator import AGENT_OUTPUT_SCHEMA
-from src.llm.tasks.primary_agent.profile_extract_task import LeadPatch, lead_profile_schema
+from src.llm.tasks.profile_extract_task import LeadPatch, lead_profile_schema
 
 
 def _as_sorted_tuple(fields: Iterable[str]) -> tuple[str, ...]:

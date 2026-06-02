@@ -11,7 +11,7 @@ if str(ROOT) not in sys.path:
 from src.settings import load_settings
 
 # Minimal defaults for modules that initialize services during import.
-os.environ.setdefault("TELEGRAM_BOT_TOKEN", "test-token")
+os.environ.setdefault("MESSAGING_PROVIDER", "none")
 os.environ.setdefault("GCP_PROJECT_ID", "test-project")
 os.environ.setdefault("PUBSUB_TOPIC_NAME", "test-topic")
 os.environ.setdefault("VERTEX_PROJECT", "test-project")

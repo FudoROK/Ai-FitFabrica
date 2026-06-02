@@ -30,11 +30,11 @@ def test_context_builder_uses_canonical_lead_id_parameter() -> None:
     assert 'lead_id = f"{safe_channel}:{safe_external_id}"' not in text
 
 
-def test_dialog_service_production_identity_authority_is_firestore() -> None:
+def test_dialog_service_no_longer_selects_production_identity_backend_directly() -> None:
     text = _read("src/services/dialog/dialog_service.py")
-    assert "FirestoreChannelIdentityRepository" in text
-    assert "FirestoreIdentityBindingRepository" in text
-    assert "FirestoreLeadIdentityRepository" in text
-    assert "PostgresChannelIdentityRepository" not in text
-    assert "PostgresIdentityBindingRepository" not in text
-    assert "PostgresLeadIdentityRepository" not in text
+    assert "FirestoreChannelIdentityRepository" not in text
+    assert "FirestoreIdentityBindingRepository" not in text
+    assert "FirestoreLeadIdentityRepository" not in text
+    assert "SqlChannelIdentityRepository" not in text
+    assert "SqlIdentityBindingRepository" not in text
+    assert "SqlLeadRepository" not in text

@@ -1,8 +1,8 @@
 """Manual smoke check for Try-On durable storage settings.
 
-Default mode is dry-run and never writes to GCS or Firestore. Live writes require
-both --live-write-check and --confirm-live-write, and must only be run after the
-human has approved real cloud activation.
+Default mode is dry-run and never writes to object storage or PostgreSQL. Live writes
+require both --live-write-check and --confirm-live-write, and must only be run after
+the human has approved real cloud activation.
 """
 from __future__ import annotations
 
@@ -37,13 +37,14 @@ def main(argv: list[str] | None = None) -> int:
     print("try_on_storage_smoke")
     print(f"dry_run={str(not args.live_write_check).lower()}")
     print(f"live_write_check={str(args.live_write_check).lower()}")
-    print(f"try_on_file_storage_backend={settings.try_on_file_storage_backend}")
+    print(f"object_storage_backend={settings.object_storage_backend}")
     print(f"try_on_job_repository_backend={settings.try_on_job_repository_backend}")
-    print(f"try_on_gcs_bucket_configured={str(settings.try_on_gcs_bucket_name is not None).lower()}")
+    print(f"object_storage_bucket_configured={str(settings.object_storage_bucket_name is not None).lower()}")
+    print(f"postgres_dsn_configured={str(settings.postgres_dsn is not None).lower()}")
     print(f"try_on_firestore_collection={settings.try_on_firestore_collection}")
 
     if not args.live_write_check:
-        print("No GCS or Firestore write was attempted.")
+        print("No object storage or PostgreSQL write was attempted.")
         return 0
 
     print("Live write check is intentionally not implemented in this activation gate.")

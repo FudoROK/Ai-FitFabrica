@@ -1,10 +1,10 @@
-"""FastAPI webhook service bootstrap."""
+"""FastAPI service bootstrap."""
 from __future__ import annotations
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .entrypoints.http_routes import router as http_router
+from .entrypoints.http_routes import build_http_router
 from .entrypoints.runtime_dependencies import (
     dialog_service,
     memory_summary_service,
@@ -28,11 +28,18 @@ def configure_cors(target_app: FastAPI, target_settings: Settings) -> None:
     )
 
 
-app = FastAPI(title="AI Assistant Skeleton Backend")
+def build_app(target_settings: Settings | None = None) -> FastAPI:
+    """Build the FastAPI app for one runtime settings profile."""
+    settings = target_settings or load_settings()
+    target_app = FastAPI(title="AI FitFabrica Backend")
+    target_app.state.settings = settings
+    configure_cors(target_app, settings)
+    target_app.include_router(build_http_router())
+    return target_app
+
+
 settings = load_settings()
-app.state.settings = settings
-configure_cors(app, settings)
-app.include_router(http_router)
+app = build_app(settings)
 
 
 # Backward-compatible test shims.

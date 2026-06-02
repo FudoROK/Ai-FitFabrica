@@ -60,7 +60,7 @@ class _GenerateReply:
     async def execute(self, **_kwargs):
         return (
             type("LLMResult", (), {"ok": True, "error": {}})(),
-            "primary_agent_reply_task",
+            "dialog_reply_task",
             {},
             {},
         )
@@ -159,6 +159,6 @@ async def test_telegram_send_is_idempotent_across_retries():
     await use_case.execute(message=message, lead=lead, session=session)
     await use_case.execute(message=message, lead=lead, session=session)
 
-    assert messaging.calls == [("1", "primary_agent_reply_task")]
+    assert messaging.calls == [("1", "dialog_reply_task")]
     assert "telegram:evt-1:message:user" in persist.message_keys
     assert "telegram:evt-1:message:assistant" in persist.message_keys

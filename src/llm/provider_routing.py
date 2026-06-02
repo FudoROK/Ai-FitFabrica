@@ -3,10 +3,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from .llm_base_contracts import TaskName
+from .reply_task_contract import REPLY_RUNTIME_TASKS
 
 _MEMORY_DAILY_RUNTIME_TASKS: frozenset[TaskName] = frozenset({"memory_daily_sync_task"})
 _MEMORY_ROLLING_RUNTIME_TASKS: frozenset[TaskName] = frozenset({"memory_rolling_sync_task"})
-_AGENT_RUNTIME_TASKS: frozenset[TaskName] = frozenset({"primary_agent_reply_task", "profile_extract_task"})
+_AGENT_RUNTIME_TASKS: frozenset[TaskName] = REPLY_RUNTIME_TASKS | frozenset({"profile_extract_task"})
 
 
 @dataclass(frozen=True)

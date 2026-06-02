@@ -9,4 +9,4 @@ def test_memory_daily_sync_routes_to_memory_daily_runtime_path() -> None:
 
 
 def test_existing_tasks_keep_legacy_paths() -> None:
-    assert select_provider_path("primary_agent_reply_task").path_name == "agent_runtime"
+    assert select_provider_path("dialog_reply_task").path_name == "agent_runtime"

@@ -1,4 +1,8 @@
-"""Firestore-backed runtime adapters implementing identity-core repository contracts."""
+"""Migration-state Firestore runtime adapters implementing identity-core repository contracts.
+
+These adapters remain only as temporary compatibility fallbacks. New identity-core
+feature work should target the portable SQL adapters instead of extending this file.
+"""
 from __future__ import annotations
 
 from datetime import datetime, timezone
@@ -47,6 +51,7 @@ class FirestoreChannelIdentityRepository(ChannelIdentityRepository):
             now = _utc_now()
             return ChannelIdentityRecord(
                 channel_identity_id=uuid4(),
+                person_id=uuid4(),
                 channel=channel,
                 external_identity=external_identity,
                 lifecycle_state=ChannelIdentityState.ACTIVE,
@@ -59,6 +64,7 @@ class FirestoreChannelIdentityRepository(ChannelIdentityRepository):
         doc_ref = client.collection(_CHANNEL_IDENTITIES_COLLECTION).document(f"{channel}:{external_identity}")
         payload = {
             "channel_identity_id": str(uuid4()),
+            "person_id": str(uuid4()),
             "channel": channel,
             "external_identity": external_identity,
             "lifecycle_state": ChannelIdentityState.ACTIVE.value,
@@ -95,6 +101,7 @@ class FirestoreChannelIdentityRepository(ChannelIdentityRepository):
             doc_ref.set,
             {
                 "channel_identity_id": str(channel_identity.channel_identity_id),
+                "person_id": str(channel_identity.person_id),
                 "channel": channel_identity.channel,
                 "external_identity": channel_identity.external_identity,
                 "lifecycle_state": channel_identity.lifecycle_state.value,
@@ -118,6 +125,7 @@ class FirestoreLeadIdentityRepository(LeadRepository):
             doc_ref.set,
             {
                 "lead_id": str(lead.lead_id),
+                "person_id": str(lead.person_id),
                 "lifecycle_state": lead.lifecycle_state.value,
                 "display_name": lead.display_name,
                 "metadata": dict(lead.metadata or {}),
@@ -146,6 +154,7 @@ class FirestoreLeadIdentityRepository(LeadRepository):
         safe_execute(
             doc_ref.set,
             {
+                "person_id": str(lead.person_id),
                 "lifecycle_state": lead.lifecycle_state.value,
                 "display_name": lead.display_name,
                 "metadata": dict(lead.metadata or {}),
@@ -314,6 +323,7 @@ def _channel_identity_from_doc(data: dict[str, Any]) -> ChannelIdentityRecord:
     now = _utc_now()
     return ChannelIdentityRecord(
         channel_identity_id=_safe_uuid(data.get("channel_identity_id")),
+        person_id=_safe_uuid(data.get("person_id")),
         channel=str(data.get("channel") or "telegram"),
         external_identity=str(data.get("external_identity") or ""),
         lifecycle_state=ChannelIdentityState(str(data.get("lifecycle_state") or ChannelIdentityState.ACTIVE.value)),
@@ -326,8 +336,10 @@ def _channel_identity_from_doc(data: dict[str, Any]) -> ChannelIdentityRecord:
 
 def _lead_from_doc(data: dict[str, Any]) -> LeadRecord:
     now = _utc_now()
+    lead_id = _safe_uuid(data.get("lead_id"))
     return LeadRecord(
-        lead_id=_safe_uuid(data.get("lead_id")),
+        lead_id=lead_id,
+        person_id=_safe_uuid(data.get("person_id"), fallback=lead_id),
         lifecycle_state=LeadLifecycleState(str(data.get("lifecycle_state") or LeadLifecycleState.ACTIVE.value)),
         display_name=data.get("display_name"),
         metadata=dict(data.get("metadata") or {}),
@@ -374,6 +386,7 @@ class InMemoryChannelIdentityRepository(ChannelIdentityRepository):
         now = _utc_now()
         created = ChannelIdentityRecord(
             channel_identity_id=uuid4(),
+            person_id=uuid4(),
             channel=channel,
             external_identity=external_identity,
             lifecycle_state=ChannelIdentityState.ACTIVE,

@@ -14,7 +14,6 @@ client = TestClient(app)
 def _base_settings(**overrides) -> Settings:
     payload = {
         "_env_file": None,
-        "telegram_bot_token": "test-token",
         "GCP_PROJECT_ID": "test-project",
         "PUBSUB_TOPIC_NAME": "test-topic",
         "VERTEX_PROJECT": "test-project",
@@ -56,7 +55,7 @@ def _mock_oidc_verifier(monkeypatch):
             raise ValueError("wrong audience")
         return claims
 
-    monkeypatch.setattr("src.entrypoints.policies.id_token.verify_oauth2_token", _verify)
+    monkeypatch.setattr("google.oauth2.id_token.verify_oauth2_token", _verify)
 
 
 

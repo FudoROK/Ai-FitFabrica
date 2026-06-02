@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from typing import Any, Literal, Optional
 
 TaskName = Literal[
-    "primary_agent_reply_task",
+    "dialog_reply_task",
     "profile_extract_task",
     "memory_daily_sync_task",
     "memory_rolling_sync_task",

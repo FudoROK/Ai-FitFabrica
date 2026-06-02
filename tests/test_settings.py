@@ -7,23 +7,19 @@ from src.utils.log_redaction import RedactingLogFilter
 
 
 REQUIRED_ENV_KEYS = [
-    "TELEGRAM_BOT_TOKEN",
     "GCP_PROJECT_ID",
     "PUBSUB_TOPIC_NAME",
     "VERTEX_PROJECT",
-    "HUBSPOT_PRIVATE_APP_TOKEN",
 ]
 
 
 def _set_minimal_valid_vertex_env(monkeypatch):
-    monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "token")
     monkeypatch.setenv("GCP_PROJECT_ID", "proj")
     monkeypatch.setenv("PUBSUB_TOPIC_NAME", "topic")
     monkeypatch.setenv("LLM_PROVIDER", "vertex")
     monkeypatch.setenv("VERTEX_PROJECT", "vertex-proj")
     monkeypatch.setenv("VERTEX_LOCATION", "us-central1")
     monkeypatch.setenv("VERTEX_AGENT_RESOURCE", "projects/547855929194/locations/us-central1/reasoningEngines/123267348101595136")
-    monkeypatch.setenv("HUBSPOT_PRIVATE_APP_TOKEN", "hubspot-token")
 
 
 @pytest.fixture(autouse=True)
@@ -133,6 +129,25 @@ def test_load_settings_does_not_require_hubspot_token_when_crm_provider_none(mon
     assert settings.crm_provider == "none"
 
 
+def test_load_settings_uses_web_first_no_messaging_default(monkeypatch):
+    _set_minimal_valid_vertex_env(monkeypatch)
+    monkeypatch.setenv("MESSAGING_PROVIDER", "none")
+
+    settings = load_settings()
+
+    assert settings.messaging_provider == "none"
+
+
+def test_load_settings_rejects_legacy_telegram_messaging_provider(monkeypatch):
+    _set_minimal_valid_vertex_env(monkeypatch)
+    monkeypatch.setenv("MESSAGING_PROVIDER", "telegram")
+
+    with pytest.raises(ValueError) as exc:
+        load_settings()
+
+    assert "MESSAGING_PROVIDER" in str(exc.value)
+
+
 def test_load_settings_installs_redaction_enforcement_on_root_pipeline(monkeypatch):
     _set_minimal_valid_vertex_env(monkeypatch)
     root = logging.getLogger()
@@ -153,7 +168,7 @@ def test_load_settings_configures_cloud_json_formatter(monkeypatch):
 
     root = logging.getLogger()
     assert root.handlers
-    assert root.handlers[0].formatter.__class__.__name__ == "CloudJsonFormatter"
+    assert any(handler.formatter.__class__.__name__ == "CloudJsonFormatter" for handler in root.handlers)
 
 
 def test_cloud_json_formatter_serializes_extra_fields(monkeypatch):

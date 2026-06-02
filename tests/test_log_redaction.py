@@ -10,17 +10,17 @@ from src.utils.log_redaction import (
 
 
 def test_redact_masks_known_patterns(monkeypatch):
-    monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "123456:ABCdef-token")
+    monkeypatch.setenv("CRM_ACCESS_TOKEN", "crm-token-raw")
     monkeypatch.setenv("HUBSPOT_ACCESS_TOKEN", "hs-token-raw")
     text = (
         "https://api.telegram.org/bot123456:ABCdef-token/sendMessage "
-        "Authorization: Bearer qwerty hubspot=hs-token-raw "
+        "Authorization: Bearer qwerty crm=crm-token-raw hubspot=hs-token-raw "
         "refresh_token=refresh-123 id_token=eyJabc12345.def67890.ghi11111"
     )
     redacted = redact(text)
     assert "/bot***" in redacted
     assert "Bearer ***" in redacted
-    assert "ABCdef-token" not in redacted
+    assert "crm-token-raw" not in redacted
     assert "hs-token-raw" not in redacted
     assert "refresh-123" not in redacted
     assert "eyJabc12345.def67890.ghi11111" not in redacted

@@ -4,7 +4,7 @@ from typing import Any
 
 from pydantic import ValidationError
 
-from src.domain.contracts.primary_agent_output_contract import AgentOutput
+from src.domain.contracts.dialog_reply_output_contract import AgentOutput
 from src.llm.vertex.vertex_schema_builder import build_vertex_response_schema
 
 

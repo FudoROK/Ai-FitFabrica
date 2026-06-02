@@ -44,7 +44,7 @@ class _RegistryStub:
         self.profile = profile
 
     def get_profile(self, *, flow: str):
-        assert flow == "primary_agent_reply_task"
+        assert flow == "dialog_reply_task"
         return self.profile
 
 
