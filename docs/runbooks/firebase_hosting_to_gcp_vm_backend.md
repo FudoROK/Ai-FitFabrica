@@ -30,15 +30,15 @@ GCP VM:
 
 ## Required DNS
 
-Prepare two public hostnames:
+Current live hostnames:
 
-- `fitfabrica.ai` or your current Firebase domain for the frontend
-- `api.fitfabrica.ai` for the backend API
+- frontend: `https://fit.aisoulfabrica.com`
+- backend: `https://api.fit.aisoulfabrica.com`
 
-Recommended pattern for staging:
+Recommended general pattern for future environments:
 
-- frontend: `staging.fitfabrica.ai`
-- backend: `api-staging.fitfabrica.ai`
+- frontend: `<env>.fitfabrica.ai` or your current public site host
+- backend: `api.<frontend-host>` or `api-<env>.fitfabrica.ai`
 
 ## GCP VM Baseline
 
@@ -77,7 +77,7 @@ Start from:
 Set at least:
 
 - `MESSAGING_PROVIDER=none`
-- `CADDY_SITE_ADDRESS=api-staging.fitfabrica.ai`
+- `CADDY_SITE_ADDRESS=api.fit.aisoulfabrica.com`
 - `APP_HOST=0.0.0.0`
 - `APP_PORT=8080`
 - `PUBLIC_STATUS_ENDPOINTS_ENABLED=true`
@@ -104,13 +104,13 @@ For Firebase frontend access, set browser origins explicitly:
 Example:
 
 ```env
-CORS_ALLOWED_ORIGINS=https://staging.fitfabrica.ai
+CORS_ALLOWED_ORIGINS=https://fit.aisoulfabrica.com
 ```
 
 If you serve the frontend on both Firebase default domain and custom domain, include both:
 
 ```env
-CORS_ALLOWED_ORIGINS=https://staging.fitfabrica.ai,https://ai-fitfabrica.web.app
+CORS_ALLOWED_ORIGINS=https://fit.aisoulfabrica.com,https://ai-fitfabrica.web.app
 ```
 
 If the frontend still uses the default Firebase domains and the final custom domain is not ready yet, use:
@@ -150,7 +150,7 @@ Point it at:
 Recommended public backend URL:
 
 ```text
-https://api-staging.fitfabrica.ai
+https://api.fit.aisoulfabrica.com
 ```
 
 The compose proxy service can obtain certificates automatically once:
@@ -170,7 +170,7 @@ curl -H "X-Status-Token: <STATUS_ENDPOINT_TOKEN>" http://127.0.0.1:8080/health
 From outside the VM after proxy/TLS:
 
 ```bash
-curl -H "X-Status-Token: <STATUS_ENDPOINT_TOKEN>" https://api-staging.fitfabrica.ai/health
+curl -H "X-Status-Token: <STATUS_ENDPOINT_TOKEN>" https://api.fit.aisoulfabrica.com/health
 ```
 
 Expected:
@@ -194,7 +194,7 @@ Start from:
 Set:
 
 ```env
-NEXT_PUBLIC_API_BASE_URL=https://api-staging.fitfabrica.ai
+NEXT_PUBLIC_API_BASE_URL=https://api.fit.aisoulfabrica.com
 ```
 
 Temporary bring-up fallback before DNS/TLS:
@@ -231,6 +231,14 @@ Deploy the frontend after the backend URL is real and healthy:
 firebase deploy --only hosting
 ```
 
+The current hosting config uses:
+
+- static export from `apps/web/out`
+- `cleanUrls: true`
+- no catch-all rewrite to `/index.html`
+
+For Firebase static hosting compatibility, workspace navigation uses plain anchor links instead of relying on Next app-router prefetch/RSC fetch behavior.
+
 ## Browser-Side Integration Contract
 
 The current frontend expects the backend base URL to expose:
@@ -263,3 +271,4 @@ This integration step is complete only when:
 - backend CORS allows the Firebase origin
 - GCP VM backend passes portable readiness and health checks
 - browser can create a Try-On job without local dev fallbacks
+- live custom domains answer on both frontend and backend hosts

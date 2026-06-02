@@ -6,7 +6,7 @@ from pathlib import Path
 def test_firebase_frontend_env_example_exists() -> None:
     source = Path("apps/web/.env.firebase.example").read_text(encoding="utf-8")
 
-    assert "NEXT_PUBLIC_API_BASE_URL=https://api-staging.fitfabrica.ai" in source
+    assert "NEXT_PUBLIC_API_BASE_URL=https://api.fit.aisoulfabrica.com" in source
 
 
 def test_firebase_to_gcp_vm_runbook_exists() -> None:
@@ -18,7 +18,8 @@ def test_firebase_to_gcp_vm_runbook_exists() -> None:
         "NEXT_PUBLIC_API_BASE_URL",
         "CORS_ALLOWED_ORIGINS",
         "MESSAGING_PROVIDER=none",
-        "api-staging.fitfabrica.ai",
+        "api.fit.aisoulfabrica.com",
+        "fit.aisoulfabrica.com",
         "firebase deploy --only hosting",
         "POST /api/try-on/jobs",
         "portable_remote_staging_ubuntu_22_04.md",

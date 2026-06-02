@@ -24,3 +24,5 @@
 - frontend reads `NEXT_PUBLIC_API_BASE_URL`
 - use `apps/web/.env.firebase.example` as the first Firebase-hosted env template
 - for the exact `Firebase Hosting -> GCP VM backend` path, use `docs/runbooks/firebase_hosting_to_gcp_vm_backend.md`
+- current live backend URL is `https://api.fit.aisoulfabrica.com`
+- Firebase Hosting serves the exported app from `apps/web/out` with `cleanUrls`, so workspace navigation uses static-hosting-safe links instead of Next app-router prefetch semantics

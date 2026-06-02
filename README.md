@@ -15,6 +15,13 @@ This repository is the production backend for AI FitFabrica. It provides a deplo
 
 `Web / Firebase Frontend -> Backend API -> Queue / Worker -> PostgreSQL / Redis / S3-compatible storage / Qdrant`
 
+## Current Live Contour
+
+*   Frontend: `https://fit.aisoulfabrica.com`
+*   Backend: `https://api.fit.aisoulfabrica.com`
+*   Hosting shape: `Firebase Hosting -> GCP VM portable backend`
+*   End-to-end Try-On sandbox flow is verified through the live site and backend
+
 ## Architectural Constraints
 
 *   Backend orchestrates all side effects.
