@@ -150,7 +150,7 @@ def test_try_on_result_contract_is_structurally_realistic():
     assert body["status"] == "completed"
     assert result["result_image"] == {
         "kind": "sandbox_placeholder",
-        "url": "/images/shared/try-on-sandbox-result.webp",
+        "url": "/images/shared/try-on-sandbox-result.svg",
         "alt": "Sandbox Try-On result preview",
     }
     assert result["quality_report"]["verdict"] == "pass"

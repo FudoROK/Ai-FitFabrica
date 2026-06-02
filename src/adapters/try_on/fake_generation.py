@@ -32,7 +32,7 @@ class FakeTryOnGenerationAdapter(TryOnGenerationPort):
             workflow_type=TryOnWorkflowType.TRY_ON,
             result_image=TryOnResultImage(
                 kind="sandbox_placeholder",
-                url="/images/shared/try-on-sandbox-result.webp",
+                url="/images/shared/try-on-sandbox-result.svg",
                 alt="Sandbox Try-On result preview",
             ),
             quality_report=TryOnQualityReport(

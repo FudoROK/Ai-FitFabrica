@@ -73,31 +73,24 @@ Site / App
 
 ## 3. Технологический фокус проекта
 
-Проект строится Google-first.
+Проект строится на одном portable enterprise baseline.
 
-Основной backend:
+Основной backend и platform foundation:
 - FastAPI;
-- Cloud Run;
-- Pub/Sub;
-- Cloud Tasks;
-- Google Cloud Workflows;
-- Cloud Storage;
-- Firestore;
-- Cloud SQL PostgreSQL на старте;
-- AlloyDB / AlloyDB Vector позже при росте;
-- BigQuery для аналитики, экономики и трендов.
+- PostgreSQL как source of truth;
+- Qdrant для vector search;
+- S3-compatible object storage для media и artifacts;
+- Redis для cache, idempotency, coordination и short-lived state;
+- backend-owned queues/workers и orchestration, не завязанные на одного cloud vendor.
 
 AI / agents:
-- Google ADK для кастомных агентов;
-- Gemini multimodal для анализа изображений и текста;
-- Vertex AI / Gemini / Imagen для generation и image editing;
-- Vertex AI Vector Search или AlloyDB Vector для similarity search;
-- Vertex AI Search для site / help / document search;
-- AI Commerce Search, если проект дойдёт до полноценного product catalog search;
-- Model Armor для защиты prompts/responses, если используется в выбранной архитектуре.
+- pluggable agent runtime layer;
+- Google ADK и Gemini как первый provider implementation;
+- provider-neutral ports для reasoning, embeddings, image generation и image editing;
+- возможность заменить provider на OpenAI, Anthropic, Qwen, DeepSeek или другой runtime без смены data foundation.
 
-Если Google-инструмент не закрывает задачу качества, допускается специализированный внешний tool внутри backend adapter.  
-Но управление workflow всё равно остаётся на нашем backend.
+Если текущий AI-provider не закрывает задачу качества, допускается специализированный внешний tool внутри backend adapter.  
+Но управление workflow, persistence и business state всё равно остаётся на нашем backend.
 
 ## 4. Web frontend
 
@@ -136,8 +129,8 @@ Mobile app является тонким клиентом.
 Предпочтительный mobile stack:
 - Flutter;
 - Dart;
-- Firebase SDK;
-- Google/Firebase services.
+- typed API client;
+- backend-driven auth/session integration.
 
 Mobile app должен:
 - авторизовать пользователя;
@@ -468,26 +461,40 @@ Allowed sources:
 
 Do not build hidden scraping or bypass marketplace rules.
 
-Google infrastructure can be used for connectors, storage, normalization, embeddings, search and price history.  
-But Google does not magically provide marketplace inventory.  
+Connector infrastructure, normalization, embeddings, search and price history должны оставаться backend-owned и portable.  
+Ни один cloud vendor не даёт marketplace inventory сам по себе.  
 Data source must be explicit.
 
 ## 14. Data storage
 
 Use separate storage layers.
 
-Firestore:
+PostgreSQL:
 - users;
 - user profiles;
 - business profiles;
+- persons;
+- channel identities;
+- identity bindings;
 - job statuses;
 - credits balance;
+- credit ledger;
 - job history;
 - saved outfits;
 - saved product cards;
-- workflow events.
+- workflow events;
+- products;
+- product images metadata;
+- garment attributes;
+- marketplace offers;
+- competitor products;
+- merchant catalogs;
+- price snapshots;
+- product card versions;
+- quality verification records;
+- audit records.
 
-Cloud Storage:
+S3-compatible object storage:
 - uploaded human photos;
 - uploaded garment photos;
 - product photos;
@@ -497,30 +504,22 @@ Cloud Storage:
 - quality reports;
 - repair versions.
 
-Cloud SQL / AlloyDB:
-- products;
-- product images;
-- garment attributes;
-- marketplace offers;
-- competitor products;
-- merchant catalogs;
-- price snapshots;
-- product card versions.
-
-Vector Search / AlloyDB Vector:
+Qdrant:
 - garment embeddings;
 - product embeddings;
+- face embeddings;
+- body embeddings;
+- style embeddings;
 - visual similarity;
 - semantic similarity.
 
-BigQuery:
-- analytics events;
-- workflow cost;
-- repair frequency;
-- model quality;
-- trends;
-- conversion signals;
-- margin analysis.
+Redis:
+- rate limiting;
+- idempotency keys;
+- distributed locks;
+- job dispatch coordination;
+- temporary cache;
+- short-lived polling acceleration.
 
 ## 15. Frontend UI requirements
 

@@ -1,0 +1,34 @@
+<svg width="1200" height="900" viewBox="0 0 1200 900" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Try-On sandbox result preview</title>
+  <desc id="desc">A premium fashion-tech placeholder image with a subtle garment silhouette and soft gradient accents.</desc>
+  <defs>
+    <linearGradient id="bg" x1="120" y1="96" x2="1080" y2="804" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F7F1E6"/>
+      <stop offset="0.52" stop-color="#FBFBF9"/>
+      <stop offset="1" stop-color="#EEE7DB"/>
+    </linearGradient>
+    <linearGradient id="card" x1="280" y1="168" x2="920" y2="732" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF" stop-opacity="0.92"/>
+      <stop offset="1" stop-color="#F8F6F1" stop-opacity="0.84"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="360" y1="240" x2="840" y2="620" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#C7B48A" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#7A679B" stop-opacity="0.95"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="900" rx="56" fill="url(#bg)"/>
+  <circle cx="980" cy="170" r="126" fill="#E7D9C0" fill-opacity="0.32"/>
+  <circle cx="190" cy="720" r="164" fill="#CFC0E8" fill-opacity="0.18"/>
+  <rect x="160" y="128" width="880" height="644" rx="40" fill="url(#card)" stroke="#E5D8C2"/>
+  <rect x="360" y="190" width="480" height="36" rx="18" fill="#2A241D" fill-opacity="0.1"/>
+  <rect x="392" y="266" width="416" height="398" rx="32" fill="#FAF7F1" stroke="#E7DCC8"/>
+  <path d="M600 308C628 308 651 331 651 359C651 387 628 410 600 410C572 410 549 387 549 359C549 331 572 308 600 308Z" fill="#D7C9B1"/>
+  <path d="M475 486C500 438 545 412 600 412C655 412 700 438 725 486C741 516 748 546 748 582C748 612 724 636 694 636H506C476 636 452 612 452 582C452 546 459 516 475 486Z" fill="url(#accent)"/>
+  <path d="M514 472L472 546C464 560 468 577 482 585L522 608" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="20" stroke-linecap="round"/>
+  <path d="M686 472L728 546C736 560 732 577 718 585L678 608" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="20" stroke-linecap="round"/>
+  <path d="M600 410V640" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="10" stroke-linecap="round"/>
+  <path d="M548 442C571 429 629 429 652 442" stroke="#2A241D" stroke-opacity="0.16" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="600" cy="706" r="10" fill="#7A679B" fill-opacity="0.78"/>
+  <text x="600" y="742" text-anchor="middle" fill="#433B33" font-family="Arial, Helvetica, sans-serif" font-size="26" letter-spacing="2">SANDBOX TRY-ON</text>
+  <text x="600" y="780" text-anchor="middle" fill="#7B746A" font-family="Arial, Helvetica, sans-serif" font-size="18" letter-spacing="0.5">Preview asset for local workspace flows</text>
+</svg>
