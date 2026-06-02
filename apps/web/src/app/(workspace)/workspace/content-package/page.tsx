@@ -105,7 +105,7 @@ export default function WorkspaceContentPackagePage() {
           </div>
           <div className="mt-6 rounded-[1.75rem] border border-[var(--border)] p-5 text-[1rem] leading-7 text-[var(--text-secondary)]">
             Визуальное качество контента позволяет позиционировать товар в сегменте
-            "Premium Basic". Рекомендуем установить базовую цену 14 990 ₽ с
+            &quot;Premium Basic&quot;. Рекомендуем установить базовую цену 14 990 ₽ с
             постоянной скидкой до 12 490 ₽.
           </div>
         </article>
