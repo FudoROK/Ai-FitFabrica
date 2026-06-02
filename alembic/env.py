@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+import asyncio
 from logging.config import fileConfig
 
 from alembic import context
 from sqlalchemy import engine_from_config, pool
+from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from src.adapters.database.sql import models  # noqa: F401
 from src.adapters.database.sql.base import SqlBase
@@ -29,12 +31,12 @@ def run_migrations_offline() -> None:
 
 def run_migrations_online() -> None:
     """Run migrations in online mode."""
+
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
-
     with connectable.connect() as connection:
         context.configure(connection=connection, target_metadata=target_metadata)
 
@@ -42,7 +44,39 @@ def run_migrations_online() -> None:
             context.run_migrations()
 
 
+def do_run_migrations(connection) -> None:
+    """Configure Alembic against an already-open SQLAlchemy connection."""
+    context.configure(connection=connection, target_metadata=target_metadata)
+
+    with context.begin_transaction():
+        context.run_migrations()
+
+
+async def run_async_migrations() -> None:
+    """Run migrations through SQLAlchemy async engine for async DSNs."""
+    connectable = async_engine_from_config(
+        config.get_section(config.config_ini_section, {}),
+        prefix="sqlalchemy.",
+        poolclass=pool.NullPool,
+    )
+
+    async with connectable.connect() as connection:
+        await connection.run_sync(do_run_migrations)
+
+    await connectable.dispose()
+
+
+def run_migrations() -> None:
+    """Select sync or async migration path from configured SQLAlchemy URL."""
+    url = config.get_main_option("sqlalchemy.url")
+    if "+asyncpg" in url:
+        asyncio.run(run_async_migrations())
+        return
+
+    run_migrations_online()
+
+
 if context.is_offline_mode():
     run_migrations_offline()
 else:
-    run_migrations_online()
+    run_migrations()
