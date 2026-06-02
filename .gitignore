@@ -5,6 +5,7 @@
 !.env.portable-staging.example
 !.env.portable-remote-staging.example
 !.env.try-on-staging.example
+!apps/web/.env.firebase.example
 .idea/
 __pycache__/
 *.pyc
