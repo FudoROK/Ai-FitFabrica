@@ -39,7 +39,13 @@ services:
       qdrant:
         condition: service_started
     healthcheck:
-      test: ["CMD-SHELL", "pgrep -f 'python -m src.worker' >/dev/null || exit 1"]
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "from pathlib import Path; import sys; cmdline = Path('/proc/1/cmdline').read_bytes().decode('utf-8', errors='ignore'); sys.exit(0 if 'src.worker' in cmdline else 1)",
+        ]
       interval: 30s
       timeout: 5s
       retries: 3
