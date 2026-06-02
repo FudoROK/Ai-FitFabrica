@@ -77,6 +77,7 @@ Start from:
 Set at least:
 
 - `MESSAGING_PROVIDER=none`
+- `CADDY_SITE_ADDRESS=api-staging.fitfabrica.ai`
 - `APP_HOST=0.0.0.0`
 - `APP_PORT=8080`
 - `PUBLIC_STATUS_ENDPOINTS_ENABLED=true`
@@ -140,6 +141,7 @@ docker compose -f docker-compose.portable-staging.yml --env-file .env.portable-r
 Start from:
 
 - `deploy/caddy/Caddyfile.portable.example`
+- `deploy/caddy/Caddyfile.portable-vm-http`
 
 Point it at:
 
@@ -150,6 +152,12 @@ Recommended public backend URL:
 ```text
 https://api-staging.fitfabrica.ai
 ```
+
+The compose proxy service can obtain certificates automatically once:
+
+- DNS already points to the VM IP
+- `CADDY_SITE_ADDRESS` matches that public hostname
+- inbound `80/tcp` and `443/tcp` are open
 
 ## Backend Verification
 

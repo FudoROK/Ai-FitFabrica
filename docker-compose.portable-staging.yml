@@ -1,13 +1,19 @@
 services:
   proxy:
     image: caddy:2
+    environment:
+      CADDY_SITE_ADDRESS: ${CADDY_SITE_ADDRESS:-:80}
     depends_on:
       api:
         condition: service_healthy
     ports:
       - "80:80"
+      - "443:443"
+      - "443:443/udp"
     volumes:
       - ./deploy/caddy/Caddyfile.portable-vm-http:/etc/caddy/Caddyfile:ro
+      - fitfabrica_caddy_data:/data
+      - fitfabrica_caddy_config:/config
     restart: unless-stopped
 
   api:
@@ -123,6 +129,8 @@ services:
     restart: unless-stopped
 
 volumes:
+  fitfabrica_caddy_data:
+  fitfabrica_caddy_config:
   fitfabrica_postgres_data:
   fitfabrica_minio_data:
   fitfabrica_qdrant_data:
