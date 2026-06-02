@@ -98,6 +98,7 @@ Telegram and Pub/Sub ingress are removed from the active deployment baseline.
 For Firebase frontend access, set browser origins explicitly:
 
 - `CORS_ALLOWED_ORIGINS=https://<firebase-frontend-host>`
+- or `CORS_ALLOWED_ORIGIN_REGEX=^https://[a-z0-9-]+\.(web\.app|firebaseapp\.com)$` for Firebase default domains
 
 Example:
 
@@ -109,6 +110,12 @@ If you serve the frontend on both Firebase default domain and custom domain, inc
 
 ```env
 CORS_ALLOWED_ORIGINS=https://staging.fitfabrica.ai,https://ai-fitfabrica.web.app
+```
+
+If the frontend still uses the default Firebase domains and the final custom domain is not ready yet, use:
+
+```env
+CORS_ALLOWED_ORIGIN_REGEX=^https://[a-z0-9-]+\.(web\.app|firebaseapp\.com)$
 ```
 
 ## Backend Bring-Up
@@ -180,6 +187,12 @@ Set:
 
 ```env
 NEXT_PUBLIC_API_BASE_URL=https://api-staging.fitfabrica.ai
+```
+
+Temporary bring-up fallback before DNS/TLS:
+
+```env
+NEXT_PUBLIC_API_BASE_URL=http://34.140.131.192
 ```
 
 For local verification:

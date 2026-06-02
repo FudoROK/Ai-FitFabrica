@@ -16,12 +16,13 @@ from .settings import load_settings
 
 def configure_cors(target_app: FastAPI, target_settings: Settings) -> None:
     """Allow configured browser frontend origins to call backend-owned API endpoints."""
-    if not target_settings.cors_allowed_origins:
+    if not target_settings.cors_allowed_origins and not target_settings.cors_allowed_origin_regex:
         return
 
     target_app.add_middleware(
         CORSMiddleware,
         allow_origins=target_settings.cors_allowed_origins,
+        allow_origin_regex=target_settings.cors_allowed_origin_regex,
         allow_credentials=False,
         allow_methods=["GET", "POST", "OPTIONS"],
         allow_headers=["*"],

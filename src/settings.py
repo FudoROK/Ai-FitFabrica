@@ -99,6 +99,10 @@ class Settings(BaseSettings):
         default_factory=list,
         validation_alias=AliasChoices("CORS_ALLOWED_ORIGINS"),
     )
+    cors_allowed_origin_regex: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices("CORS_ALLOWED_ORIGIN_REGEX"),
+    )
 
     # Integration providers
     crm_provider: str = Field("none", validation_alias=AliasChoices("CRM_PROVIDER"))
@@ -389,6 +393,15 @@ class Settings(BaseSettings):
         if isinstance(value, (list, tuple, set)):
             return [str(item).strip().rstrip("/") for item in value if str(item).strip()]
         return [str(value).strip().rstrip("/")] if str(value).strip() else []
+
+    @field_validator("cors_allowed_origin_regex", mode="before")
+    @classmethod
+    def _parse_cors_allowed_origin_regex(cls, value: object) -> str | None:
+        """Normalize the optional browser-origin regex for dynamic frontend hosts."""
+        if value in (None, "", []):
+            return None
+        normalized = str(value).strip()
+        return normalized or None
 
     @field_validator(
         "memory_summary_task_allowed_service_accounts",
