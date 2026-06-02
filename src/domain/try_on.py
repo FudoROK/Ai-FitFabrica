@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from enum import StrEnum
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, field_validator
 
 
 def utc_now() -> datetime:
@@ -19,6 +19,14 @@ class TryOnWorkflowType(StrEnum):
     TRY_ON = "try_on"
 
 
+class TryOnGenerationMode(StrEnum):
+    """Active generation mode for a Try-On workflow execution."""
+
+    SANDBOX_FAKE = "sandbox_fake"
+    PROVIDER_RUNTIME = "provider_runtime"
+    VERTEX_VIRTUAL_TRY_ON = "vertex_virtual_try_on"
+
+
 class TryOnJobStatus(StrEnum):
     """Allowed lifecycle states for a Try-On sandbox job."""
 
@@ -26,6 +34,7 @@ class TryOnJobStatus(StrEnum):
     VALIDATING_INPUTS = "validating_inputs"
     GENERATING = "generating"
     QUALITY_CHECKING = "quality_checking"
+    REPAIRING = "repairing"
     COMPLETED = "completed"
     FAILED = "failed"
 
@@ -49,6 +58,7 @@ class TryOnChargeStatus(StrEnum):
     """Charge states supported by the initial sandbox contract."""
 
     NOT_CHARGED = "not_charged"
+    CHARGED = "charged"
 
 
 class TryOnErrorCode(StrEnum):
@@ -90,9 +100,10 @@ class TryOnStoredInput(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     role: TryOnUploadRole
-    storage_backend: Literal["in_memory", "gcs"]
+    storage_backend: Literal["in_memory", "gcs", "s3"]
     uri: str = Field(min_length=1)
     bucket_name: str | None = None
+    object_key: str | None = None
     object_name: str | None = None
     content_type: str = Field(min_length=1)
     size_bytes: int = Field(ge=1)
@@ -158,9 +169,10 @@ class TryOnResultImage(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    kind: Literal["sandbox_placeholder"]
+    kind: Literal["sandbox_placeholder", "generated_artifact"]
     url: str = Field(min_length=1)
     alt: str = Field(min_length=1)
+    _artifact_object_key: str | None = PrivateAttr(default=None)
 
 
 class TryOnResult(BaseModel):
@@ -194,6 +206,7 @@ class TryOnJob(BaseModel):
 
     job_id: str = Field(min_length=1)
     workflow_type: TryOnWorkflowType = TryOnWorkflowType.TRY_ON
+    generation_mode: TryOnGenerationMode = TryOnGenerationMode.SANDBOX_FAKE
     status: TryOnJobStatus
     created_at: datetime = Field(default_factory=utc_now)
     updated_at: datetime = Field(default_factory=utc_now)

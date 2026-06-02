@@ -38,11 +38,12 @@ async def test_create_job_persists_validated_uploads_before_saving_job() -> None
         garment_photo=_upload("garment.jpg", "image/jpeg", b"garment-photo"),
     )
 
-    assert job.status == TryOnJobStatus.COMPLETED
+    assert job.status == TryOnJobStatus.ACCEPTED
     assert [stored.role for stored in job.stored_inputs] == [
         TryOnUploadRole.HUMAN_PHOTO,
         TryOnUploadRole.GARMENT_PHOTO,
     ]
     assert all(stored.storage_backend == "in_memory" for stored in job.stored_inputs)
-    assert all(stored.uri.startswith("memory://try-on/") for stored in job.stored_inputs)
+    assert all(stored.uri.startswith("memory://fitfabrica/tenants/public/try-on/") for stored in job.stored_inputs)
+    assert all(stored.object_key is not None for stored in job.stored_inputs)
     assert await repository.get(job.job_id) == job

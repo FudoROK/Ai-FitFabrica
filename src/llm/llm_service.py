@@ -7,18 +7,19 @@ from typing import Any
 from ..settings import load_settings
 from .llm_base_contracts import LLMMeta, LLMResult, TaskName
 from .core.result import LLMResult as CoreLLMResult
+from .provider_runtime import ProviderRuntime, build_provider_runtime
 from .provider_routing import ProviderRoutingDecision, select_provider_path
 from .providers.base import LLMProvider
-from .providers.gemini_structured_provider import GeminiStructuredProvider
-from .vertex.vertex_provider import VertexProvider
 from .providers.registry import get_provider
+from .reply_task_contract import REPLY_RUNTIME_TASKS
 from .llm_task_registry import get_task_implementation, validate_task_registry
 from .tasks.helpers.task_request_builder import ProviderRequestParts, provider_parts_to_core_request
-from .tasks.primary_agent.profile_extract_task import register_profile_extract_schema
+from .tasks.profile_extract_task import register_profile_extract_schema
 
 logger = logging.getLogger(__name__)
 _MEMORY_DAILY_RUNTIME_TASKS = frozenset({"memory_daily_sync_task"})
 _MEMORY_ROLLING_RUNTIME_TASKS = frozenset({"memory_rolling_sync_task"})
+_REPLY_RUNTIME_TASKS = REPLY_RUNTIME_TASKS
 
 
 class LLMService:
@@ -29,11 +30,13 @@ class LLMService:
         mode: str | None = None,
         model: str | None = None,
         settings=None,
+        provider_runtime: ProviderRuntime | None = None,
     ) -> None:
         self.settings = settings or load_settings()
         self.mode = (mode or self.settings.llm.mode or "stub").strip().lower()
         self.model = model or self.settings.llm.model
         self.provider = provider or get_provider(self.settings)
+        self.provider_runtime = provider_runtime or build_provider_runtime(self.settings)
         self._structured_runtime_provider: LLMProvider | None = None
         self._memory_daily_runtime_provider: LLMProvider | None = None
         self._memory_rolling_runtime_provider: LLMProvider | None = None
@@ -144,13 +147,13 @@ class LLMService:
             return self._error_result(task, provider_result, str(exc))
 
     def _stub_result(self, task: TaskName) -> LLMResult:
-        if task == "primary_agent_reply_task":
+        if task in _REPLY_RUNTIME_TASKS:
             return LLMResult(task=task, ok=False, data={"reply_text": "", "system_payload": None}, error={"kind": "NON_LIVE", "message": "reply_unavailable"})
         return LLMResult(task=task, ok=False, error={"kind": "NON_LIVE", "message": "non_live_mode"})
 
     def _controlled_routing_error(self, *, task: TaskName, reason: str) -> LLMResult:
         message = f"structured_provider_unavailable: {reason}"
-        if task == "primary_agent_reply_task":
+        if task in _REPLY_RUNTIME_TASKS:
             return LLMResult(
                 task=task,
                 ok=False,
@@ -164,7 +167,7 @@ class LLMService:
         if isinstance(kind, str) and kind.lower() == "unknown":
             kind = "UNKNOWN"
         message = provider_result.error.message_redacted if provider_result.error else fallback_message
-        if task == "primary_agent_reply_task":
+        if task in _REPLY_RUNTIME_TASKS:
             return LLMResult(
                 task=task,
                 ok=False,
@@ -190,31 +193,26 @@ class LLMService:
             return memory_provider, ProviderRoutingDecision(path_name="memory_rolling_runtime", structured_provider_used=False)
 
         routing = select_provider_path(task)
+        if task in _REPLY_RUNTIME_TASKS:
+            structured_provider = self._structured_runtime_provider or self.provider_runtime.structured_reasoning
+            if structured_provider is None:
+                raise RuntimeError("structured_provider_unavailable: configure provider_runtime.structured_reasoning")
+            return structured_provider, ProviderRoutingDecision(path_name="structured_reasoning", structured_provider_used=True)
         if routing.path_name == "agent_runtime" and self._structured_runtime_provider is not None:
             return self._structured_runtime_provider, routing
         if not routing.structured_provider_used:
             return self.provider, routing
 
-        if self._structured_runtime_provider is None:
-            self._structured_runtime_provider = GeminiStructuredProvider(settings=self.settings)
-        return self._structured_runtime_provider, routing
+        structured_provider = self._structured_runtime_provider or self.provider_runtime.structured_reasoning
+        if structured_provider is None:
+            raise RuntimeError("structured_provider_unavailable: configure provider_runtime.structured_reasoning")
+        return structured_provider, routing
 
     def _get_memory_daily_runtime_provider(self) -> LLMProvider | None:
         if self._memory_daily_runtime_provider is not None:
             return self._memory_daily_runtime_provider
 
-        provider_name = (self.settings.llm.provider or "").strip().lower()
-        if provider_name != "vertex":
-            return None
-
-        memory_agent_resource = (self.settings.llm.vertex_memory_daily_agent_resource or "").strip()
-        if not memory_agent_resource:
-            return None
-
-        self._memory_daily_runtime_provider = VertexProvider(
-            settings=self.settings,
-            agent_resource_override=memory_agent_resource,
-        )
+        self._memory_daily_runtime_provider = self.provider_runtime.memory_daily_agent_runtime
         return self._memory_daily_runtime_provider
 
 
@@ -222,16 +220,5 @@ class LLMService:
         if self._memory_rolling_runtime_provider is not None:
             return self._memory_rolling_runtime_provider
 
-        provider_name = (self.settings.llm.provider or "").strip().lower()
-        if provider_name != "vertex":
-            return None
-
-        memory_agent_resource = (self.settings.llm.vertex_memory_rolling_agent_resource or "").strip()
-        if not memory_agent_resource:
-            return None
-
-        self._memory_rolling_runtime_provider = VertexProvider(
-            settings=self.settings,
-            agent_resource_override=memory_agent_resource,
-        )
+        self._memory_rolling_runtime_provider = self.provider_runtime.memory_rolling_agent_runtime
         return self._memory_rolling_runtime_provider

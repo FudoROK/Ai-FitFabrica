@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 import time
 from typing import Any
 
@@ -7,6 +8,16 @@ from ..core.errors import ERROR_INVALID_OUTPUT, ERROR_RATE_LIMITED, ERROR_TIMEOU
 from ..core.request import LLMRequest
 from ..core.result import LLMResult
 from ..core.types import LLMError
+
+
+@dataclass(frozen=True)
+class _StructuredReasoningResult:
+    """Lightweight structured reasoning result used by the fake provider."""
+
+    task: str
+    payload: dict[str, Any]
+    provider: str
+    model: str
 
 
 class FakeProvider:
@@ -54,6 +65,19 @@ class FakeProvider:
             retry_count=0,
             usage=None,
             error=None,
+        )
+
+    def generate_structured(self, request: Any) -> _StructuredReasoningResult:
+        """Return a deterministic structured payload for backend-owned reasoning flows."""
+        output = self.task_outputs.get(request.task, {})
+        payload = output.get("json")
+        if not isinstance(payload, dict):
+            payload = self._default_structured_payload(request)
+        return _StructuredReasoningResult(
+            task=request.task,
+            payload=payload,
+            provider=self.provider_name,
+            model=self.default_model,
         )
 
     def _failed_result(self, failure_mode: str, request: LLMRequest, started: float) -> LLMResult:
@@ -125,3 +149,20 @@ class FakeProvider:
         if py_type is None:
             return True
         return isinstance(value, py_type)
+
+    @staticmethod
+    def _default_structured_payload(request: Any) -> dict[str, Any]:
+        """Return a schema-compatible fallback payload for tests and local runtime flows."""
+        properties = request.response_schema.get("properties", {})
+        if {"verdict", "confidence", "summary", "limitations"} <= set(properties):
+            return {
+                "verdict": "pass",
+                "confidence": 0.7,
+                "summary": "Fake structured provider accepted the quality verification request.",
+                "limitations": ["Fake structured reasoning did not perform real image analysis."],
+            }
+        if "note" in properties:
+            return {
+                "note": "Fake structured stylist generated a concise Try-On explanation from backend facts.",
+            }
+        return {}

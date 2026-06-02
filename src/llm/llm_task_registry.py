@@ -5,7 +5,8 @@ from typing import Any, Callable, Protocol, runtime_checkable
 
 from .llm_base_contracts import TaskName
 from .core.result import LLMResult as CoreLLMResult
-from .tasks import memory_daily_sync_task, memory_rolling_sync_task, profile_extract_task, primary_agent_reply_task
+from .reply_task_contract import CANONICAL_DIALOG_REPLY_TASK
+from .tasks import dialog_reply_task, memory_daily_sync_task, memory_rolling_sync_task, profile_extract_task
 from .tasks.helpers.task_request_builder import ProviderRequestParts
 
 BuildProviderRequestFn = Callable[[dict[str, Any], Any], ProviderRequestParts]
@@ -25,7 +26,7 @@ class TaskDefinition:
 
 
 TASK_REGISTRY: dict[TaskName, TaskDefinition] = {
-    "primary_agent_reply_task": TaskDefinition(task_name="primary_agent_reply_task", implementation=primary_agent_reply_task),
+    CANONICAL_DIALOG_REPLY_TASK: TaskDefinition(task_name=CANONICAL_DIALOG_REPLY_TASK, implementation=dialog_reply_task),
     "profile_extract_task": TaskDefinition(task_name="profile_extract_task", implementation=profile_extract_task),
     "memory_daily_sync_task": TaskDefinition(task_name="memory_daily_sync_task", implementation=memory_daily_sync_task),
     "memory_rolling_sync_task": TaskDefinition(task_name="memory_rolling_sync_task", implementation=memory_rolling_sync_task),

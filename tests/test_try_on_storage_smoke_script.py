@@ -15,12 +15,11 @@ def _env() -> dict[str, str]:
     env.update(
         {
             "ENVIRONMENT": "test",
-            "TELEGRAM_BOT_TOKEN": "token",
             "GCP_PROJECT_ID": "test-project",
             "PUBSUB_TOPIC_NAME": "agent-jobs",
             "LLM_PROVIDER": "fake",
             "MEMORY_SUMMARY_ENABLED": "false",
-            "TRY_ON_FILE_STORAGE_BACKEND": "in_memory",
+            "OBJECT_STORAGE_BACKEND": "in_memory",
             "TRY_ON_JOB_REPOSITORY_BACKEND": "in_memory",
         }
     )
@@ -40,7 +39,7 @@ def test_try_on_storage_smoke_defaults_to_dry_run() -> None:
     assert result.returncode == 0
     assert "dry_run=true" in result.stdout
     assert "live_write_check=false" in result.stdout
-    assert "No GCS or Firestore write was attempted." in result.stdout
+    assert "No object storage or PostgreSQL write was attempted." in result.stdout
 
 
 def test_try_on_storage_smoke_requires_explicit_live_flag() -> None:

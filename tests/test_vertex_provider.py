@@ -308,7 +308,7 @@ class _RetryingAgentEnginesModuleStub(_AgentEnginesModuleStub):
 
 def _request(payload: str = '{"user_text":"hello","context":{"source":"telegram"}}') -> LLMRequest:
     return LLMRequest(
-        task="primary_agent_reply_task",
+        task="dialog_reply_task",
         input=payload,
         structured_output={"kind": REPLY_AGENT_OUTPUT_KIND, "schema": build_vertex_response_schema()},
     )
@@ -371,7 +371,7 @@ def test_vertex_provider_does_not_forward_structured_kwargs_to_reasoning_engine(
 
     result = provider.generate(
         LLMRequest(
-            task="primary_agent_reply_task",
+            task="dialog_reply_task",
             input='{"user_text":"hello"}',
             structured_output={"schema": schema, "kind": REPLY_AGENT_OUTPUT_KIND, "required": True},
         )
@@ -401,7 +401,7 @@ def test_vertex_provider_uses_minimal_invocation_contract_even_when_structured_r
 
     result = provider.generate(
         LLMRequest(
-            task="primary_agent_reply_task",
+            task="dialog_reply_task",
             input='{"user_text":"hello"}',
             structured_output={"schema": {"type": "OBJECT"}, "kind": REPLY_AGENT_OUTPUT_KIND},
         )
@@ -426,7 +426,7 @@ def test_vertex_provider_uses_streaming_when_required_structured_contract_has_on
 
     result = provider.generate(
         LLMRequest(
-            task="primary_agent_reply_task",
+            task="dialog_reply_task",
             input='{"user_text":"hello"}',
             structured_output={"schema": {"type": "OBJECT"}, "kind": REPLY_AGENT_OUTPUT_KIND, "required": True},
         )
@@ -449,7 +449,7 @@ def test_vertex_provider_uses_streaming_when_structured_contract_required(monkey
 
     result = provider.generate(
         LLMRequest(
-            task="primary_agent_reply_task",
+            task="dialog_reply_task",
             input='{"user_text":"hello"}',
             structured_output={"schema": schema, "kind": REPLY_AGENT_OUTPUT_KIND, "required": True},
         )
@@ -543,7 +543,7 @@ def test_vertex_provider_compatibility_with_llm_result_contract(monkeypatch):
     _patch_reasoning_engines(monkeypatch, engine_stub)
     provider = VertexProvider(settings=_Settings(llm=_LLM()))
 
-    req = LLMRequest(task="primary_agent_reply_task", input="hello", max_retries=1)
+    req = LLMRequest(task="dialog_reply_task", input="hello", max_retries=1)
     result = provider.generate(req)
 
     assert result.status == "ok"
@@ -593,7 +593,7 @@ def test_vertex_provider_falls_back_to_async_query_when_stream_methods_are_missi
 
     result = provider.generate(
         LLMRequest(
-            task="primary_agent_reply_task",
+            task="dialog_reply_task",
             input='{"user_text":"hello"}',
             structured_output={"schema": {"type": "OBJECT"}, "kind": REPLY_AGENT_OUTPUT_KIND, "required": True},
         )
@@ -698,9 +698,26 @@ def test_vertex_provider_retries_retriable_errors_and_keeps_contract(monkeypatch
     _patch_reasoning_engines(monkeypatch, engine_stub)
     provider = VertexProvider(settings=_Settings(llm=_LLM()))
 
-    result = provider.generate(LLMRequest(task="primary_agent_reply_task", input='{"user_text":"hello"}', max_retries=1))
+    result = provider.generate(LLMRequest(task="dialog_reply_task", input='{"user_text":"hello"}', max_retries=1))
 
     assert result.status == "ok"
     assert result.structured_data == payload
     assert result.retry_count == 1
     assert engine_stub.calls["attempts"] == [1, 2]
+
+
+def test_vertex_provider_keeps_legacy_reply_task_alias(monkeypatch):
+    payload = {"reply_text": "ok", "system_payload": {}}
+    engine_stub = _AgentEnginesModuleStub(stream_events=[{"output": payload}])
+    _patch_reasoning_engines(monkeypatch, engine_stub)
+    provider = VertexProvider(settings=_Settings(llm=_LLM()))
+
+    result = provider.generate(
+        LLMRequest(
+            task="dialog_reply_task",
+            input='{"user_text":"hello"}',
+            structured_output={"schema": {"type": "OBJECT"}, "kind": REPLY_AGENT_OUTPUT_KIND},
+        )
+    )
+
+    assert result.status == "ok"

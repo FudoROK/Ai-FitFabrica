@@ -116,7 +116,6 @@ def test_runtime_and_llm_paths_do_not_import_adk_agents() -> None:
         "src/memory_layer/use_cases/apply_daily_agent_output_use_case.py",
         "src/memory_layer/use_cases/apply_rolling_memory_agent_output_use_case.py",
         "src/llm/tasks/helpers/memory_output_parser.py",
-        "src/llm/tasks/primary_agent/primary_agent_reply_task.py",
         "src/llm/tasks/memory/memory_daily_sync_task.py",
         "src/llm/tasks/memory/memory_rolling_sync_task.py",
         *[str(path.relative_to(REPO_ROOT)) for path in (REPO_ROOT / "src/runtime_agents").rglob("*.py")],
@@ -130,7 +129,7 @@ def test_runtime_and_llm_paths_do_not_import_adk_agents() -> None:
 
 def test_llm_structured_routing_policy_matches_current_registry_tasks() -> None:
     routing = _read("src/llm/provider_routing.py")
-    assert '"primary_agent_reply_task"' in routing
+    assert "REPLY_RUNTIME_TASKS" in routing
     assert '"profile_extract_task"' in routing
     assert '"memory_daily_sync_task"' in routing
     assert '"memory_rolling_sync_task"' in routing

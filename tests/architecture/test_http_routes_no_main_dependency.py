@@ -3,7 +3,8 @@ from pathlib import Path
 
 from fastapi.testclient import TestClient
 
-from src.main import app
+from src.main import build_app
+from src.settings import Settings
 
 
 def test_http_routes_has_no_main_import_or_main_symbol_usage():
@@ -20,36 +21,19 @@ def test_http_routes_has_no_main_import_or_main_symbol_usage():
         if isinstance(node, ast.Attribute) and isinstance(node.value, ast.Name) and node.value.id == "main":
             raise AssertionError("http_routes.py must not use main.* symbols")
 
-
-def test_pubsub_runtime_path_does_not_use_main_shims(monkeypatch):
-    import src.main as main_module
-
-    client = TestClient(app)
-
-    monkeypatch.setattr("src.entrypoints.pubsub_routes.verify_pubsub_oidc_jwt", lambda *_args, **_kwargs: True)
-
-    class _Outcome:
-        kind = "ok"
-        pipeline_status = "success"
-
-    async def _process(**_kwargs):
-        return _Outcome()
-
-    monkeypatch.setattr("src.entrypoints.pubsub_routes.process_pubsub_normalized_event", _process)
-    monkeypatch.setattr(
-        "src.entrypoints.pubsub_routes.dialog_service",
-        lambda _settings=None: type("S", (), {"handle_normalized_message": None})(),
-    )
-    monkeypatch.setattr(main_module, "_dialog_service", lambda: (_ for _ in ()).throw(RuntimeError("must not be called")))
-
-    response = client.post(
-        "/pubsub",
-        json={
-            "message": {
-                "data": "eyJjaGFubmVsIjoidGVsZWdyYW0iLCJzb3VyY2VfaWRlbnRpdHkiOiIxIiwiY29udmVyc2F0aW9uX2lkZW50aXR5IjoiMSIsImV2ZW50X2lkZW50aXR5IjoiZXZ0LTEiLCJ0ZXh0IjoiaGkifQ=="
-            }
-        },
+def test_web_first_runtime_excludes_legacy_ingress_routes() -> None:
+    client = TestClient(
+        build_app(
+            Settings(
+                ENVIRONMENT="test",
+                GCP_PROJECT_ID="fitfabrica-test",
+                PUBSUB_TOPIC_NAME="fitfabrica-events",
+                LLM_PROVIDER="fake",
+                MEMORY_SUMMARY_ENABLED=False,
+                MESSAGING_PROVIDER="none",
+            )
+        )
     )
 
-    assert response.status_code == 200
-    assert response.json() == {"status": "ok", "pipeline_status": "success"}
+    assert client.post("/webhook/telegram", json={}).status_code == 404
+    assert client.post("/pubsub", json={}).status_code == 404

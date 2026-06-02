@@ -12,7 +12,6 @@ from src.settings import Settings
 def _base_settings(**overrides) -> Settings:
     payload = {
         "_env_file": None,
-        "telegram_bot_token": "test-token",
         "GCP_PROJECT_ID": "test-project",
         "PUBSUB_TOPIC_NAME": "test-topic",
         "VERTEX_PROJECT": "test-project",

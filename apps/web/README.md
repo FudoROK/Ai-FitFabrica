@@ -18,3 +18,9 @@
 - `npm run typecheck`
 - `npm run build`
 - `npm run dev`
+
+## Backend Integration
+
+- frontend reads `NEXT_PUBLIC_API_BASE_URL`
+- use `apps/web/.env.firebase.example` as the first Firebase-hosted env template
+- for the exact `Firebase Hosting -> GCP VM backend` path, use `docs/runbooks/firebase_hosting_to_gcp_vm_backend.md`

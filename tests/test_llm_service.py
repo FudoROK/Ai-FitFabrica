@@ -6,6 +6,7 @@ from src.llm.contract_kinds import MEMORY_DAILY_OUTPUT_KIND, REPLY_AGENT_OUTPUT_
 from src.llm.core.request import LLMRequest
 from src.llm.core.result import LLMResult as CoreLLMResult
 from src.llm.core.types import LLMError
+from src.llm.provider_runtime import ProviderRuntime
 from src.llm.vertex.vertex_schema_builder import build_vertex_response_schema
 from src.runtime_agents.memory_agent.contracts import DailyMemoryContract
 
@@ -73,7 +74,7 @@ def test_llm_service_reply_uses_injected_runtime_provider():
     service = LLMService(provider=primary_provider, mode="live")
     service._reply_structured_provider = structured_provider
 
-    result = asyncio.run(service.run(task="primary_agent_reply_task", payload={"user_text": "hi", "context": None}, meta=LLMMeta(trace_id="t-1")))
+    result = asyncio.run(service.run(task="dialog_reply_task", payload={"user_text": "hi", "context": None}, meta=LLMMeta(trace_id="t-1")))
 
     assert result.ok is True
     assert result.data["reply_text"] == "structured-reply"
@@ -93,7 +94,7 @@ def test_llm_service_reply_builds_provider_neutral_request():
     service = LLMService(provider=FakeProvider(CoreLLMResult(status="ok", text="unused", provider="fake", model="fake-model")), mode="live")
     service._reply_structured_provider = structured_provider
 
-    result = asyncio.run(service.run(task="primary_agent_reply_task", payload={"user_text": "hi"}, meta=LLMMeta(trace_id="t-1")))
+    result = asyncio.run(service.run(task="dialog_reply_task", payload={"user_text": "hi"}, meta=LLMMeta(trace_id="t-1")))
 
     assert result.ok is True
     assert structured_provider.last_request is not None
@@ -178,7 +179,7 @@ def test_llm_service_non_live_returns_stub_for_reply():
     provider = FakeProvider(CoreLLMResult(status="ok", text="unused", provider="fake", model="fake-model"))
     service = LLMService(provider=provider, mode="stub")
 
-    result = asyncio.run(service.run(task="primary_agent_reply_task", payload={"user_text": "hi"}, meta=LLMMeta()))
+    result = asyncio.run(service.run(task="dialog_reply_task", payload={"user_text": "hi"}, meta=LLMMeta()))
 
     assert result.ok is False
     assert result.data["reply_text"] == ""
@@ -201,16 +202,20 @@ def test_llm_service_memory_sync_uses_dedicated_memory_vertex_resource_when_conf
         )
     )
 
-    monkeypatch.setattr(
-        "src.llm.llm_service.VertexProvider",
-        lambda settings, agent_resource_override=None: memory_provider,
-    )
     service = LLMService(
         provider=primary_provider,
         mode="live",
         settings=_build_settings(
             provider="vertex",
             memory_daily_resource="projects/p/locations/us-central1/reasoningEngines/99",
+        ),
+        provider_runtime=ProviderRuntime(
+            structured_reasoning=None,
+            agent_runtime=None,
+            embedding_provider=None,
+            image_generation=None,
+            image_editing=None,
+            memory_daily_agent_runtime=memory_provider,
         ),
     )
 
@@ -318,10 +323,6 @@ def test_llm_service_rolling_sync_uses_dedicated_rolling_vertex_resource_when_co
         )
     )
 
-    monkeypatch.setattr(
-        "src.llm.llm_service.VertexProvider",
-        lambda settings, agent_resource_override=None: rolling_provider,
-    )
     service = LLMService(
         provider=primary_provider,
         mode="live",
@@ -329,6 +330,14 @@ def test_llm_service_rolling_sync_uses_dedicated_rolling_vertex_resource_when_co
             provider="vertex",
             memory_daily_resource="projects/p/locations/us-central1/reasoningEngines/99",
             memory_rolling_resource="projects/p/locations/us-central1/reasoningEngines/199",
+        ),
+        provider_runtime=ProviderRuntime(
+            structured_reasoning=None,
+            agent_runtime=None,
+            embedding_provider=None,
+            image_generation=None,
+            image_editing=None,
+            memory_rolling_agent_runtime=rolling_provider,
         ),
     )
 

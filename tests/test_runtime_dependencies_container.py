@@ -121,3 +121,63 @@ def test_runtime_container_uses_inmemory_ingress_limiters_in_test_env(monkeypatc
     assert limiter_a is not limiter_b
     assert global_limiter_a is not global_limiter_b
     assert all(call.get("backend_override") == "inmemory" for call in calls)
+
+
+def test_portable_infrastructure_is_cached_per_settings_instance(monkeypatch):
+    settings = SimpleNamespace()
+    calls = []
+
+    def _build_portable_infrastructure(target_settings):
+        calls.append(target_settings)
+        return object()
+
+    monkeypatch.setattr(deps, "build_portable_infrastructure", _build_portable_infrastructure)
+
+    first = deps.portable_infrastructure(settings)
+    second = deps.portable_infrastructure(settings)
+
+    assert first is second
+    assert calls == [settings]
+
+
+def test_runtime_identity_repositories_prefer_sql_when_portable_infrastructure_exists(monkeypatch):
+    settings = _settings(environment="prod")
+    monkeypatch.setattr(
+        deps,
+        "portable_infrastructure",
+        lambda _settings: SimpleNamespace(sql_session_factory="session-factory"),
+    )
+
+    repositories = deps.identity_runtime_repositories(settings)
+
+    assert repositories.channel_identity_repo.__class__.__name__.startswith("Sql")
+
+
+def test_identity_audit_recorder_prefers_sql_when_portable_infrastructure_exists(monkeypatch):
+    settings = _settings(environment="prod")
+    monkeypatch.setattr(
+        deps,
+        "portable_infrastructure",
+        lambda _settings: SimpleNamespace(sql_session_factory="session-factory"),
+    )
+
+    recorder = deps.identity_audit_recorder(settings)
+
+    assert recorder.__class__.__name__ == "SqlIdentityResolutionAuditRecorder"
+
+
+def test_provider_runtime_is_cached_per_settings_instance(monkeypatch):
+    settings = _settings(environment="prod")
+    calls = []
+
+    def _build_provider_runtime(target_settings):
+        calls.append(target_settings)
+        return object()
+
+    monkeypatch.setattr(deps, "build_provider_runtime", _build_provider_runtime)
+
+    first = deps.provider_runtime(settings)
+    second = deps.provider_runtime(settings)
+
+    assert first is second
+    assert calls == [settings]

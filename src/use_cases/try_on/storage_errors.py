@@ -7,7 +7,7 @@ from typing import Literal
 from src.domain.try_on import TryOnError, TryOnErrorCode
 
 
-TryOnStorageBackend = Literal["gcs", "firestore"]
+TryOnStorageBackend = Literal["in_memory", "s3", "sql", "gcs", "firestore"]
 TryOnStorageOperation = Literal["save_upload", "save_job", "get_job"]
 
 

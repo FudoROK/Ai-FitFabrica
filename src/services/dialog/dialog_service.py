@@ -10,9 +10,6 @@ from .dialog_pipeline_assembler import DialogPipelineAssembler
 from ..runtime.feature_flags import resolve_feature_flags
 from src.domain.contracts.persistence import LeadRepositoryPort, SessionRepositoryPort
 from src.identity_core.services.identity_core_runtime_repositories import (
-    FirestoreChannelIdentityRepository,
-    FirestoreIdentityBindingRepository,
-    FirestoreLeadIdentityRepository,
     InMemoryChannelIdentityRepository,
     InMemoryIdentityBindingRepository,
     InMemoryLeadIdentityRepository,
@@ -66,17 +63,10 @@ class DialogService:
         )
 
     def _build_identity_resolution_service(self) -> RuntimeIdentityResolutionService:
-        if self._is_test_environment():
-            return RuntimeIdentityResolutionService(
-                channel_identity_repo=InMemoryChannelIdentityRepository(),
-                identity_binding_repo=InMemoryIdentityBindingRepository(),
-                lead_repo=InMemoryLeadIdentityRepository(),
-            )
-
         return RuntimeIdentityResolutionService(
-            channel_identity_repo=FirestoreChannelIdentityRepository(),
-            identity_binding_repo=FirestoreIdentityBindingRepository(),
-            lead_repo=FirestoreLeadIdentityRepository(),
+            channel_identity_repo=InMemoryChannelIdentityRepository(),
+            identity_binding_repo=InMemoryIdentityBindingRepository(),
+            lead_repo=InMemoryLeadIdentityRepository(),
         )
 
     def _is_test_environment(self) -> bool:

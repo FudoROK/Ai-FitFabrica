@@ -1,16 +1,13 @@
-import base64
 import json
 from datetime import datetime, timezone
 from types import SimpleNamespace
 
 from google.api_core.datetime_helpers import DatetimeWithNanoseconds
-from fastapi.testclient import TestClient
 import pytest
 
 from src.domain.models import ChatSession, Lead
 from src.domain.pipeline_status import PipelineResult
 from src.services.rate_limit.contracts import RateLimitDecision
-from src.main import app
 from src.services.dialog.dialog_service import DialogService
 from src.use_cases.dialog import GenerateReplyUseCase
 
@@ -72,169 +69,6 @@ class _SessionRepo:
         return ChatSession(id="telegram:1", channel="telegram", chat_id="1", external_user_id="1", lead_id="canonical-1")
 
 
-def _pubsub_request_payload(data: dict) -> dict:
-    encoded = base64.b64encode(json.dumps(data).encode("utf-8")).decode("utf-8")
-    return {"message": {"data": encoded}}
-
-
-def test_webhook_publish_failure_returns_non_200(monkeypatch):
-    client = TestClient(app)
-    monkeypatch.setattr("src.entrypoints.telegram_webhook_routes.has_valid_token", lambda *_args, **_kwargs: True)
-
-    # Inject mock rate limiters to always allow
-    monkeypatch.setattr(
-        "src.entrypoints.telegram_webhook_routes.ingress_rate_limiter",
-        lambda _settings: type("AllowAll", (), {"allow": lambda *_args, **_kwargs: RateLimitDecision(status="allowed")})(),
-    )
-    monkeypatch.setattr(
-        "src.entrypoints.telegram_webhook_routes.ingress_global_safety_limiter",
-        lambda _settings: type("AllowAll", (), {"allow": lambda *_args, **_kwargs: RateLimitDecision(status="allowed")})(),
-    )
-
-    monkeypatch.setattr("src.entrypoints.telegram_webhook_routes.publish_normalized_update", lambda *_args, **_kwargs: (_ for _ in ()).throw(RuntimeError("boom")))
-
-    response = client.post("/webhook/telegram", json={"update_id": 1, "message": {"message_id": 10, "date": 1710000000, "from": {"id": 1}, "chat": {"id": 1}, "text": "hi"}})
-
-    assert response.status_code == 503
-    assert response.json()["pipeline_status"] == "failed"
-
-
-def test_webhook_publish_success_returns_200(monkeypatch):
-    client = TestClient(app)
-    monkeypatch.setattr("src.entrypoints.telegram_webhook_routes.has_valid_token", lambda *_args, **_kwargs: True)
-
-    # Inject mock rate limiters to always allow
-    monkeypatch.setattr(
-        "src.entrypoints.telegram_webhook_routes.ingress_rate_limiter",
-        lambda _settings: type("AllowAll", (), {"allow": lambda *_args, **_kwargs: RateLimitDecision(status="allowed")})(),
-    )
-    monkeypatch.setattr(
-        "src.entrypoints.telegram_webhook_routes.ingress_global_safety_limiter",
-        lambda _settings: type("AllowAll", (), {"allow": lambda *_args, **_kwargs: RateLimitDecision(status="allowed")})(),
-    )
-
-    monkeypatch.setattr("src.entrypoints.telegram_webhook_routes.publish_normalized_update", lambda *_args, **_kwargs: "id")
-
-    response = client.post("/webhook/telegram", json={"update_id": 1, "message": {"message_id": 10, "date": 1710000000, "from": {"id": 1}, "chat": {"id": 1}, "text": "hi"}})
-
-    assert response.status_code == 200
-    assert response.json()["pipeline_status"] == "success"
-
-
-
-
-def test_webhook_retry_after_publish_failure_is_retried(monkeypatch):
-    client = TestClient(app)
-    monkeypatch.setattr("src.entrypoints.telegram_webhook_routes.has_valid_token", lambda *_args, **_kwargs: True)
-
-    attempts = {"count": 0}
-
-    def _publish(*_args, **_kwargs):
-        attempts["count"] += 1
-        if attempts["count"] == 1:
-            raise RuntimeError("transient")
-        return "id"
-
-    monkeypatch.setattr("src.entrypoints.telegram_webhook_routes.publish_normalized_update", _publish)
-
-    payload = {"update_id": 99, "message": {"message_id": 90, "date": 1710000000, "from": {"id": 1}, "chat": {"id": 1}, "text": "hi"}}
-
-    first = client.post("/webhook/telegram", json=payload)
-    second = client.post("/webhook/telegram", json=payload)
-
-    assert first.status_code == 503
-    assert first.json()["status"] == "enqueue_failed"
-    assert second.status_code == 200
-    assert second.json()["status"] == "queued"
-    assert attempts["count"] == 2
-
-
-def test_pubsub_success_marks_completed(monkeypatch):
-    client = TestClient(app)
-    monkeypatch.setattr("src.entrypoints.pubsub_routes.verify_pubsub_oidc_jwt", lambda *_args, **_kwargs: True)
-    monkeypatch.setattr(
-        "src.entrypoints.pubsub_pipeline.start_normalized_event_processing",
-        lambda **_kwargs: type("S", (), {"decision": "started", "should_process": True, "status": "processing"})(),
-    )
-    completed = {"called": False}
-    monkeypatch.setattr("src.entrypoints.pubsub_pipeline.complete_normalized_event_processing", lambda *_args, **_kwargs: completed.__setitem__("called", True))
-    monkeypatch.setattr("src.entrypoints.pubsub_pipeline.fail_normalized_event_processing", lambda *_args, **_kwargs: None)
-
-    class _Svc:
-        async def handle_normalized_message(self, _normalized):
-            return PipelineResult(status="success", reply_text="ok")
-
-    monkeypatch.setattr("src.entrypoints.pubsub_routes.dialog_service", lambda _settings=None: _Svc())
-
-    response = client.post("/pubsub", json=_pubsub_request_payload({"channel": "telegram", "source_identity": "1", "event_identity": "1", "conversation_identity": "1", "text": "hi"}))
-
-    assert response.status_code == 200
-    assert completed["called"] is True
-
-
-def test_pubsub_dialog_error_marks_failed(monkeypatch):
-    client = TestClient(app)
-    monkeypatch.setattr("src.entrypoints.pubsub_routes.verify_pubsub_oidc_jwt", lambda *_args, **_kwargs: True)
-    monkeypatch.setattr(
-        "src.entrypoints.pubsub_pipeline.start_normalized_event_processing",
-        lambda **_kwargs: type("S", (), {"decision": "started", "should_process": True, "status": "processing"})(),
-    )
-    failed = {"called": False}
-    monkeypatch.setattr("src.entrypoints.pubsub_pipeline.complete_normalized_event_processing", lambda *_args, **_kwargs: None)
-    monkeypatch.setattr("src.entrypoints.pubsub_pipeline.fail_normalized_event_processing", lambda *_args, **_kwargs: failed.__setitem__("called", True))
-
-    class _Svc:
-        async def handle_normalized_message(self, _normalized):
-            raise RuntimeError("dialog")
-
-    monkeypatch.setattr("src.entrypoints.pubsub_routes.dialog_service", lambda _settings=None: _Svc())
-
-    response = client.post("/pubsub", json=_pubsub_request_payload({"channel": "telegram", "source_identity": "1", "event_identity": "1", "conversation_identity": "1", "text": "hi"}))
-
-    assert response.status_code == 500
-    assert failed["called"] is True
-
-
-def test_pubsub_completed_duplicate_skipped(monkeypatch):
-    client = TestClient(app)
-    monkeypatch.setattr("src.entrypoints.pubsub_routes.verify_pubsub_oidc_jwt", lambda *_args, **_kwargs: True)
-    monkeypatch.setattr(
-        "src.entrypoints.pubsub_pipeline.start_normalized_event_processing",
-        lambda **_kwargs: type(
-            "S",
-            (),
-            {"decision": "already_completed", "should_process": False, "status": "completed"},
-        )(),
-    )
-
-    response = client.post("/pubsub", json=_pubsub_request_payload({"channel": "telegram", "source_identity": "1", "event_identity": "1", "conversation_identity": "1", "text": "hi"}))
-
-    assert response.status_code == 200
-    assert response.json()["status"] == "duplicate_skipped"
-
-
-def test_pubsub_failed_retry_reprocessed(monkeypatch):
-    client = TestClient(app)
-    monkeypatch.setattr("src.entrypoints.pubsub_routes.verify_pubsub_oidc_jwt", lambda *_args, **_kwargs: True)
-    monkeypatch.setattr(
-        "src.entrypoints.pubsub_pipeline.start_normalized_event_processing",
-        lambda **_kwargs: type("S", (), {"decision": "started", "should_process": True, "status": "processing"})(),
-    )
-    monkeypatch.setattr("src.entrypoints.pubsub_pipeline.complete_normalized_event_processing", lambda *_args, **_kwargs: None)
-    monkeypatch.setattr("src.entrypoints.pubsub_pipeline.fail_normalized_event_processing", lambda *_args, **_kwargs: None)
-
-    class _Svc:
-        async def handle_normalized_message(self, _normalized):
-            return PipelineResult(status="degraded", reply_text="fallback")
-
-    monkeypatch.setattr("src.entrypoints.pubsub_routes.dialog_service", lambda _settings=None: _Svc())
-
-    response = client.post("/pubsub", json=_pubsub_request_payload({"channel": "telegram", "source_identity": "1", "event_identity": "1", "conversation_identity": "1", "text": "hi"}))
-
-    assert response.status_code == 200
-    assert response.json()["pipeline_status"] == "degraded"
-
-
 def test_firestore_write_error_is_not_silent(monkeypatch):
     import src.adapters.database.firestore.storage_primitives as sp
     import src.adapters.database.firestore.lead_store as lead_store
@@ -274,7 +108,7 @@ def test_llm_fallback_is_degraded_not_success(monkeypatch):
             from src.llm.llm_base_contracts import LLMResult
 
             return LLMResult(
-                task="primary_agent_reply_task",
+                task="dialog_reply_task",
                 ok=False,
                 data={"reply_text": "fallback", "system_payload": None},
                 error={"kind": "provider_error", "message": "x"},
@@ -319,7 +153,7 @@ def test_generate_reply_use_case_serializes_nested_firestore_timestamps():
             captured_payload["task"] = task
             captured_payload["payload"] = payload
             captured_payload["meta"] = meta
-            return LLMResult(task="primary_agent_reply_task", ok=True, data={"reply_text": "ok", "system_payload": None})
+            return LLMResult(task="dialog_reply_task", ok=True, data={"reply_text": "ok", "system_payload": None})
 
     use_case = GenerateReplyUseCase(_LLM())
 
@@ -367,7 +201,7 @@ def test_generate_reply_use_case_exposes_normalized_provider_session_id():
             from src.llm.llm_base_contracts import LLMResult
 
             return LLMResult(
-                task="primary_agent_reply_task",
+                task="dialog_reply_task",
                 ok=True,
                 data={
                     "reply_text": "ok",

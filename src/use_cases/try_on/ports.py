@@ -3,7 +3,14 @@ from __future__ import annotations
 
 from typing import Protocol
 
-from src.domain.try_on import TryOnInputMetadata, TryOnJob, TryOnResult, TryOnStoredInput, TryOnUploadRole
+from src.domain.try_on import (
+    TryOnGenerationMode,
+    TryOnInputMetadata,
+    TryOnJob,
+    TryOnResult,
+    TryOnStoredInput,
+    TryOnUploadRole,
+)
 
 
 class TryOnJobRepositoryPort(Protocol):
@@ -38,6 +45,62 @@ class TryOnFileStoragePort(Protocol):
 class TryOnGenerationPort(Protocol):
     """Generation boundary used by the workflow service."""
 
-    async def generate(self, *, job_id: str, input_metadata: list[TryOnInputMetadata]) -> TryOnResult:
+    generation_mode: TryOnGenerationMode
+
+    async def generate(
+        self,
+        *,
+        job_id: str,
+        input_metadata: list[TryOnInputMetadata],
+        stored_inputs: list[TryOnStoredInput],
+    ) -> TryOnResult:
         """Generate a Try-On result for validated input metadata."""
+        ...
+
+
+class TryOnQualityVerifierPort(Protocol):
+    """Quality-verification boundary used after Try-On generation."""
+
+    async def verify(
+        self,
+        *,
+        job_id: str,
+        generation_mode: TryOnGenerationMode,
+        input_metadata: list[TryOnInputMetadata],
+        stored_inputs: list[TryOnStoredInput],
+        result: TryOnResult,
+    ):
+        """Verify the generated Try-On result and return a backend-owned quality report."""
+        ...
+
+
+class TryOnRepairPort(Protocol):
+    """Repair boundary used when quality verification recommends a local fix."""
+
+    async def repair(
+        self,
+        *,
+        job_id: str,
+        generation_mode: TryOnGenerationMode,
+        stored_inputs: list[TryOnStoredInput],
+        result: TryOnResult,
+        quality_report,
+    ) -> TryOnResult:
+        """Repair the generated Try-On result and return an updated result artifact."""
+        ...
+
+
+class TryOnStylistPort(Protocol):
+    """Stylist boundary used to generate the final user-facing Try-On explanation."""
+
+    async def generate_note(
+        self,
+        *,
+        job_id: str,
+        generation_mode: TryOnGenerationMode,
+        input_metadata: list[TryOnInputMetadata],
+        stored_inputs: list[TryOnStoredInput],
+        result: TryOnResult,
+    ) -> str:
+        """Return the final stylist note for a completed Try-On result."""
         ...

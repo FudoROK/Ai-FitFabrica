@@ -20,10 +20,11 @@ def test_try_on_sandbox_api_contract_doc_exists() -> None:
         "not_ready",
         "job_failed",
         "Storage Backend",
-        "try_on_file_storage_backend=gcs",
-        "try_on_job_repository_backend=firestore",
-        "No live GCS or Firestore resource usage",
-        "No Vertex",
+        "object_storage_backend=s3",
+        "portable SQL infrastructure",
+        "try_on_generation_backend=sandbox_fake|provider_runtime",
+        "try_on_quality_verifier_backend=deterministic|model_backed",
+        "try_on_repair_backend=deterministic|provider_runtime",
     ]
 
     for fragment in required_fragments:
@@ -40,8 +41,9 @@ def test_try_on_durable_storage_activation_doc_exists() -> None:
         "IAM",
         "Dry Run",
         "Rollback",
-        "TRY_ON_FILE_STORAGE_BACKEND=gcs",
-        "TRY_ON_JOB_REPOSITORY_BACKEND=firestore",
+        "OBJECT_STORAGE_BACKEND=s3",
+        "OBJECT_STORAGE_BUCKET_NAME",
+        "POSTGRES_DSN",
         "No Vertex",
     ]
 

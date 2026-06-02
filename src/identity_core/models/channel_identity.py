@@ -11,6 +11,7 @@ from .identity_core_primitives import ChannelIdentityState, JsonMap
 @dataclass(slots=True, frozen=True)
 class ChannelIdentityRecord:
     channel_identity_id: UUID
+    person_id: UUID
     channel: str
     external_identity: str
     lifecycle_state: ChannelIdentityState

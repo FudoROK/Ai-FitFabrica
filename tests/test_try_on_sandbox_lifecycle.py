@@ -106,8 +106,9 @@ def test_try_on_job_creation_records_status_history_and_cost_events():
         },
     )
 
-    assert response.status_code == 201
+    assert response.status_code == 202
     created = response.json()
+    assert created["status"] == "accepted"
     status_response = client.get(created["status_url"])
 
     assert status_response.status_code == 200
@@ -115,7 +116,6 @@ def test_try_on_job_creation_records_status_history_and_cost_events():
     assert body["status"] == "completed"
     assert [event["status"] for event in body["status_history"]] == [
         "accepted",
-        "validating_inputs",
         "generating",
         "quality_checking",
         "completed",
@@ -141,7 +141,7 @@ def test_try_on_result_contract_is_structurally_realistic():
         },
     )
 
-    assert create_response.status_code == 201
+    assert create_response.status_code == 202
     result_response = client.get(create_response.json()["result_url"])
 
     assert result_response.status_code == 200
@@ -169,7 +169,7 @@ def test_try_on_public_responses_do_not_expose_storage_references():
         },
     )
 
-    assert create_response.status_code == 201
+    assert create_response.status_code == 202
     created = create_response.json()
     status_response = client.get(created["status_url"])
     result_response = client.get(created["result_url"])
@@ -182,6 +182,7 @@ def test_try_on_public_responses_do_not_expose_storage_references():
     assert "stored_inputs" not in serialized
     assert "memory://try-on/" not in serialized
     assert "bucket_name" not in serialized
+    assert "object_key" not in serialized
     assert "object_name" not in serialized
 
 
@@ -196,9 +197,9 @@ def test_try_on_pending_sandbox_job_returns_not_ready_result():
         },
     )
 
-    assert create_response.status_code == 201
+    assert create_response.status_code == 202
     created = create_response.json()
-    assert created["status"] == "generating"
+    assert created["status"] == "accepted"
 
     result_response = client.get(created["result_url"])
 
@@ -208,18 +209,16 @@ def test_try_on_pending_sandbox_job_returns_not_ready_result():
         "status": "not_ready",
         "job_id": created["job_id"],
         "workflow_type": "try_on",
-        "current_status": "generating",
+        "current_status": "accepted",
         "status_url": created["status_url"],
     }
 
     status_response = client.get(created["status_url"])
     assert status_response.status_code == 200
     status_body = status_response.json()
-    assert status_body["status"] == "generating"
+    assert status_body["status"] == "accepted"
     assert [event["status"] for event in status_body["status_history"]] == [
         "accepted",
-        "validating_inputs",
-        "generating",
     ]
     assert status_body["cost_events"][0]["charge_status"] == "not_charged"
 
@@ -235,9 +234,9 @@ def test_try_on_failed_sandbox_job_returns_typed_result_error():
         },
     )
 
-    assert create_response.status_code == 201
+    assert create_response.status_code == 202
     created = create_response.json()
-    assert created["status"] == "failed"
+    assert created["status"] == "accepted"
 
     result_response = client.get(created["result_url"])
 
@@ -356,7 +355,6 @@ def test_try_on_domain_contracts_match_planned_shapes():
 def test_try_on_settings_content_types_fallback_and_positive_upload_limit():
     settings = Settings(
         _env_file=None,
-        telegram_bot_token="token",
         GCP_PROJECT_ID="project",
         PUBSUB_TOPIC_NAME="topic",
         TRY_ON_ALLOWED_CONTENT_TYPES=",",
@@ -367,7 +365,6 @@ def test_try_on_settings_content_types_fallback_and_positive_upload_limit():
     try:
         Settings(
             _env_file=None,
-            telegram_bot_token="token",
             GCP_PROJECT_ID="project",
             PUBSUB_TOPIC_NAME="topic",
             TRY_ON_MAX_UPLOAD_BYTES=0,
@@ -424,51 +421,50 @@ async def test_try_on_workflow_service_creates_completed_job_and_persists_it():
         human_photo=_upload_file("human.png", b"human-image", "image/png"),
         garment_photo=_upload_file("garment.webp", b"garment-image", "image/webp"),
     )
+    completed = await service.execute_job(job_id=job.job_id)
 
-    assert job.status == TryOnJobStatus.COMPLETED
-    assert [event.status for event in job.status_history] == [
+    assert job.status == TryOnJobStatus.ACCEPTED
+    assert [event.status for event in completed.status_history] == [
         TryOnJobStatus.ACCEPTED,
-        TryOnJobStatus.VALIDATING_INPUTS,
         TryOnJobStatus.GENERATING,
         TryOnJobStatus.QUALITY_CHECKING,
         TryOnJobStatus.COMPLETED,
     ]
-    assert [event.stage for event in job.status_history] == [
+    assert [event.stage for event in completed.status_history] == [
         "accepted",
-        "input_validation",
         "sandbox_generation",
         "quality_check",
         "completed",
     ]
-    assert job.cost_events[0].event_type == "try_on_sandbox_generation"
-    assert job.cost_events[0].charge_status == TryOnChargeStatus.NOT_CHARGED
-    assert job.cost_events[0].charged_credits == 0
-    assert job.result is not None
-    assert job.result.quality_report.verdict == "pass"
-    assert job.result.quality_report.checks[0] == TryOnQualityCheck(
+    assert completed.cost_events[0].event_type == "try_on_sandbox_generation"
+    assert completed.cost_events[0].charge_status == TryOnChargeStatus.NOT_CHARGED
+    assert completed.cost_events[0].charged_credits == 0
+    assert completed.result is not None
+    assert completed.result.quality_report.verdict == "pass"
+    assert completed.result.quality_report.checks[0] == TryOnQualityCheck(
         name="face_preservation",
         status="passed",
         confidence=0.92,
         message="Sandbox verifier confirms the face-preservation check shape.",
     )
-    assert job.result.quality_report.checks[1] == TryOnQualityCheck(
+    assert completed.result.quality_report.checks[1] == TryOnQualityCheck(
         name="garment_similarity",
         status="passed",
         confidence=0.9,
         message="Sandbox verifier confirms garment-similarity reporting shape.",
     )
-    assert job.result.quality_report.checks[2] == TryOnQualityCheck(
+    assert completed.result.quality_report.checks[2] == TryOnQualityCheck(
         name="artifact_scan",
         status="warning",
         confidence=0.74,
         message="Sandbox output is deterministic and not a real image generation.",
     )
-    assert job.result.quality_report.limitations == ["Sandbox fake generation does not evaluate the uploaded pixels."]
+    assert completed.result.quality_report.limitations == ["Sandbox fake generation does not evaluate the uploaded pixels."]
     assert (
-        job.result.stylist_note
+        completed.result.stylist_note
         == "Sandbox Try-On completed. Real stylist advice will be generated after the production generation adapter is connected."
     )
-    assert await repository.get(job.job_id) == job
+    assert await repository.get(job.job_id) == completed
 
 
 @pytest.mark.anyio

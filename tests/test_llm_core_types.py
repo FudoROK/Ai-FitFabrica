@@ -5,7 +5,7 @@ from src.llm.core.types import LLMError, Usage
 
 def test_core_models_can_be_constructed():
     request = LLMRequest(
-        task="primary_agent_reply_task",
+        task="dialog_reply_task",
         input="hello",
         structured_output={"schema": {"type": "object"}},
         metadata={"trace_id": "abc"},

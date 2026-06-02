@@ -6,7 +6,7 @@ from src.llm.llm_task_registry import TASK_REGISTRY, get_task_implementation, va
 
 
 EXPECTED_TASKS = {
-    "primary_agent_reply_task",
+    "dialog_reply_task",
     "profile_extract_task",
     "memory_daily_sync_task",
     "memory_rolling_sync_task",
@@ -18,7 +18,7 @@ def test_task_registry_catalog_is_explicit_and_complete() -> None:
 
 
 def test_get_task_implementation_returns_contract_functions() -> None:
-    implementation = get_task_implementation("primary_agent_reply_task")
+    implementation = get_task_implementation("dialog_reply_task")
 
     assert callable(getattr(implementation, "build_provider_request", None))
     assert callable(getattr(implementation, "parse_provider_response", None))
@@ -30,14 +30,14 @@ def test_validate_task_registry_fails_for_broken_contract(monkeypatch: pytest.Mo
             return payload, meta
 
     broken_registry = dict(TASK_REGISTRY)
-    broken_registry["primary_agent_reply_task"] = broken_registry["primary_agent_reply_task"].__class__(
-        task_name="primary_agent_reply_task",
+    broken_registry["dialog_reply_task"] = broken_registry["dialog_reply_task"].__class__(
+        task_name="dialog_reply_task",
         implementation=_BrokenTask(),
     )
 
     monkeypatch.setattr("src.llm.llm_task_registry.TASK_REGISTRY", broken_registry)
 
-    with pytest.raises(RuntimeError, match="invalid_llm_task_registry:primary_agent_reply_task:missing_callable:parse_provider_response"):
+    with pytest.raises(RuntimeError, match="invalid_llm_task_registry:dialog_reply_task:missing_callable:parse_provider_response"):
         validate_task_registry()
 
 

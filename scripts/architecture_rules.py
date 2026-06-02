@@ -87,6 +87,7 @@ IDENTITY_CORE_MODELS_SCOPE = "src.identity_core.models"
 IDENTITY_CORE_ALLOWED_RUNTIME_IMPORTERS = (
     "src/identity_core/services/identity_resolution.py",
     "src/identity_core/services/identity_core_runtime_repositories.py",
+    "src/adapters/database/sql/identity_repositories.py",
 )
 
 CRM_LAYER_SCOPES = (
