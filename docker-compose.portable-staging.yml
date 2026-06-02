@@ -1,4 +1,15 @@
 services:
+  proxy:
+    image: caddy:2
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "80:80"
+    volumes:
+      - ./deploy/caddy/Caddyfile.portable-vm-http:/etc/caddy/Caddyfile:ro
+    restart: unless-stopped
+
   api:
     build:
       context: .
