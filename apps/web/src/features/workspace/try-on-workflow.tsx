@@ -1,9 +1,8 @@
-"use client";
+﻿"use client";
 
 import type { ChangeEvent, FormEvent } from "react";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { SiteButton } from "@/components/site/site-button";
 import { WebApiClient } from "@/lib/api/client";
@@ -18,7 +17,7 @@ type UploadCardProps = {
 };
 
 const acceptedImageTypes = ["image/jpeg", "image/png", "image/webp"] as const;
-const acceptedImageTypesLabel = "JPEG, PNG или WebP, до 10 МБ";
+const acceptedImageTypesLabel = "JPEG, PNG РёР»Рё WebP, РґРѕ 10 РњР‘";
 const maxFileSizeBytes = 10 * 1024 * 1024;
 const emptyImage: SelectedImage = { error: "", file: null, previewUrl: "" };
 
@@ -28,16 +27,16 @@ function getApiBaseUrl(): string {
 
 function validateImageFile(file: File | null): string {
   if (!file) {
-    return "Выберите файл изображения.";
+    return "Р’С‹Р±РµСЂРёС‚Рµ С„Р°Р№Р» РёР·РѕР±СЂР°Р¶РµРЅРёСЏ.";
   }
   if (file.size === 0) {
-    return "Файл пустой. Выберите другое изображение.";
+    return "Р¤Р°Р№Р» РїСѓСЃС‚РѕР№. Р’С‹Р±РµСЂРёС‚Рµ РґСЂСѓРіРѕРµ РёР·РѕР±СЂР°Р¶РµРЅРёРµ.";
   }
   if (!acceptedImageTypes.includes(file.type as (typeof acceptedImageTypes)[number])) {
-    return "Поддерживаются только JPEG, PNG или WebP.";
+    return "РџРѕРґРґРµСЂР¶РёРІР°СЋС‚СЃСЏ С‚РѕР»СЊРєРѕ JPEG, PNG РёР»Рё WebP.";
   }
   if (file.size > maxFileSizeBytes) {
-    return "Максимальный размер файла - 10 МБ.";
+    return "РњР°РєСЃРёРјР°Р»СЊРЅС‹Р№ СЂР°Р·РјРµСЂ С„Р°Р№Р»Р° - 10 РњР‘.";
   }
   return "";
 }
@@ -84,8 +83,8 @@ function StatusHistory({ items }: { items: TryOnStatusEvent[] }) {
   if (!items.length) {
     return (
       <div className="rounded-[1.2rem] bg-[var(--background)] p-4">
-        <strong className="block text-[0.95rem]">Ожидание запуска</strong>
-        <p className="mt-1 text-[0.85rem] leading-6 text-[var(--text-secondary)]">После отправки бэкенд вернет историю статусов задачи.</p>
+        <strong className="block text-[0.95rem]">РћР¶РёРґР°РЅРёРµ Р·Р°РїСѓСЃРєР°</strong>
+        <p className="mt-1 text-[0.85rem] leading-6 text-[var(--text-secondary)]">РџРѕСЃР»Рµ РѕС‚РїСЂР°РІРєРё Р±СЌРєРµРЅРґ РІРµСЂРЅРµС‚ РёСЃС‚РѕСЂРёСЋ СЃС‚Р°С‚СѓСЃРѕРІ Р·Р°РґР°С‡Рё.</p>
       </div>
     );
   }
@@ -172,12 +171,12 @@ export function TryOnWorkflow() {
     }
     const baseUrl = getApiBaseUrl();
     if (!baseUrl) {
-      setError("Не настроен NEXT_PUBLIC_API_BASE_URL. Укажите backend base URL для создания примерки.");
+      setError("РќРµ РЅР°СЃС‚СЂРѕРµРЅ NEXT_PUBLIC_API_BASE_URL. РЈРєР°Р¶РёС‚Рµ backend base URL РґР»СЏ СЃРѕР·РґР°РЅРёСЏ РїСЂРёРјРµСЂРєРё.");
       setWorkflowState("error");
       return;
     }
     if (!humanPhoto.file || !garmentPhoto.file) {
-      setError("Выберите фото человека и фото одежды.");
+      setError("Р’С‹Р±РµСЂРёС‚Рµ С„РѕС‚Рѕ С‡РµР»РѕРІРµРєР° Рё С„РѕС‚Рѕ РѕРґРµР¶РґС‹.");
       setWorkflowState("error");
       return;
     }
@@ -198,7 +197,7 @@ export function TryOnWorkflow() {
       }
       setWorkflowState("status_loaded");
     } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : "Не удалось создать задачу примерки.");
+      setError(requestError instanceof Error ? requestError.message : "РќРµ СѓРґР°Р»РѕСЃСЊ СЃРѕР·РґР°С‚СЊ Р·Р°РґР°С‡Сѓ РїСЂРёРјРµСЂРєРё.");
       setWorkflowState("error");
     }
   }
@@ -208,14 +207,14 @@ export function TryOnWorkflow() {
       <div className="border-b border-[var(--border)] bg-[var(--surface)] px-5 py-4 lg:px-6">
         <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0">
-            <h1 className="workspace-title font-[family-name:var(--font-manrope)]">Новая примерка</h1>
+            <h1 className="workspace-title font-[family-name:var(--font-manrope)]">РќРѕРІР°СЏ РїСЂРёРјРµСЂРєР°</h1>
             <p className="workspace-subtitle mt-2 max-w-[760px] text-[var(--text-secondary)]">
-              Загрузите фото человека и фото одежды. Интерфейс отправит файлы на бэкенд и покажет текущий статус задачи.
+              Р—Р°РіСЂСѓР·РёС‚Рµ С„РѕС‚Рѕ С‡РµР»РѕРІРµРєР° Рё С„РѕС‚Рѕ РѕРґРµР¶РґС‹. РРЅС‚РµСЂС„РµР№СЃ РѕС‚РїСЂР°РІРёС‚ С„Р°Р№Р»С‹ РЅР° Р±СЌРєРµРЅРґ Рё РїРѕРєР°Р¶РµС‚ С‚РµРєСѓС‰РёР№ СЃС‚Р°С‚СѓСЃ Р·Р°РґР°С‡Рё.
             </p>
           </div>
-          <Link className="site-pill-button site-pill-button--compact" href="/workspace/chat">
-            Вернуться в общий чат
-          </Link>
+          <a className="site-pill-button site-pill-button--compact" href="/workspace/chat">
+            Р’РµСЂРЅСѓС‚СЊСЃСЏ РІ РѕР±С‰РёР№ С‡Р°С‚
+          </a>
         </div>
       </div>
 
@@ -223,8 +222,8 @@ export function TryOnWorkflow() {
         <form className="tryon-layout grid h-full min-w-0 gap-5 overflow-hidden" onSubmit={handleSubmit}>
           <div className="min-h-0 overflow-y-auto overflow-x-hidden">
             <div className="grid gap-5">
-              <UploadCard description={acceptedImageTypesLabel} disabled={isSubmitting} image={humanPhoto} label="Фото человека" name="human_photo" onChange={updateImage} />
-              <UploadCard description={acceptedImageTypesLabel} disabled={isSubmitting} image={garmentPhoto} label="Фото одежды" name="garment_photo" onChange={updateImage} />
+              <UploadCard description={acceptedImageTypesLabel} disabled={isSubmitting} image={humanPhoto} label="Р¤РѕС‚Рѕ С‡РµР»РѕРІРµРєР°" name="human_photo" onChange={updateImage} />
+              <UploadCard description={acceptedImageTypesLabel} disabled={isSubmitting} image={garmentPhoto} label="Р¤РѕС‚Рѕ РѕРґРµР¶РґС‹" name="garment_photo" onChange={updateImage} />
             </div>
           </div>
 
@@ -235,22 +234,22 @@ export function TryOnWorkflow() {
                   {isSubmitting ? "..." : "AI"}
                 </div>
                 <h2 className="result-title mt-6 font-[family-name:var(--font-manrope)] font-bold tracking-[-0.04em]">
-                  {workflowState === "completed" ? "Задача завершена" : "Подготовка примерки"}
+                  {workflowState === "completed" ? "Р—Р°РґР°С‡Р° Р·Р°РІРµСЂС€РµРЅР°" : "РџРѕРґРіРѕС‚РѕРІРєР° РїСЂРёРјРµСЂРєРё"}
                 </h2>
                 <p className="result-description mx-auto mt-4 max-w-[620px] text-[var(--text-secondary)]">
                   {createdJobId
-                    ? `Задача ${createdJobId} создана. Результат откроется после статуса completed.`
-                    : "Выберите два изображения и отправьте их на бэкенд. Генерация, качество и сохранение остаются на стороне бэкенда."}
+                    ? `Р—Р°РґР°С‡Р° ${createdJobId} СЃРѕР·РґР°РЅР°. Р РµР·СѓР»СЊС‚Р°С‚ РѕС‚РєСЂРѕРµС‚СЃСЏ РїРѕСЃР»Рµ СЃС‚Р°С‚СѓСЃР° completed.`
+                    : "Р’С‹Р±РµСЂРёС‚Рµ РґРІР° РёР·РѕР±СЂР°Р¶РµРЅРёСЏ Рё РѕС‚РїСЂР°РІСЊС‚Рµ РёС… РЅР° Р±СЌРєРµРЅРґ. Р“РµРЅРµСЂР°С†РёСЏ, РєР°С‡РµСЃС‚РІРѕ Рё СЃРѕС…СЂР°РЅРµРЅРёРµ РѕСЃС‚Р°СЋС‚СЃСЏ РЅР° СЃС‚РѕСЂРѕРЅРµ Р±СЌРєРµРЅРґР°."}
                 </p>
                 {workflowState === "status_loaded" && status ? (
                   <p className="mt-5 rounded-2xl bg-[var(--success-soft)] px-5 py-4 text-sm font-medium text-[var(--success)]">
-                    Статус получен: {status.status}. Откройте страницу результата, чтобы продолжить отслеживание.
+                    РЎС‚Р°С‚СѓСЃ РїРѕР»СѓС‡РµРЅ: {status.status}. РћС‚РєСЂРѕР№С‚Рµ СЃС‚СЂР°РЅРёС†Сѓ СЂРµР·СѓР»СЊС‚Р°С‚Р°, С‡С‚РѕР±С‹ РїСЂРѕРґРѕР»Р¶РёС‚СЊ РѕС‚СЃР»РµР¶РёРІР°РЅРёРµ.
                   </p>
                 ) : null}
                 {resultHref ? (
-                  <Link className="site-pill-button mt-5" href={resultHref}>
-                    Открыть задачу
-                  </Link>
+                  <a className="site-pill-button mt-5" href={resultHref}>
+                    РћС‚РєСЂС‹С‚СЊ Р·Р°РґР°С‡Сѓ
+                  </a>
                 ) : null}
                 {error ? <p className="mt-5 rounded-2xl bg-[#fce8e6] px-5 py-4 text-sm font-medium text-[var(--error)]">{error}</p> : null}
               </div>
@@ -260,25 +259,25 @@ export function TryOnWorkflow() {
           <aside className="workspace-status min-h-0 overflow-y-auto overflow-x-hidden pr-1">
             <div className="site-card flex min-h-0 flex-col justify-between p-6">
               <div>
-                <h2 className="text-[1.35rem] font-semibold">Статус бэкенда</h2>
+                <h2 className="text-[1.35rem] font-semibold">РЎС‚Р°С‚СѓСЃ Р±СЌРєРµРЅРґР°</h2>
                 <div className="mt-6 grid gap-4">
                   <StatusHistory items={status?.status_history ?? []} />
                 </div>
               </div>
               <div className="mt-6">
                 <div className="mb-4 flex items-center justify-between gap-4 text-[0.95rem]">
-                  <span className="text-[var(--text-secondary)]">Песочница:</span>
-                  <strong>списание не выполняется</strong>
+                  <span className="text-[var(--text-secondary)]">РџРµСЃРѕС‡РЅРёС†Р°:</span>
+                  <strong>СЃРїРёСЃР°РЅРёРµ РЅРµ РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ</strong>
                 </div>
                 <SiteButton className="w-full" disabled={!canSubmit} type="submit" variant="violet">
-                  {isSubmitting ? "Создаем задачу..." : "Создать примерку"}
+                  {isSubmitting ? "РЎРѕР·РґР°РµРј Р·Р°РґР°С‡Сѓ..." : "РЎРѕР·РґР°С‚СЊ РїСЂРёРјРµСЂРєСѓ"}
                 </SiteButton>
                 <p className="mt-3 text-center text-[0.82rem] font-medium text-[var(--text-muted)]">
-                  {createdJobId ? "Задача уже создана, повторная отправка заблокирована" : canSubmit ? "Файлы готовы к отправке" : "Загрузите оба изображения для начала"}
+                  {createdJobId ? "Р—Р°РґР°С‡Р° СѓР¶Рµ СЃРѕР·РґР°РЅР°, РїРѕРІС‚РѕСЂРЅР°СЏ РѕС‚РїСЂР°РІРєР° Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅР°" : canSubmit ? "Р¤Р°Р№Р»С‹ РіРѕС‚РѕРІС‹ Рє РѕС‚РїСЂР°РІРєРµ" : "Р—Р°РіСЂСѓР·РёС‚Рµ РѕР±Р° РёР·РѕР±СЂР°Р¶РµРЅРёСЏ РґР»СЏ РЅР°С‡Р°Р»Р°"}
                 </p>
                 {resultHref ? (
                   <SiteButton className="mt-4 w-full" href={resultHref} variant="soft">
-                    Перейти к статусу
+                    РџРµСЂРµР№С‚Рё Рє СЃС‚Р°С‚СѓСЃСѓ
                   </SiteButton>
                 ) : null}
               </div>
@@ -289,3 +288,4 @@ export function TryOnWorkflow() {
     </main>
   );
 }
+

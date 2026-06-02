@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { MaterialIcon } from "@/components/site/material-icon";
 
@@ -55,9 +54,9 @@ export function SiteButton(props: SiteButtonProps) {
     const { children, className, href, icon } = props;
 
     return (
-      <Link className={getCommonClasses(variant, className)} href={href}>
+      <a className={getCommonClasses(variant, className)} href={href}>
         <ButtonContent icon={icon}>{children}</ButtonContent>
-      </Link>
+      </a>
     );
   }
 
