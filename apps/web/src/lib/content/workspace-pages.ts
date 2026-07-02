@@ -5,7 +5,7 @@ export const workspacePages: Record<string, WorkspacePageContent> = {
     eyebrow: "Workspace",
     title: "Операционный центр FitFabrica",
     lead:
-      "Рабочее пространство собрано вокруг активных процессов: примерка, карточки товара, brand profile и AI-проверки.",
+      "Рабочее пространство собрано вокруг активных процессов: примерка, карточки товара, профиль бренда и AI-проверки.",
     actions: [
       { href: "/workspace/new-fitting", label: "Создать новый сценарий", variant: "primary" },
       { href: "/workspace/history", label: "Открыть историю", variant: "secondary" }
@@ -18,11 +18,11 @@ export const workspacePages: Record<string, WorkspacePageContent> = {
     checklist: [
       {
         title: "Запустить примерку",
-        body: "Подготовьте фото и предмет одежды, затем запустите новый workflow."
+        body: "Подготовьте фото и вещь, затем откройте новый workflow."
       },
       {
         title: "Собрать карточку товара",
-        body: "Перейдите в product-card flow, чтобы подготовить структуру под ecommerce-контент."
+        body: "Перейдите в product-card flow, чтобы подготовить основу под ecommerce-контент."
       },
       {
         title: "Настроить бренд",
@@ -32,11 +32,11 @@ export const workspacePages: Record<string, WorkspacePageContent> = {
     panels: [
       {
         title: "Состояние продукта",
-        body: "Frontend перестроен под реальные панели и формы. Скриншоты выведены из основного потока."
+        body: "Frontend перестроен под реальные панели и формы без декоративных скриншотов."
       },
       {
         title: "Статусы AI",
-        body: "Каждый следующий экран рассчитан на понятные проверки качества, загрузки и результата."
+        body: "Каждый экран показывает понятные проверки качества, загрузки и результата."
       },
       {
         title: "Интеграционный контур",
@@ -46,7 +46,7 @@ export const workspacePages: Record<string, WorkspacePageContent> = {
     placeholder: {
       eyebrow: "Workspace Preview",
       title: "Главная продуктовая панель",
-      body: "Здесь позже можно показать реальный live preview результата, историю, канбан задач или enterprise overview.",
+      body: "Позже сюда можно встроить live preview результата, историю задач или операционный overview.",
       items: ["Preview area", "Status panel", "Inputs", "Next action"]
     }
   },
@@ -71,21 +71,21 @@ export const workspacePages: Record<string, WorkspacePageContent> = {
       },
       {
         title: "Фото или ссылка на товар",
-        body: "Вторая зона нужна для вещи, которую пользователь собирается примерить."
+        body: "Второй вход нужен для вещи, которую пользователь собирается примерить."
       },
       {
         title: "Проверка перед запуском",
-        body: "Frontend показывает только статус, а решение о запуске и валидации принимает backend."
+        body: "Frontend показывает статус, а решение о валидности и запуске принимает backend."
       }
     ],
     panels: [
       {
         title: "Upload zone",
-        body: "На этом экране позже должны появиться две управляемые зоны загрузки с прогрессом и ошибками."
+        body: "Позже здесь должны появиться управляемые зоны загрузки с прогрессом и ошибками."
       },
       {
         title: "AI quality panel",
-        body: "Панель справа будет показывать пригодность фото, риск по качеству и рекомендации перед запуском."
+        body: "Панель справа показывает пригодность фото, риск по качеству и рекомендации перед запуском."
       },
       {
         title: "Primary action",
@@ -94,8 +94,8 @@ export const workspacePages: Record<string, WorkspacePageContent> = {
     ],
     placeholder: {
       eyebrow: "Try-On Placeholder",
-      title: "Заглушка для preview перед генерацией",
-      body: "Позже сюда можно вставить live canvas, before/after или контрольную зону результата.",
+      title: "Preview перед генерацией",
+      body: "Позже сюда можно встроить live canvas, before/after или контрольную зону результата.",
       items: ["User photo", "Garment photo", "Quality check", "Generate CTA"]
     }
   },
@@ -103,10 +103,10 @@ export const workspacePages: Record<string, WorkspacePageContent> = {
     eyebrow: "Result Review",
     title: "Результат примерки",
     lead:
-      "Экран результата больше не притворяется скриншотом. Он подготовлен для живой выдачи, заметок и следующего действия.",
+      "Экран результата подготовлен для живой выдачи, заметок, качества и перехода к следующему действию.",
     actions: [
       { href: "/workspace/outfit-builder", label: "Подобрать образ", variant: "primary" },
-      { href: "/workspace/similar", label: "Найти похожее", variant: "secondary" }
+      { href: "/workspace/similar-search", label: "Найти похожее", variant: "secondary" }
     ],
     status: [
       { label: "Статус", value: "Result ready" },
@@ -124,7 +124,7 @@ export const workspacePages: Record<string, WorkspacePageContent> = {
       },
       {
         title: "Выбор следующего шага",
-        body: "Сохранить, перейти в outfit builder или искать альтернативу дешевле."
+        body: "Можно сохранить результат, перейти в outfit builder или искать альтернативу дешевле."
       }
     ],
     panels: [
@@ -134,17 +134,17 @@ export const workspacePages: Record<string, WorkspacePageContent> = {
       },
       {
         title: "AI checklist",
-        body: "Проверка цвета, посадки, целостности материала и готовности к сохранению."
+        body: "Проверяется цвет, посадка, целостность материала и готовность к сохранению."
       },
       {
         title: "Action rail",
-        body: "Важные действия вынесены отдельно и не конкурируют друг с другом."
+        body: "Ключевые действия вынесены отдельно и не конкурируют друг с другом."
       }
     ],
     placeholder: {
       eyebrow: "Result Placeholder",
       title: "Зона живого результата",
-      body: "Позже сюда можно вставить готовый рендер, review mode или comparison с исходником.",
+      body: "Позже сюда можно встроить готовый рендер, review mode или comparison с исходником.",
       items: ["Main preview", "Fit notes", "Quality badges", "Save result"]
     }
   },
@@ -155,7 +155,7 @@ export const workspacePages: Record<string, WorkspacePageContent> = {
       "Следующий слой после примерки: собрать комплект, уточнить роль вещи и выбрать направление стилизации.",
     actions: [
       { href: "/workspace/try-on/result", label: "Вернуться к результату", variant: "primary" },
-      { href: "/workspace/similar", label: "Искать альтернативы", variant: "secondary" }
+      { href: "/workspace/similar-search", label: "Искать альтернативы", variant: "secondary" }
     ],
     status: [
       { label: "База", value: "Одна ключевая вещь" },
@@ -183,7 +183,7 @@ export const workspacePages: Record<string, WorkspacePageContent> = {
       },
       {
         title: "Style rules",
-        body: "Панель может показывать, почему AI рекомендует те или иные сочетания."
+        body: "Панель может объяснять, почему AI рекомендует те или иные сочетания."
       },
       {
         title: "Follow-up actions",
@@ -193,7 +193,7 @@ export const workspacePages: Record<string, WorkspacePageContent> = {
     placeholder: {
       eyebrow: "Look Builder Placeholder",
       title: "Зона будущего образа",
-      body: "Позже сюда можно вставить outfit board, модуль сочетаний или карточки образов.",
+      body: "Позже сюда можно встроить outfit board, модуль сочетаний или карточки образов.",
       items: ["Base item", "Layering", "Palette", "Style rationale"]
     }
   },
@@ -201,7 +201,7 @@ export const workspacePages: Record<string, WorkspacePageContent> = {
     eyebrow: "Alternative Search",
     title: "Поиск похожих вариантов",
     lead:
-      "Этот экран больше не изображает каталог через скрин. Он подготовлен под реальный список альтернатив и фильтры backend-поиска.",
+      "Экран подготовлен под реальный список альтернатив, фильтры и backend-поиск, а не под статичный каталог.",
     actions: [
       { href: "/workspace/new-fitting", label: "Начать новый поиск", variant: "primary" },
       { href: "/workspace/history", label: "Открыть историю", variant: "secondary" }
@@ -214,11 +214,11 @@ export const workspacePages: Record<string, WorkspacePageContent> = {
     checklist: [
       {
         title: "Референсная вещь",
-        body: "Система должна использовать исходный товар или результат примерки как опорную точку."
+        body: "Система использует исходный товар или результат примерки как опорную точку."
       },
       {
         title: "Фильтры поиска",
-        body: "Цена, категория, тональность и сходство подключаются как typed параметры запроса."
+        body: "Цена, категория, тональность и сходство подключаются как типизированные параметры."
       },
       {
         title: "Реальные карточки",
@@ -228,7 +228,7 @@ export const workspacePages: Record<string, WorkspacePageContent> = {
     panels: [
       {
         title: "Result list",
-        body: "Вместо изображения каталога здесь будет реальный поток карточек."
+        body: "Вместо декоративного каталога здесь должен жить реальный поток карточек."
       },
       {
         title: "Compare panel",
@@ -236,13 +236,13 @@ export const workspacePages: Record<string, WorkspacePageContent> = {
       },
       {
         title: "Price guidance",
-        body: "AI-панель может объяснить, почему система рекомендует конкретные альтернативы."
+        body: "AI-панель объясняет, почему система рекомендует конкретные альтернативы."
       }
     ],
     placeholder: {
       eyebrow: "Search Placeholder",
       title: "Сетка альтернатив",
-      body: "Позже сюда можно вставить реальные product cards, фильтры и compare mode.",
+      body: "Позже сюда можно встроить product cards, фильтры и compare mode.",
       items: ["Filters", "Result cards", "Price notes", "Similarity score"]
     }
   },
@@ -250,7 +250,7 @@ export const workspacePages: Record<string, WorkspacePageContent> = {
     eyebrow: "Product Workflow",
     title: "Карточка товара",
     lead:
-      "Экран подготовлен для карточки товара как продукта, а не как картинки. Здесь должна жить структура под описание, визуал и экспорт.",
+      "Экран подготовлен для сборки карточки товара как продукта: описание, визуал, атрибуты и экспорт.",
     actions: [
       { href: "/workspace/content-package", label: "Открыть контент-пакет", variant: "primary" },
       { href: "/workspace/business-profile", label: "Настроить бренд", variant: "secondary" }
@@ -258,41 +258,41 @@ export const workspacePages: Record<string, WorkspacePageContent> = {
     status: [
       { label: "SKU", value: "Один товар" },
       { label: "Режим", value: "Content assembly" },
-      { label: "Выход", value: "Card + package" }
+      { label: "Финал", value: "Marketplace-ready output" }
     ],
     checklist: [
       {
-        title: "Описание товара",
-        body: "Карточка должна принимать structured fields и текстовые характеристики."
+        title: "Собрать описание",
+        body: "Здесь должны жить title, ключевые характеристики и marketplace-friendly copy."
       },
       {
-        title: "Визуальные материалы",
-        body: "Основной preview и дополнительные материалы появляются в крупной центральной зоне."
+        title: "Проверить визуал",
+        body: "Изображения и варианты подачи должны пройти quality-check перед публикацией."
       },
       {
-        title: "Экспорт",
-        body: "Следующие действия: сохранить, отправить в content package или экспортировать."
+        title: "Подготовить экспорт",
+        body: "Финальный артефакт должен быть готов к публикации или передаче в контент-пакет."
       }
     ],
     panels: [
       {
-        title: "Card structure",
-        body: "Панель рассчитана на SKU, описание, преимущества и статусы проверки."
+        title: "Content editor",
+        body: "Экран рассчитан на рабочее редактирование, а не на статичную витрину."
       },
       {
-        title: "AI support",
-        body: "AI-слой может подсказать тон описания, риск по качеству и readiness к публикации."
+        title: "AI notes",
+        body: "Панель справа показывает рекомендации по карточке, цене и качеству материалов."
       },
       {
-        title: "Operational handoff",
-        body: "Карточка товара становится частью следующего workflow, а не тупиковой страницей."
+        title: "Publishing rail",
+        body: "Экспорт и следующие действия живут в отдельном безопасном контуре."
       }
     ],
     placeholder: {
-      eyebrow: "Product Card Placeholder",
-      title: "Место для реальной карточки товара",
-      body: "Позже сюда можно вставить SKU-preview, ключевой визуал, описание и метаданные.",
-      items: ["SKU info", "Primary visual", "Copy block", "Export actions"]
+      eyebrow: "Product Placeholder",
+      title: "Зона карточки товара",
+      body: "Позже сюда можно встроить реальную карточку, атрибуты, preview и publish actions.",
+      items: ["Description", "Attributes", "Preview", "Export"]
     }
   }
 };

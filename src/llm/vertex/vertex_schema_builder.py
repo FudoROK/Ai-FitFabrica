@@ -5,14 +5,10 @@ from typing import Any
 
 from src.domain.contracts.dialog_reply_output_contract import AgentOutput
 from src.llm.contract_kinds import (
-    MEMORY_DAILY_OUTPUT_KIND,
-    MEMORY_ROLLING_OUTPUT_KIND,
     REPLY_AGENT_OUTPUT_KIND,
     canonicalize_contract_kind,
 )
 from src.llm.reply_task_contract import CANONICAL_DIALOG_REPLY_TASK, normalize_reply_runtime_task
-from src.runtime_agents.memory_agent.contracts.daily import DailyMemoryContract
-from src.runtime_agents.memory_agent.contracts.rolling import RollingMemoryContract
 
 _ALLOWED_SCHEMA_KEYS = {
     "type",
@@ -157,26 +153,12 @@ def _default_contract_kind_for_task(task_name: str) -> str | None:
     normalized = normalize_reply_runtime_task(task_name)
     if normalized == CANONICAL_DIALOG_REPLY_TASK:
         return REPLY_AGENT_OUTPUT_KIND
-    if normalized == "memory_daily_sync_task":
-        return MEMORY_DAILY_OUTPUT_KIND
-    if normalized == "memory_rolling_sync_task":
-        return MEMORY_ROLLING_OUTPUT_KIND
     return None
 
 
 def build_vertex_response_schema() -> dict[str, Any]:
     """Build Vertex-compatible response schema from canonical reply AgentOutput model."""
     return _build_vertex_schema_from_model(AgentOutput)
-
-
-def build_vertex_memory_daily_response_schema() -> dict[str, Any]:
-    """Build Vertex-compatible response schema from daily memory runtime output model."""
-    return _build_vertex_schema_from_model(DailyMemoryContract)
-
-
-def build_vertex_memory_rolling_response_schema() -> dict[str, Any]:
-    """Build Vertex-compatible response schema from rolling memory runtime output model."""
-    return _build_vertex_schema_from_model(RollingMemoryContract)
 
 
 def build_vertex_structured_contract(
@@ -198,10 +180,6 @@ def build_vertex_structured_contract(
         schema = _coerce_to_vertex_schema(raw_schema)
     elif canonical_kind == REPLY_AGENT_OUTPUT_KIND:
         schema = build_vertex_response_schema()
-    elif canonical_kind == MEMORY_DAILY_OUTPUT_KIND:
-        schema = build_vertex_memory_daily_response_schema()
-    elif canonical_kind == MEMORY_ROLLING_OUTPUT_KIND:
-        schema = build_vertex_memory_rolling_response_schema()
     else:
         schema = None
 

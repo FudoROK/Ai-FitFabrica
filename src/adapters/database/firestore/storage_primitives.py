@@ -40,20 +40,6 @@ from .lead_store import (
     write_extraction_attempt,
 )
 from .message_store import append_message_with_ttl, fetch_messages_in_window, fetch_recent_messages
-from .summary_store import (
-    acquire_memory_write_guard,
-    create_rolling_artifact,
-    fetch_daily_summary,
-    fetch_latest_daily_summary,
-    fetch_current_rolling_pointer,
-    fetch_rolling_artifact,
-    fetch_rolling_summary,
-    promote_rolling_pointer,
-    release_memory_write_guard,
-    update_rolling_summary,
-    write_daily_summary,
-)
-
 
 def get_document(collection: str, doc_id: str) -> Optional[dict[str, Any]]:
     client = get_firestore_client()

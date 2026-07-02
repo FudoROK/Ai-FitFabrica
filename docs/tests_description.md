@@ -8,9 +8,14 @@ The repository test suite is intended to protect:
 
 - backend domain and use-case behavior
 - provider and transport contracts
+- canonical agent invocation validation, timeout, failure mapping, and safe audit persistence
+- approved agent-artifact resolution, integrity validation, multimodal provider delivery, and text-only runtime fail-closed behavior
+- image-agent request/output contracts, prompt policy, semantic invariants, and golden evaluation fixtures
 - architecture boundaries
 - security and idempotency contours
 - Try-On workflow behavior
+- Product Card mandatory Garment Identity analysis and fail-closed workflow behavior
+- workflow cost map, provider price config, credits pricing, and offline cost reporting
 - frontend and backend contract alignment
 
 ## Main Test Groups
@@ -30,7 +35,6 @@ Primary coverage areas include:
 - dialog and inbound handling
 - identity resolution
 - LLM/provider contracts
-- memory layer
 - Try-On workflow
 
 ### Architecture Guardrail Tests
@@ -39,22 +43,42 @@ The `tests/architecture` suite enforces structural rules such as:
 
 - layer boundaries
 - runtime-agent restrictions
-- Firestore contour guardrails during migration-state operation
+- support-only Firestore contour guardrails where those boundaries still exist
 - transport neutrality
+- no direct ADK agent-root imports from routes or use cases
+- no direct cross-agent or agent-to-gateway imports
+- no `Any` in active image-agent packages
 
-These tests are especially important while the project is being migrated from the old baseline to the new portable baseline.
+These tests are especially important because the repository still protects a few isolated support contours while the active product baseline follows the portable backend architecture.
 
 ### Try-On Tests
 
 The Try-On suite covers:
 
 - sandbox lifecycle
+- mandatory parallel Human Identity, Garment Identity, and Material / Texture analysis before generation
+- backend continuation policy and fail-closed behavior
+- hardened Human Identity suitability policy for headshot crops, face occlusion, multiple subjects, missing required body regions, and insufficient body coverage
+- required-analysis SQL round-trip and migration chain
+- Try-On Instruction Agent structured-only input boundary, fail-closed policy, workflow wiring, SQL round-trip, and migration chain
+- generation-port execution, Vertex/provider adapter wiring, and fail-closed generation failure handling
+- Human Identity artifact-reference mapping without raw image persistence
 - storage selection and wiring
 - storage error handling
 - frontend route alignment
 - async result polling behavior
 
-These tests currently prove that the workflow works, but they do not mean Firestore or GCS are the approved long-term target architecture.
+The active Try-On storage tests protect the portable SQL and object-storage contour. Removed Firestore and GCS Try-On adapters are not part of the current production baseline.
+
+### Product Card Tests
+
+The Product Card suite covers:
+
+- mandatory Garment Identity analysis before generation
+- analysis contract mapping, confidence policy, and fail-closed behavior
+- one persisted reusable analysis per Product Card job
+- Product Card generation from structured analysis without source-image access
+- SQL round-trip, migration chain, runtime wiring, routes, billing, and architecture boundaries
 
 ### Frontend Verification
 
@@ -76,6 +100,12 @@ cd apps/web && npm run lint
 cd apps/web && npm run typecheck
 cd apps/web && npm run build
 ```
+
+Latest full backend result on `2026-06-16`: `665 passed`.
+
+Latest Human Identity hardening result on `2026-06-16`: targeted Human Identity policy, adapter, and workflow checks passed with `37 passed`; architecture guardrails passed; staging API/worker images were rebuilt and policy matrix verification is documented in `docs/reports/2026-06-16-human-identity-policy-hardening-report.md`.
+
+Latest Workflow Agent Cost Map result on `2026-06-16`: provider price config, workflow cost estimator, credits pricing policy, cost-map document contract, CLI report, and agent invocation cost metadata checks passed with `22 passed`.
 
 ## Documentation Rule
 

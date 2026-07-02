@@ -1,6 +1,5 @@
 from .contracts import RateLimitDecision, RateLimiter
 from .factory import FailModeRateLimiter, create_rate_limiter
-from .firestore_rate_limiter import FirestoreRateLimiter
 from .inmemory_rate_limiter import InMemoryRateLimiter
 from .redis_rate_limiter import RedisRateLimiter
 
@@ -9,7 +8,6 @@ __all__ = [
     "RateLimiter",
     "FailModeRateLimiter",
     "create_rate_limiter",
-    "FirestoreRateLimiter",
     "InMemoryRateLimiter",
     "RedisRateLimiter",
 ]

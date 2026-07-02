@@ -14,6 +14,7 @@ from src.domain.try_on import (
     TryOnStoredInput,
 )
 from src.use_cases.try_on.ports import TryOnQualityVerifierPort
+from src.use_cases.try_on.quality_policy import TryOnQualityPolicy
 
 
 class ModelBackedTryOnQualityVerifier(TryOnQualityVerifierPort):
@@ -23,6 +24,7 @@ class ModelBackedTryOnQualityVerifier(TryOnQualityVerifierPort):
         """Store the deterministic verifier and structured reasoning provider dependencies."""
         self._baseline_verifier = baseline_verifier
         self._structured_reasoning_provider = structured_reasoning_provider
+        self._quality_policy = TryOnQualityPolicy(minimum_pass_confidence=0.8)
 
     async def verify(
         self,
@@ -91,11 +93,13 @@ class ModelBackedTryOnQualityVerifier(TryOnQualityVerifierPort):
                 message=summary,
             )
         ]
-        return TryOnQualityReport(
-            verdict=verdict,
-            confidence=max(0.0, min(1.0, float(confidence))),
-            checks=checks,
-            limitations=limitations,
+        return self._quality_policy.evaluate(
+            TryOnQualityReport(
+                verdict=verdict,
+                confidence=max(0.0, min(1.0, float(confidence))),
+                checks=checks,
+                limitations=limitations,
+            )
         )
 
     def _fallback_report(self, *, baseline_report: TryOnQualityReport, exc: Exception) -> TryOnQualityReport:
@@ -111,11 +115,13 @@ class ModelBackedTryOnQualityVerifier(TryOnQualityVerifierPort):
         limitations = list(baseline_report.limitations) + [
             "Structured quality reasoning was unavailable, so the backend used deterministic verification only."
         ]
-        return TryOnQualityReport(
-            verdict=baseline_report.verdict,
-            confidence=baseline_report.confidence,
-            checks=checks,
-            limitations=limitations,
+        return self._quality_policy.evaluate(
+            TryOnQualityReport(
+                verdict=baseline_report.verdict,
+                confidence=baseline_report.confidence,
+                checks=checks,
+                limitations=limitations,
+            )
         )
 
     def _build_prompt(
@@ -134,6 +140,7 @@ class ModelBackedTryOnQualityVerifier(TryOnQualityVerifierPort):
             "generation_mode": generation_mode.value,
             "input_count": len(input_metadata),
             "stored_input_count": len(stored_inputs),
+            "garment_slot_roles": _garment_slot_roles(input_metadata),
             "result_image_kind": result.result_image.kind,
             "baseline_verdict": baseline_report.verdict,
             "baseline_confidence": baseline_report.confidence,
@@ -156,3 +163,8 @@ class ModelBackedTryOnQualityVerifier(TryOnQualityVerifierPort):
             "Use reject when the result should not be shown even after a local fix attempt. "
             f"Backend facts: {json.dumps(facts, ensure_ascii=False)}"
         )
+
+
+def _garment_slot_roles(items: list[TryOnInputMetadata]) -> list[str]:
+    """Return garment slot roles in request order, excluding the human input."""
+    return [item.role.value for item in items if item.role.value != "human_photo"]

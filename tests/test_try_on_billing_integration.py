@@ -11,6 +11,9 @@ from src.domain.try_on import TryOnChargeStatus, TryOnSandboxLifecycleMode, TryO
 from src.use_cases.billing.policy import BillingPolicyResolver
 from src.use_cases.billing.service import BillingService
 from src.use_cases.try_on.workflow_service import TryOnUploadValidationConfig, TryOnWorkflowService
+from tests.try_on_analysis_bundle_stub import required_analysis_bundle
+from src.adapters.agents.deterministic_try_on_instruction import DeterministicTryOnInstructionAdapter
+from tests.try_on_human_identity_stub import AllowingHumanIdentityAnalysisStub
 
 
 def _utc_now() -> datetime:
@@ -26,7 +29,7 @@ class _RepositoryStub:
 
 
 class _GenerationStub:
-    async def generate(self, *, job_id, input_metadata, stored_inputs):
+    async def generate(self, *, job_id, input_metadata, stored_inputs, instruction):
         from src.domain.try_on import TryOnQualityReport, TryOnResult, TryOnResultImage, TryOnWorkflowType
 
         return TryOnResult(
@@ -70,6 +73,8 @@ async def test_try_on_records_charge_through_billing_core() -> None:
     service = TryOnWorkflowService(
         repository=_RepositoryStub(),
         generator=_GenerationStub(),
+            analysis_bundle_service=required_analysis_bundle(AllowingHumanIdentityAnalysisStub()),
+            instruction_creator=DeterministicTryOnInstructionAdapter(),
         file_storage=_FileStorageStub(),
         validation_config=TryOnUploadValidationConfig(
             allowed_content_types={"image/png"},

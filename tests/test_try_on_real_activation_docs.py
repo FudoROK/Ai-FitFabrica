@@ -4,8 +4,8 @@ from __future__ import annotations
 from pathlib import Path
 
 
-DOC_PATH = Path("docs/try-on-real-activation.md")
-ENV_PACK_PATH = Path("docs/try-on-real-activation-staging.env.example")
+DOC_PATH = Path("docs/runbooks/try_on_real_activation.md")
+ENV_PACK_PATH = Path("docs/runbooks/try_on_real_activation_staging.env.example")
 
 
 def test_try_on_real_activation_doc_exists() -> None:

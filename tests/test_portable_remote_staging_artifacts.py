@@ -30,7 +30,8 @@ def test_portable_remote_staging_runbook_exists() -> None:
         ".env.portable-remote-staging.local",
         "alembic upgrade head",
         "Try-On Activation Dry Run",
-        "platform_foundation_smoke.py --env-file .env.portable-remote-staging.local --require-ready",
+        "run --rm --no-deps api python scripts/platform_foundation_smoke.py --require-ready",
+        "python scripts/business_catalog_search_index_readiness.py --require-db",
         "bootstrap_portable_host.sh",
         "deploy_portable_runtime.sh",
         "Caddyfile.portable.example",
@@ -47,7 +48,11 @@ def test_portable_remote_bootstrap_scripts_and_proxy_example_exist() -> None:
     caddy_example = Path("deploy/caddy/Caddyfile.portable.example").read_text(encoding="utf-8")
 
     assert "docker compose plugin" in bootstrap_script or "docker-compose-plugin" in bootstrap_script
-    assert "python scripts/platform_foundation_smoke.py --env-file" in deploy_script
+    assert 'build api' in deploy_script
+    assert 'build api worker' not in deploy_script
+    assert 'run --rm --no-deps api' in deploy_script
+    assert 'python scripts/platform_foundation_smoke.py --require-ready' in deploy_script
+    assert 'python scripts/business_catalog_search_index_readiness.py --require-db' in deploy_script
     assert "docker compose -f" in deploy_script
     assert "reverse_proxy 127.0.0.1:8080" in caddy_example
 
@@ -59,7 +64,7 @@ def test_portable_remote_ubuntu_runbook_exists() -> None:
         "Ubuntu `22.04 LTS`",
         "ssh ubuntu@<server-ip>",
         "sudo bash scripts/bootstrap_portable_host.sh",
-        "python scripts/platform_foundation_smoke.py --env-file .env.portable-remote-staging.local --require-ready",
+        "run --rm --no-deps api python scripts/platform_foundation_smoke.py --require-ready",
         "bash scripts/deploy_portable_runtime.sh .env.portable-remote-staging.local",
         "docker compose -f docker-compose.portable-staging.yml --env-file .env.portable-remote-staging.local ps",
         "MESSAGING_PROVIDER=none",
@@ -67,3 +72,42 @@ def test_portable_remote_ubuntu_runbook_exists() -> None:
 
     for fragment in required_fragments:
         assert fragment in source
+
+
+def test_portable_shell_scripts_use_linux_line_endings() -> None:
+    """Keep deployment scripts directly executable on the Linux staging host."""
+    for path in Path("scripts").glob("*.sh"):
+        assert b"\r\n" not in path.read_bytes(), f"{path} must use LF line endings"
+
+
+def test_portable_smoke_script_is_available_inside_the_api_image() -> None:
+    """Allow the deployment readiness gate to run inside the built API image."""
+    dockerignore = Path(".dockerignore").read_text(encoding="utf-8")
+
+    assert "scripts/*" in dockerignore
+    assert "!scripts/platform_foundation_smoke.py" in dockerignore
+    assert "!scripts/business_catalog_search_index_readiness.py" in dockerignore
+    assert "!scripts/reindex_business_catalog_search.py" in dockerignore
+    dockerfile = Path("Dockerfile").read_text(encoding="utf-8")
+    assert "scripts/business_catalog_search_index_readiness.py" in dockerfile
+    assert "scripts/reindex_business_catalog_search.py" in dockerfile
+
+
+def test_backend_deploy_archive_script_excludes_local_env_and_secret_files() -> None:
+    """Prevent staging deploy archives from overwriting VM-only env files."""
+
+    script = Path("scripts/create_backend_deploy_archive.ps1").read_text(encoding="utf-8")
+
+    required_excludes = [
+        "--exclude=.env",
+        "--exclude=.env.*",
+        "--exclude=apps/web/.env.local",
+        "--exclude=service-account.json",
+        "--exclude=secrets",
+        "--exclude=*.pem",
+        "--exclude=*.key",
+        "--exclude=*.p12",
+    ]
+    for fragment in required_excludes:
+        assert fragment in script
+    assert "Deployment archive contains local env or secret files." in script

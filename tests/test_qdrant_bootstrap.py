@@ -35,6 +35,7 @@ def test_bootstrapper_creates_missing_namespace_collection() -> None:
 
     assert client.calls[0] == ("exists", "fitfabrica_garments")
     assert client.calls[1][0] == "create"
+    assert client.calls[1][1]["vectors_config"]["distance"] == "Cosine"
 
 
 def test_bootstrapper_skips_create_when_collection_already_exists() -> None:

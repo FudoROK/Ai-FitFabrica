@@ -1,0 +1,2 @@
+{"type": "case", "generation_mode": "vertex_virtual_try_on", "result_object_key": "fitfabrica/tenants/public/try-on/try_on_generation_live_smoke/result_image/result.png", "result_artifact_size_bytes": 1713851, "quality_verdict": "pass", "quality_confidence": 0.86, "passed": true}
+{"type": "summary", "generation_mode": "vertex_virtual_try_on", "result_object_key": "fitfabrica/tenants/public/try-on/try_on_generation_live_smoke/result_image/result.png", "result_artifact_size_bytes": 1713851, "quality_verdict": "pass", "quality_confidence": 0.86, "passed": true}

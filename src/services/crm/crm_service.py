@@ -27,11 +27,6 @@ def crm_sync_enabled() -> bool:
 def crm_profile_sync_enabled() -> bool:
     return load_settings().crm_profile_sync_enabled
 
-
-def crm_memory_sync_enabled() -> bool:
-    return load_settings().crm_memory_sync_enabled
-
-
 def crm_enabled() -> bool:
     return _crm().is_enabled()
 

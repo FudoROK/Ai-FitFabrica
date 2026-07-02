@@ -4,8 +4,8 @@ from __future__ import annotations
 from pathlib import Path
 
 
-DOC_PATH = Path("docs/try-on-sandbox-api.md")
-ACTIVATION_DOC_PATH = Path("docs/try-on-durable-storage-activation.md")
+DOC_PATH = Path("docs/runbooks/try_on_sandbox_api.md")
+ACTIVATION_DOC_PATH = Path("docs/runbooks/try_on_durable_storage_activation.md")
 
 
 def test_try_on_sandbox_api_contract_doc_exists() -> None:

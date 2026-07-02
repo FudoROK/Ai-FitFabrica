@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from datetime import datetime
 
 from src.domain.billing import BillingOwnerType, LedgerEvent
-from src.domain.product_card import ProductCardJobRecord, ProductCardRequest, ProductCardVersionRecord
+from src.domain.product_card import ProductCardGarmentAnalysis, ProductCardJobRecord, ProductCardRequest, ProductCardVersionRecord
 
 
 @dataclass(frozen=True)
@@ -24,6 +24,7 @@ class ProductCardWorkflowResult:
 
     job: ProductCardJobRecord
     version: ProductCardVersionRecord
+    garment_analysis: ProductCardGarmentAnalysis
     ledger_event: LedgerEvent | None = None
 
 
@@ -35,6 +36,7 @@ class ProductCardWorkflowService:
         *,
         file_storage,
         repository,
+        garment_identity_analyzer,
         generation_adapter,
         clock,
         billing_service=None,
@@ -44,6 +46,7 @@ class ProductCardWorkflowService:
         """Store explicit dependencies for product-card orchestration."""
         self._file_storage = file_storage
         self._repository = repository
+        self._garment_identity_analyzer = garment_identity_analyzer
         self._generation_adapter = generation_adapter
         self._clock = clock
         self._billing_service = billing_service
@@ -83,15 +86,30 @@ class ProductCardWorkflowService:
             raise LookupError(f"Unknown product-card job: {job_id}")
         request = ProductCardRequest(
             title_hint=job.title_hint,
+            category=job.category,
             target_channel=job.target_channel,
             brand_tone=job.brand_tone,
             source_image_keys=list(job.asset_keys),
         )
-        draft = await self._generation_adapter.generate(request=request, asset_keys=list(job.asset_keys))
+        try:
+            garment_analysis = await self._garment_identity_analyzer.analyze(
+                job_id=job.job_id,
+                asset_keys=list(job.asset_keys),
+            )
+            garment_analysis = await self._repository.save_garment_analysis(garment_analysis)
+            draft = await self._generation_adapter.generate(request=request, garment_analysis=garment_analysis)
+        except Exception:
+            await self._repository.mark_failed(job.job_id, now=self._clock())
+            raise
         version = await self._repository.save_generated_version(job_id=job.job_id, draft=draft, now=self._clock())
         completed_job = await self._repository.mark_completed(job.job_id, now=self._clock())
         ledger_event = await self._charge_completed_job(job_id=job.job_id)
-        return ProductCardWorkflowResult(job=completed_job, version=version, ledger_event=ledger_event)
+        return ProductCardWorkflowResult(
+            job=completed_job,
+            version=version,
+            garment_analysis=garment_analysis,
+            ledger_event=ledger_event,
+        )
 
     async def get_job(self, job_id: str) -> ProductCardJobRecord | None:
         """Return the persisted product-card job state for the requested identifier."""
@@ -100,6 +118,10 @@ class ProductCardWorkflowService:
     async def get_result(self, job_id: str) -> ProductCardVersionRecord | None:
         """Return the latest generated product-card version for the requested job identifier."""
         return await self._repository.get_latest_version(job_id)
+
+    async def get_garment_analysis(self, job_id: str) -> ProductCardGarmentAnalysis | None:
+        """Return the validated saved garment analysis for one job."""
+        return await self._repository.get_garment_analysis(job_id)
 
     async def _charge_completed_job(self, *, job_id: str) -> LedgerEvent | None:
         """Charge the completed product-card workflow through the billing core when configured."""

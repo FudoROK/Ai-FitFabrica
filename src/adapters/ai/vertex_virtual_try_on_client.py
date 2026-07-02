@@ -43,7 +43,6 @@ class VertexVirtualTryOnClient:
         response = self._require_client().models.recontext_image(
             model=self._model,
             source=sdk_types.RecontextImageSource(
-                prompt=prompt,
                 person_image=sdk_types.Image(
                     image_bytes=person_image_bytes,
                     mime_type=person_image_mime_type,

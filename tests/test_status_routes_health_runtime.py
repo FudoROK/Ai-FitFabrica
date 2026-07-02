@@ -10,13 +10,18 @@ client = TestClient(app)
 
 def test_health_route_reports_queue_and_worker_readiness(monkeypatch) -> None:
     from src.entrypoints import status_routes
-    app.state.settings = SimpleNamespace(
-        public_status_endpoints_enabled=False,
-        status_endpoint_token="test-token",
-        postgres_dsn=None,
-        redis_url=None,
-        object_storage_backend="in_memory",
-        qdrant_url=None,
+    monkeypatch.setattr(
+        app.state,
+        "settings",
+        SimpleNamespace(
+            environment="test",
+            public_status_endpoints_enabled=False,
+            status_endpoint_token="test-token",
+            postgres_dsn=None,
+            redis_url=None,
+            object_storage_backend="in_memory",
+            qdrant_url=None,
+        ),
     )
 
     class _HealthStub:

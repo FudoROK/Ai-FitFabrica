@@ -26,22 +26,24 @@ function percent(value: number): string {
 
 function ResultImage({ result }: { result: TryOnResult }) {
   const imageUrl = result.result_image.url.trim();
-  const imageAlt = result.result_image.alt.trim() || "Sandbox Try-On result preview";
+  const imageAlt = result.result_image.alt.trim() || "Предпросмотр результата примерки";
 
   if (!imageUrl) {
     return <ImagePlaceholder className="h-[460px] w-full" label={imageAlt} />;
   }
 
   return (
-    <Image
-      alt={imageAlt}
-      className="h-[460px] w-full rounded-[2rem] object-cover"
-      height={900}
-      priority
-      src={imageUrl}
-      unoptimized
-      width={1200}
-    />
+    <div className="media-zoom overflow-hidden rounded-[2rem]">
+      <Image
+        alt={imageAlt}
+        className="media-zoom-media h-[460px] w-full object-cover"
+        height={900}
+        priority
+        src={imageUrl}
+        unoptimized
+        width={1200}
+      />
+    </div>
   );
 }
 
@@ -79,14 +81,14 @@ export function TryOnResultView() {
     const normalizedJobId = jobId?.trim() ?? "";
 
     if (!normalizedJobId) {
-      setError("Не указан job_id для результата примерки.");
+      setError("Параметр job_id не указан.");
       setIsLoading(false);
       setIsRefreshing(false);
       return;
     }
 
     if (!safeJobIdPattern.test(normalizedJobId)) {
-      setError("job_id имеет недопустимый формат.");
+      setError("Параметр job_id содержит недопустимые символы.");
       setIsLoading(false);
       setIsRefreshing(false);
       return;
@@ -94,7 +96,7 @@ export function TryOnResultView() {
 
     const baseUrl = getApiBaseUrl();
     if (!baseUrl) {
-      setError("Не настроен NEXT_PUBLIC_API_BASE_URL для загрузки результата Try-On.");
+      setError("Не настроен NEXT_PUBLIC_API_BASE_URL для чтения результата примерки.");
       setIsLoading(false);
       setIsRefreshing(false);
       return;
@@ -120,7 +122,7 @@ export function TryOnResultView() {
         setStatusResponse(latestStatus);
 
         if (latestStatus.status === "failed") {
-          setError("Try-On job завершился с ошибкой. Создайте новую примерку или повторите позже.");
+          setError("Задача примерки завершилась ошибкой. Проверьте статус и попробуйте снова.");
           return;
         }
 
@@ -133,7 +135,7 @@ export function TryOnResultView() {
       setStatusResponse(null);
     } catch (requestError) {
       if (isMountedRef.current) {
-        setError(requestError instanceof Error ? requestError.message : "Не удалось загрузить результат Try-On.");
+        setError(requestError instanceof Error ? requestError.message : "Не удалось загрузить результат примерки.");
       }
     } finally {
       if (isMountedRef.current) {
@@ -158,7 +160,7 @@ export function TryOnResultView() {
   }, [clearPendingPoll, loadResult, pollAttempt]);
 
   if (isLoading) {
-    return <main className="px-8 py-10 lg:px-16">Загружаем результат Try-On...</main>;
+    return <main className="px-8 py-10 lg:px-16">Загружаем результат примерки...</main>;
   }
 
   if (error && (!response || response.status !== "not_ready")) {
@@ -166,11 +168,11 @@ export function TryOnResultView() {
       <main className="px-8 py-10 lg:px-16">
         <div className="site-card p-8">
           <h1 className="font-[family-name:var(--font-manrope)] text-[3rem] font-bold tracking-[-0.04em]">
-            Результат недоступен
+            Не удалось открыть результат
           </h1>
           <p className="mt-4 text-[var(--text-secondary)]">{error}</p>
           <SiteButton className="mt-8" href="/workspace/new-fitting" variant="primary">
-            Создать новую примерку
+            Начать новую примерку
           </SiteButton>
         </div>
       </main>
@@ -204,10 +206,10 @@ export function TryOnResultView() {
           ) : null}
           <div className="mt-8 flex flex-wrap gap-4">
             <SiteButton href="/workspace/new-fitting" variant="secondary">
-              Вернуться к примерке
+              Вернуться к загрузке
             </SiteButton>
             <SiteButton disabled={isRefreshing || currentStatus === "failed"} onClick={() => void loadResult()} variant="violet">
-              {isRefreshing ? "Проверяем..." : "Проверить снова"}
+              {isRefreshing ? "Обновляем..." : "Проверить статус"}
             </SiteButton>
           </div>
         </div>
@@ -245,7 +247,7 @@ export function TryOnResultView() {
         <div className="grid gap-8">
           <article className="rounded-[2rem] border border-[#c7b8ff] bg-[#ede6ff] p-6">
             <h2 className="font-[family-name:var(--font-manrope)] text-[2rem] font-bold text-[#2f2570]">
-              Quality report
+              Отчет по качеству
             </h2>
             <div className="mt-5 grid gap-3 text-[0.95rem] text-[var(--text-secondary)]">
               <p>
@@ -271,7 +273,7 @@ export function TryOnResultView() {
 
             {result.quality_report.limitations.length > 0 ? (
               <div className="mt-6 rounded-[1.5rem] bg-white/70 px-5 py-4 text-[0.9rem] text-[var(--text-secondary)]">
-                <strong className="block text-[var(--text-primary)]">Limitations</strong>
+                <strong className="block text-[var(--text-primary)]">Ограничения</strong>
                 <ul className="mt-3 grid gap-2">
                   {result.quality_report.limitations.map((limitation, index) => (
                     <li key={`${limitation}-${index}`}>{limitation}</li>
@@ -283,7 +285,7 @@ export function TryOnResultView() {
 
           {result.input_metadata.length > 0 ? (
             <article className="site-card p-6">
-              <h2 className="font-[family-name:var(--font-manrope)] text-[1.7rem] font-bold">Input metadata</h2>
+              <h2 className="font-[family-name:var(--font-manrope)] text-[1.7rem] font-bold">Метаданные входных файлов</h2>
               <div className="mt-5 grid gap-3">
                 {result.input_metadata.map((item) => (
                   <div className="rounded-[1.25rem] bg-[var(--background)] p-4 text-sm" key={`${item.role}-${item.sha256}`}>

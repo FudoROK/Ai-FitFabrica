@@ -1,23 +1,5 @@
-import { SiteButton } from "@/components/site/site-button";
-
-const historyRows = [
-  ["Сегодня, 14:32", "Генерация примерки", "Осеннее пальто (Проект A)", "- 45 кр.", "Выполнено"],
-  ["Вчера, 18:05", "Создание карточки товара", "Набор аксессуаров (3 фона)", "- 120 кр.", "Выполнено"],
-  ["12 Октября, 09:15", "Возврат средств", "Ошибка генерации (ID: #8821)", "+ 45 кр.", "Возврат"],
-  ["10 Октября, 11:00", "Пополнение баланса", "Пакет PRO PACK", "+ 2,000 кр.", "Успешно"]
-];
+import { WorkspaceCreditsView } from "@/features/workspace/workspace-credits-view";
 
 export default function WorkspaceCreditsPage() {
-  return (
-    <main className="px-8 py-10 lg:px-16">
-      <h1 className="font-[family-name:var(--font-manrope)] text-[clamp(3.8rem,6vw,5.8rem)] font-bold tracking-[-0.06em]">Баланс и тариф</h1>
-      <p className="mt-4 max-w-[980px] text-[1.35rem] leading-8 text-[var(--text-secondary)]">Управляйте своими кредитами, пополняйте баланс и отслеживайте историю списаний за генерации.</p>
-      <section className="mt-10 grid gap-6 xl:grid-cols-[1.2fr_0.58fr]">
-        <article className="site-card p-8"><p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--text-secondary)]">Доступно кредитов</p><strong className="mt-4 block text-[5rem] font-semibold leading-none tracking-[-0.06em]">1,450</strong><div className="mt-8 flex flex-wrap items-center gap-4"><SiteButton>Пополнить баланс</SiteButton><span className="rounded-full bg-[#ece7e5] px-4 py-3 text-sm font-semibold text-[var(--text-secondary)]">Автоплатеж активен</span></div></article>
-        <article className="site-card bg-[var(--surface-alt)] p-8"><p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--text-secondary)]">Текущий тариф</p><h2 className="mt-6 font-[family-name:var(--font-manrope)] text-[3rem] font-bold tracking-[-0.05em]">Pro Business</h2><p className="mt-4 text-[1.2rem] text-[var(--text-secondary)]">Следующее списание: 15 ноября 2024</p><p className="mt-16 text-[1.15rem] font-semibold text-[var(--ai)]">Управление тарифом →</p></article>
-      </section>
-      <section className="mt-14"><h2 className="font-[family-name:var(--font-manrope)] text-[4rem] font-bold tracking-[-0.06em]">Пакеты пополнения</h2><div className="mt-8 grid gap-6 xl:grid-cols-3">{[["Starter", "500", ["~10 генераций образов", "Базовое качество"], "Купить за 490 ₽", "secondary"], ["Pro Pack", "2,000", ["~40 генераций образов", "Высокое разрешение 4K", "Приоритетная очередь"], "Купить за 1,490 ₽", "violet"], ["Agency", "10,000", ["Для командной работы", "API доступ", "Выделенный менеджер"], "Купить за 5,990 ₽", "soft"]].map(([title, credits, perks, cta, variant], index) => <article className={`site-card p-8 ${index === 1 ? "border-2 border-[var(--ai)]" : ""}`} key={title as string}><p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--text-secondary)]">{title}</p><div className="mt-5 flex items-end gap-3"><strong className="text-[4rem] font-semibold leading-none tracking-[-0.06em]">{credits}</strong><span className="pb-2 text-[1.2rem] text-[var(--text-secondary)]">кредитов</span></div><ul className="mt-8 grid gap-4 text-[1.1rem] text-[var(--text-secondary)]">{(perks as string[]).map((perk) => <li key={perk}>{perk}</li>)}</ul><SiteButton className="mt-10 w-full" variant={variant as "secondary" | "violet" | "soft"}>{cta as string}</SiteButton></article>)}</div></section>
-      <section className="mt-14"><div className="mb-6 flex items-end justify-between"><h2 className="font-[family-name:var(--font-manrope)] text-[4rem] font-bold tracking-[-0.06em]">История списаний</h2><span className="text-[1.2rem] text-[var(--text-secondary)]">Фильтр</span></div><div className="site-card overflow-hidden"><div className="grid grid-cols-[1.2fr_2.2fr_1fr_1fr] gap-4 bg-[#f2eeeb] px-6 py-4 text-sm font-semibold uppercase tracking-[0.18em] text-[var(--text-secondary)]"><span>Дата</span><span>Операция</span><span className="text-right">Сумма</span><span className="text-right">Статус</span></div>{historyRows.map(([date, title, subtitle, amount, status]) => <div className="grid grid-cols-[1.2fr_2.2fr_1fr_1fr] items-center gap-4 border-t border-[var(--border)] px-6 py-5" key={`${date}-${title}`}><span className="text-[1.1rem] text-[var(--text-secondary)]">{date}</span><div><strong className="block text-[1.2rem]">{title}</strong><span className="mt-1 block text-[1rem] text-[var(--text-secondary)]">{subtitle}</span></div><strong className={`text-right text-[1.2rem] ${amount.startsWith("+") ? "text-[var(--success)]" : "text-[var(--error)]"}`}>{amount}</strong><div className="text-right"><span className="rounded-full bg-[#ece7e5] px-4 py-2 text-sm font-semibold text-[var(--text-secondary)]">{status}</span></div></div>)}</div></section>
-    </main>
-  );
+  return <WorkspaceCreditsView />;
 }

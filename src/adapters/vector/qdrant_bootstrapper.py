@@ -28,6 +28,6 @@ class QdrantVectorBootstrapper:
             collection_name=collection_name,
             vectors_config={
                 "size": spec.vector_size,
-                "distance": spec.distance,
+                "distance": spec.distance.capitalize(),
             },
         )

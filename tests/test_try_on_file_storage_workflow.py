@@ -11,6 +11,9 @@ from src.adapters.try_on.in_memory_file_storage import InMemoryTryOnFileStorage
 from src.adapters.try_on.in_memory_repository import InMemoryTryOnJobRepository
 from src.domain.try_on import TryOnJobStatus, TryOnUploadRole
 from src.use_cases.try_on.workflow_service import TryOnUploadValidationConfig, TryOnWorkflowService
+from tests.try_on_analysis_bundle_stub import required_analysis_bundle
+from src.adapters.agents.deterministic_try_on_instruction import DeterministicTryOnInstructionAdapter
+from tests.try_on_human_identity_stub import AllowingHumanIdentityAnalysisStub
 
 
 def _upload(filename: str, content_type: str, payload: bytes) -> UploadFile:
@@ -26,6 +29,8 @@ async def test_create_job_persists_validated_uploads_before_saving_job() -> None
     service = TryOnWorkflowService(
         repository=repository,
         generator=FakeTryOnGenerationAdapter(),
+        analysis_bundle_service=required_analysis_bundle(AllowingHumanIdentityAnalysisStub()),
+        instruction_creator=DeterministicTryOnInstructionAdapter(),
         file_storage=storage,
         validation_config=TryOnUploadValidationConfig(
             allowed_content_types={"image/jpeg"},

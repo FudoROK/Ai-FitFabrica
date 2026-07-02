@@ -38,6 +38,9 @@ class ContentPackageRepositoryPort(Protocol):
     async def get_latest_version(self, job_id: str) -> ContentPackageVersionRecord | None:
         """Return the latest generated version for the requested job."""
 
+    async def list_recent(self, *, limit: int) -> list[ContentPackageJobRecord]:
+        """Return recent content-package jobs for workspace history surfaces."""
+
 
 class ContentPackageArtifactStoragePort(Protocol):
     """Port for persisting generated content-package artifacts."""

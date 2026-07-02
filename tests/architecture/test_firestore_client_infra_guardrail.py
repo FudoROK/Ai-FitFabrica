@@ -42,7 +42,7 @@ def _iter_python_files(root: Path) -> list[Path]:
     return sorted(path for path in root.rglob("*.py") if path.is_file())
 
 
-def test_runtime_source_has_no_legacy_firestore_facade_imports() -> None:
+def test_runtime_source_has_no_removed_firestore_facade_imports() -> None:
     violations: list[str] = []
     for path in _iter_python_files(SRC_ROOT):
         if path.relative_to(REPO_ROOT).as_posix() == "src/firestore_client.py":
@@ -50,12 +50,12 @@ def test_runtime_source_has_no_legacy_firestore_facade_imports() -> None:
         for imported in _collect_imports(path):
             if imported.startswith(LEGACY_FACADE_MODULE):
                 rel = path.relative_to(REPO_ROOT).as_posix()
-                violations.append(f"{rel} imports legacy facade module '{imported}'")
+                violations.append(f"{rel} imports removed facade module '{imported}'")
 
     assert not violations, "\n".join(violations)
 
 
-def test_architecture_tests_do_not_depend_on_legacy_firestore_facade_file() -> None:
+def test_architecture_tests_do_not_depend_on_removed_firestore_facade_file() -> None:
     forbidden_tokens = (
         "Path(\"src/firestore_client.py\")",
         "Path('src/firestore_client.py')",
@@ -71,6 +71,11 @@ def test_architecture_tests_do_not_depend_on_legacy_firestore_facade_file() -> N
         text = path.read_text(encoding="utf-8")
         for token in forbidden_tokens:
             if token in text:
-                violations.append(f"{rel} contains forbidden legacy facade file token: {token}")
+                violations.append(f"{rel} contains forbidden removed facade file token: {token}")
 
     assert not violations, "\n".join(violations)
+
+
+def test_runtime_lazy_factories_do_not_expose_removed_firestore_session_factory() -> None:
+    text = (SRC_ROOT / "entrypoints" / "runtime_dependency_lazy_factories.py").read_text(encoding="utf-8")
+    assert "def FirestoreSessionRepository" not in text

@@ -1,73 +1,10 @@
 import json
 from datetime import datetime, timezone
-from types import SimpleNamespace
 
 from google.api_core.datetime_helpers import DatetimeWithNanoseconds
 import pytest
 
-from src.domain.models import ChatSession, Lead
-from src.domain.pipeline_status import PipelineResult
-from src.services.rate_limit.contracts import RateLimitDecision
-from src.services.dialog.dialog_service import DialogService
 from src.use_cases.dialog import GenerateReplyUseCase
-
-
-def _test_safe_settings():
-    return SimpleNamespace(
-        environment="test",
-        enable_distributed_rate_limit=False,
-        rate_limit_backend="inmemory",
-        rate_limit_max_events=100,
-        rate_limit_window_seconds=60,
-        rate_limit_fail_mode="closed",
-        rate_limit_collection="runtime_rate_limits_test",
-    )
-
-
-class _FakeTelegram:
-    async def send_message(self, _chat_id, _text: str, **_kwargs) -> None:
-        return None
-
-
-class _LeadRepo:
-    async def get_or_create_canonical(self, **_kwargs):
-        return Lead(lead_id="canonical-1", primary_channel="telegram", channel_user_id="1")
-
-    async def save(self, _lead):
-        return None
-
-    async def update_last_activity(self, _lead_id, _now):
-        return True
-
-    async def append_message(self, **_kwargs):
-        return True
-
-    async def get(self, _lead_id):
-        return Lead(lead_id="canonical-1", primary_channel="telegram", channel_user_id="1")
-
-    async def apply_lead_patch(self, _lead_id, _patch):
-        return True
-
-    async def fetch_last_messages(self, **_kwargs):
-        return []
-
-    async def fetch_latest_daily_summary(self, **_kwargs):
-        return None
-
-    async def record_extraction_attempt(self, **_kwargs):
-        return True
-
-
-class _SessionRepo:
-    async def get_or_create(self, **_kwargs):
-        return ChatSession(id="telegram:1", channel="telegram", chat_id="1", external_user_id="1", lead_id="canonical-1")
-
-    async def save(self, _session):
-        return None
-
-    async def get(self, _session_id):
-        return ChatSession(id="telegram:1", channel="telegram", chat_id="1", external_user_id="1", lead_id="canonical-1")
-
 
 def test_firestore_write_error_is_not_silent(monkeypatch):
     import src.adapters.database.firestore.storage_primitives as sp
@@ -98,49 +35,6 @@ def test_firestore_write_error_is_not_silent(monkeypatch):
 
     with pytest.raises(RuntimeError, match="firestore write failed"):
         sp.apply_lead_patch("telegram:1", {"first_name": "A"})
-
-
-def test_llm_fallback_is_degraded_not_success(monkeypatch):
-    class _LLM:
-        provider = type("P", (), {"provider_name": "fake"})()
-
-        async def run(self, *_args, **_kwargs):
-            from src.llm.llm_base_contracts import LLMResult
-
-            return LLMResult(
-                task="dialog_reply_task",
-                ok=False,
-                data={"reply_text": "fallback", "system_payload": None},
-                error={"kind": "provider_error", "message": "x"},
-            )
-
-    class _AllowLimiter:
-        def allow(self, key: str) -> RateLimitDecision:
-            return RateLimitDecision(status="allowed")
-
-    service = DialogService(
-        _FakeTelegram(),
-        leads_repo=_LeadRepo(),
-        sessions_repo=_SessionRepo(),
-        settings=_test_safe_settings(),
-        rate_limiter=_AllowLimiter(), # Inject the mock rate limiter
-        llm_service=_LLM(),
-    )
-
-    result = __import__("asyncio").run(
-        service.handle_normalized_message(
-            {
-                "channel": "telegram",
-                "conversation_identity": "1",
-                "source_identity": "1",
-                "event_identity": "evt-2",
-                "text": "hi",
-            }
-        )
-    )
-
-    assert result.reply_text == "fallback"
-    assert result.status == "degraded"
 
 
 def test_generate_reply_use_case_serializes_nested_firestore_timestamps():

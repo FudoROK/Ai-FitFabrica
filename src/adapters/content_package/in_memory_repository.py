@@ -61,6 +61,11 @@ class InMemoryContentPackageRepository:
         """Return the requested in-memory content-package job."""
         return self._jobs.get(job_id)
 
+    async def list_recent(self, *, limit: int) -> list[ContentPackageJobRecord]:
+        """Return recent in-memory content-package jobs ordered by update time."""
+        jobs = sorted(self._jobs.values(), key=lambda job: job.updated_at, reverse=True)
+        return jobs[:limit]
+
     async def mark_completed(self, job_id: str, *, now) -> ContentPackageJobRecord:
         """Mark the requested in-memory content-package job as completed."""
         job = self._jobs[job_id]

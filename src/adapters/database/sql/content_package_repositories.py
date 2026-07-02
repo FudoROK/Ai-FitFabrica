@@ -102,6 +102,18 @@ class SqlContentPackageRepository:
             row = await session.get(ContentPackageJobRow, job_id)
             return None if row is None else job_record_from_row(row)
 
+    async def list_recent(self, *, limit: int) -> list[ContentPackageJobRecord]:
+        """Return recent persisted content-package jobs for workspace history surfaces."""
+        async with self._session_factory() as session:
+            rows = (
+                await session.scalars(
+                    select(ContentPackageJobRow)
+                    .order_by(ContentPackageJobRow.updated_at.desc())
+                    .limit(limit)
+                )
+            ).all()
+            return [job_record_from_row(row) for row in rows]
+
     async def mark_completed(self, job_id: str, *, now) -> ContentPackageJobRecord:
         """Mark the requested content-package job as completed."""
         async with self._session_factory() as session:

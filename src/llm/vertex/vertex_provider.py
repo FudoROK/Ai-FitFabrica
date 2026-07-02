@@ -26,6 +26,7 @@ logger = logging.getLogger(__name__)
 
 class VertexProvider:
     provider_name = "vertex"
+    supports_artifacts = False
 
     def __init__(
         self,

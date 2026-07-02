@@ -18,9 +18,8 @@ def _env() -> dict[str, str]:
             "GCP_PROJECT_ID": "test-project",
             "PUBSUB_TOPIC_NAME": "agent-jobs",
             "LLM_PROVIDER": "fake",
-            "MEMORY_SUMMARY_ENABLED": "false",
             "OBJECT_STORAGE_BACKEND": "in_memory",
-            "TRY_ON_JOB_REPOSITORY_BACKEND": "in_memory",
+            "TRY_ON_GENERATION_BACKEND": "sandbox_fake",
         }
     )
     return env

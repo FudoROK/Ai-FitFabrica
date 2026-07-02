@@ -6,8 +6,6 @@ from typing import Any, Literal, Optional
 TaskName = Literal[
     "dialog_reply_task",
     "profile_extract_task",
-    "memory_daily_sync_task",
-    "memory_rolling_sync_task",
 ]
 
 

@@ -12,6 +12,7 @@ from src.domain.try_on import (
     TryOnResultImage,
 )
 from src.use_cases.try_on.ports import TryOnRepairPort
+from src.use_cases.try_on.repair_policy import TryOnRepairPolicy
 
 
 class DeterministicTryOnRepairAdapter(TryOnRepairPort):
@@ -32,6 +33,7 @@ class DeterministicTryOnRepairAdapter(TryOnRepairPort):
         self._root_prefix = root_prefix
         self._signed_url_ttl_seconds = signed_url_ttl_seconds
         self._minimum_generated_bytes = minimum_generated_bytes
+        self._repair_policy = TryOnRepairPolicy()
 
     async def repair(
         self,
@@ -43,6 +45,23 @@ class DeterministicTryOnRepairAdapter(TryOnRepairPort):
         quality_report: TryOnQualityReport,
     ) -> TryOnResult:
         """Repair the generated artifact by creating a backend-owned repaired variant."""
+        repair_decision = self._repair_policy.evaluate(quality_report)
+        if not repair_decision.allowed:
+            blocked_report = quality_report.model_copy(
+                update={
+                    "verdict": "reject",
+                    "checks": list(quality_report.checks)
+                    + [
+                        TryOnQualityCheck(
+                            name="repair_policy_blocked",
+                            status="failed",
+                            confidence=1.0,
+                            message=f"Repair was blocked by backend policy: {', '.join(repair_decision.rejection_reasons)}.",
+                        )
+                    ],
+                }
+            )
+            return result.model_copy(update={"quality_report": blocked_report})
         if result.result_image.kind != "generated_artifact" or not result.result_image._artifact_object_key:
             return result
 

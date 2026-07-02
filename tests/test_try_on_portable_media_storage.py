@@ -13,6 +13,9 @@ from src.adapters.try_on.fake_generation import FakeTryOnGenerationAdapter
 from src.adapters.try_on.in_memory_repository import InMemoryTryOnJobRepository
 from src.domain.try_on import TryOnJobStatus, TryOnUploadRole
 from src.use_cases.try_on.workflow_service import TryOnUploadValidationConfig, TryOnWorkflowService
+from tests.try_on_analysis_bundle_stub import required_analysis_bundle
+from src.adapters.agents.deterministic_try_on_instruction import DeterministicTryOnInstructionAdapter
+from tests.try_on_human_identity_stub import AllowingHumanIdentityAnalysisStub
 
 
 @pytest.mark.asyncio
@@ -57,6 +60,8 @@ async def test_try_on_workflow_service_accepts_portable_media_storage() -> None:
     service = TryOnWorkflowService(
         repository=repository,
         generator=FakeTryOnGenerationAdapter(),
+        analysis_bundle_service=required_analysis_bundle(AllowingHumanIdentityAnalysisStub()),
+        instruction_creator=DeterministicTryOnInstructionAdapter(),
         file_storage=storage,
         validation_config=TryOnUploadValidationConfig(
             allowed_content_types={"image/jpeg"},

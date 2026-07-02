@@ -126,7 +126,8 @@ On the VM:
 ```bash
 cd /opt/fitfabrica
 cp .env.portable-remote-staging.example .env.portable-remote-staging.local
-python scripts/platform_foundation_smoke.py --env-file .env.portable-remote-staging.local --require-ready
+docker compose -f docker-compose.portable-staging.yml --env-file .env.portable-remote-staging.local build api
+docker compose -f docker-compose.portable-staging.yml --env-file .env.portable-remote-staging.local run --rm --no-deps api python scripts/platform_foundation_smoke.py --require-ready
 bash scripts/deploy_portable_runtime.sh .env.portable-remote-staging.local
 ```
 

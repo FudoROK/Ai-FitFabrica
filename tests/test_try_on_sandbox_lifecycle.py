@@ -11,10 +11,12 @@ from src.adapters.try_on.in_memory_repository import InMemoryTryOnJobRepository
 from src.domain.try_on import (
     TryOnChargeStatus,
     TryOnCostEvent,
+    TryOnError,
     TryOnInputMetadata,
     TryOnJob,
     TryOnJobCreatedResponse,
     TryOnJobStatus,
+    TryOnErrorCode,
     TryOnJobStatusResponse,
     TryOnNotReadyResponse,
     TryOnQualityCheck,
@@ -29,11 +31,15 @@ from src.domain.try_on import (
 )
 from src.main import app
 from src.settings import Settings
+from tests.try_on_analysis_bundle_stub import required_analysis_bundle
+from src.adapters.agents.deterministic_try_on_instruction import DeterministicTryOnInstructionAdapter
 from src.use_cases.try_on.workflow_service import (
     TryOnUploadValidationConfig,
     TryOnValidationError,
     TryOnWorkflowService,
 )
+import src.entrypoints.try_on_routes as try_on_routes
+from tests.try_on_human_identity_stub import AllowingHumanIdentityAnalysisStub
 
 
 client = TestClient(app)
@@ -116,6 +122,7 @@ def test_try_on_job_creation_records_status_history_and_cost_events():
     assert body["status"] == "completed"
     assert [event["status"] for event in body["status_history"]] == [
         "accepted",
+        "analyzing_human",
         "generating",
         "quality_checking",
         "completed",
@@ -250,6 +257,54 @@ def test_try_on_failed_sandbox_job_returns_typed_result_error():
     status_body = status_response.json()
     assert status_body["status"] == "failed"
     assert status_body["status_history"][-1]["status"] == "failed"
+
+
+def test_try_on_failed_result_response_preserves_saved_error_details(monkeypatch):
+    """Failed result endpoint should expose backend-safe failure diagnostics."""
+
+    class _ServiceStub:
+        async def get_job(self, job_id: str):
+            return TryOnJob(
+                job_id=job_id,
+                workflow_type=TryOnWorkflowType.TRY_ON,
+                status=TryOnJobStatus.FAILED,
+                created_at=utc_now(),
+                updated_at=utc_now(),
+                input_metadata=[],
+                status_history=[],
+                cost_events=[],
+                result=None,
+                error=TryOnError(
+                    code=TryOnErrorCode.JOB_FAILED,
+                    message="Try-On result was rejected by the quality verifier.",
+                    details={
+                        "job_id": job_id,
+                        "stage": "quality_verifier",
+                        "verdict": "reject",
+                        "quality_confidence": 0.12,
+                        "quality_checks": [
+                            {
+                                "name": "face_preservation",
+                                "status": "failed",
+                                "confidence": 0.12,
+                                "message": "Face changed.",
+                            }
+                        ],
+                        "quality_limitations": ["Rejected in test."],
+                    },
+                ),
+            )
+
+    monkeypatch.setattr(try_on_routes, "_service", lambda _settings: _ServiceStub())
+
+    response = client.get("/api/jobs/try_on_failed_quality/result")
+
+    assert response.status_code == 409
+    body = response.json()
+    assert body["error"]["code"] == "job_failed"
+    assert body["error"]["details"]["stage"] == "quality_verifier"
+    assert body["error"]["details"]["quality_confidence"] == 0.12
+    assert body["error"]["details"]["quality_checks"][0]["name"] == "face_preservation"
 
 
 def test_try_on_domain_contracts_match_planned_shapes():
@@ -403,6 +458,8 @@ def _service() -> tuple[TryOnWorkflowService, InMemoryTryOnJobRepository]:
     service = TryOnWorkflowService(
         repository=repository,
         generator=FakeTryOnGenerationAdapter(),
+        analysis_bundle_service=required_analysis_bundle(AllowingHumanIdentityAnalysisStub()),
+        instruction_creator=DeterministicTryOnInstructionAdapter(),
         file_storage=InMemoryTryOnFileStorage(),
         validation_config=TryOnUploadValidationConfig(
             allowed_content_types={"image/jpeg", "image/png", "image/webp"},
@@ -426,12 +483,14 @@ async def test_try_on_workflow_service_creates_completed_job_and_persists_it():
     assert job.status == TryOnJobStatus.ACCEPTED
     assert [event.status for event in completed.status_history] == [
         TryOnJobStatus.ACCEPTED,
+        TryOnJobStatus.ANALYZING_HUMAN,
         TryOnJobStatus.GENERATING,
         TryOnJobStatus.QUALITY_CHECKING,
         TryOnJobStatus.COMPLETED,
     ]
     assert [event.stage for event in completed.status_history] == [
         "accepted",
+        "human_identity_analysis",
         "sandbox_generation",
         "quality_check",
         "completed",

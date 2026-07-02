@@ -38,10 +38,11 @@ def main(argv: list[str] | None = None) -> int:
     print(f"dry_run={str(not args.live_write_check).lower()}")
     print(f"live_write_check={str(args.live_write_check).lower()}")
     print(f"object_storage_backend={settings.object_storage_backend}")
-    print(f"try_on_job_repository_backend={settings.try_on_job_repository_backend}")
+    print(f"try_on_generation_backend={settings.try_on_generation_backend}")
+    print(f"enable_real_try_on_generation={str(settings.enable_real_try_on_generation).lower()}")
     print(f"object_storage_bucket_configured={str(settings.object_storage_bucket_name is not None).lower()}")
     print(f"postgres_dsn_configured={str(settings.postgres_dsn is not None).lower()}")
-    print(f"try_on_firestore_collection={settings.try_on_firestore_collection}")
+    print(f"operations_queue_backend={settings.operations_queue_backend}")
 
     if not args.live_write_check:
         print("No object storage or PostgreSQL write was attempted.")

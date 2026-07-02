@@ -21,11 +21,11 @@ def test_try_on_storage_defaults_to_portable_in_memory_and_repository_settings()
     """Local settings must stay on portable in-memory object storage by default."""
     settings = _settings()
 
-    assert settings.try_on_job_repository_backend == "in_memory"
     assert settings.try_on_generation_backend == "sandbox_fake"
     assert settings.object_storage_backend == "in_memory"
     assert settings.object_storage_prefix == "fitfabrica"
-    assert settings.try_on_firestore_collection == "try_on_jobs"
+    assert settings.try_on_human_identity_timeout_seconds == 60.0
+    assert settings.try_on_human_identity_minimum_confidence == 0.8
 
 
 def test_vertex_virtual_try_on_requires_vertex_project(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -101,11 +101,3 @@ def test_portable_s3_storage_requires_bucket_name() -> None:
     with pytest.raises(ValidationError, match="object_storage_bucket_name"):
         _settings(OBJECT_STORAGE_BACKEND="s3")
 
-
-def test_firestore_repository_requires_collection_name() -> None:
-    """Selecting Firestore without a collection must fail during settings validation."""
-    with pytest.raises(ValidationError, match="try_on_firestore_collection"):
-        _settings(
-            try_on_job_repository_backend="firestore",
-            try_on_firestore_collection="   ",
-        )

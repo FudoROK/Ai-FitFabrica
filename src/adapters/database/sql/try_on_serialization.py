@@ -8,18 +8,31 @@ from src.domain.try_on import (
     TryOnCostEvent,
     TryOnError,
     TryOnInputMetadata,
+    TryOnHumanIdentityAnalysis,
     TryOnJob,
     TryOnResult,
     TryOnResultImage,
     TryOnStatusEvent,
     TryOnStoredInput,
+    TryOnWearControlSelection,
 )
+from src.domain.try_on_analysis import (
+    TryOnGarmentIdentityAnalysis,
+    TryOnGarmentSlotIdentityAnalysis,
+    TryOnMaterialTextureAnalysis,
+)
+from src.domain.try_on_instruction import TryOnGenerationInstruction
 
 from .try_on_models import (
     TryOnCostEventRow,
     TryOnErrorRow,
+    TryOnHumanIdentityAnalysisRow,
+    TryOnGarmentIdentityAnalysisRow,
+    TryOnGarmentSlotIdentityAnalysisRow,
     TryOnJobRow,
+    TryOnInstructionRow,
     TryOnResultRow,
+    TryOnMaterialTextureAnalysisRow,
     TryOnStatusEventRow,
     TryOnStoredInputRow,
 )
@@ -35,6 +48,11 @@ class SerializedTryOnJob:
     cost_event_rows: list[TryOnCostEventRow]
     result_row: TryOnResultRow | None
     error_row: TryOnErrorRow | None
+    human_identity_analysis_row: TryOnHumanIdentityAnalysisRow | None
+    garment_identity_analysis_row: TryOnGarmentIdentityAnalysisRow | None
+    garment_slot_identity_analysis_rows: list[TryOnGarmentSlotIdentityAnalysisRow]
+    material_texture_analysis_row: TryOnMaterialTextureAnalysisRow | None
+    instruction_row: TryOnInstructionRow | None
 
 
 def job_to_models(job: TryOnJob) -> SerializedTryOnJob:
@@ -46,6 +64,9 @@ def job_to_models(job: TryOnJob) -> SerializedTryOnJob:
             generation_mode=job.generation_mode.value,
             status=job.status.value,
             input_metadata_json=[item.model_dump(mode="json") for item in job.input_metadata],
+            wear_control_selections_json=[
+                item.model_dump(mode="json") for item in job.wear_control_selections
+            ],
             created_at=job.created_at,
             updated_at=job.updated_at,
         ),
@@ -111,6 +132,70 @@ def job_to_models(job: TryOnJob) -> SerializedTryOnJob:
             if job.error is not None
             else None
         ),
+        human_identity_analysis_row=(
+            TryOnHumanIdentityAnalysisRow(
+                job_id=job.job_id,
+                invocation_id=job.human_identity_analysis.invocation_id,
+                prompt_version=job.human_identity_analysis.prompt_version,
+                contract_version=job.human_identity_analysis.contract_version,
+                verdict=job.human_identity_analysis.verdict.value,
+                confidence=job.human_identity_analysis.confidence,
+                uncertainty_level=job.human_identity_analysis.uncertainty_level,
+                analysis_json=job.human_identity_analysis.model_dump(mode="json"),
+                completed_at=job.human_identity_analysis.completed_at,
+            )
+            if job.human_identity_analysis is not None
+            else None
+        ),
+        garment_identity_analysis_row=(
+            TryOnGarmentIdentityAnalysisRow(
+                job_id=job.job_id,
+                invocation_id=job.garment_identity_analysis.invocation_id,
+                confidence=job.garment_identity_analysis.confidence,
+                uncertainty_level=job.garment_identity_analysis.uncertainty_level,
+                analysis_json=job.garment_identity_analysis.model_dump(mode="json"),
+                completed_at=job.garment_identity_analysis.completed_at,
+            )
+            if job.garment_identity_analysis is not None
+            else None
+        ),
+        garment_slot_identity_analysis_rows=[
+            TryOnGarmentSlotIdentityAnalysisRow(
+                job_id=job.job_id,
+                position=index,
+                slot_role=slot_analysis.slot_role,
+                invocation_id=slot_analysis.analysis.invocation_id,
+                confidence=slot_analysis.analysis.confidence,
+                uncertainty_level=slot_analysis.analysis.uncertainty_level,
+                analysis_json=slot_analysis.analysis.model_dump(mode="json"),
+                completed_at=slot_analysis.analysis.completed_at,
+            )
+            for index, slot_analysis in enumerate(job.garment_slot_analyses)
+        ],
+        material_texture_analysis_row=(
+            TryOnMaterialTextureAnalysisRow(
+                job_id=job.job_id,
+                invocation_id=job.material_texture_analysis.invocation_id,
+                confidence=job.material_texture_analysis.confidence,
+                uncertainty_level=job.material_texture_analysis.uncertainty_level,
+                analysis_json=job.material_texture_analysis.model_dump(mode="json"),
+                completed_at=job.material_texture_analysis.completed_at,
+            )
+            if job.material_texture_analysis is not None
+            else None
+        ),
+        instruction_row=(
+            TryOnInstructionRow(
+                job_id=job.job_id,
+                invocation_id=job.instruction.invocation_id,
+                confidence=job.instruction.confidence,
+                uncertainty_level=job.instruction.uncertainty_level,
+                instruction_json=job.instruction.model_dump(mode="json"),
+                completed_at=job.instruction.completed_at,
+            )
+            if job.instruction is not None
+            else None
+        ),
     )
 
 
@@ -122,6 +207,11 @@ def job_from_models(
     cost_event_rows: list[TryOnCostEventRow],
     result_row: TryOnResultRow | None,
     error_row: TryOnErrorRow | None,
+    human_identity_analysis_row: TryOnHumanIdentityAnalysisRow | None,
+    garment_identity_analysis_row: TryOnGarmentIdentityAnalysisRow | None = None,
+    garment_slot_identity_analysis_rows: list[TryOnGarmentSlotIdentityAnalysisRow] | None = None,
+    material_texture_analysis_row: TryOnMaterialTextureAnalysisRow | None = None,
+    instruction_row: TryOnInstructionRow | None = None,
 ) -> TryOnJob:
     """Reconstruct a Try-On domain aggregate from SQL rows."""
     result = None
@@ -152,6 +242,10 @@ def job_from_models(
         created_at=job_row.created_at,
         updated_at=job_row.updated_at,
         input_metadata=[TryOnInputMetadata.model_validate(item) for item in job_row.input_metadata_json],
+        wear_control_selections=[
+            TryOnWearControlSelection.model_validate(item)
+            for item in getattr(job_row, "wear_control_selections_json", []) or []
+        ],
         stored_inputs=[
             TryOnStoredInput(
                 role=row.role,
@@ -186,6 +280,33 @@ def job_from_models(
             )
             for row in sorted(cost_event_rows, key=lambda item: item.position)
         ],
+        human_identity_analysis=(
+            TryOnHumanIdentityAnalysis.model_validate(human_identity_analysis_row.analysis_json)
+            if human_identity_analysis_row is not None
+            else None
+        ),
+        garment_identity_analysis=(
+            TryOnGarmentIdentityAnalysis.model_validate(garment_identity_analysis_row.analysis_json)
+            if garment_identity_analysis_row is not None
+            else None
+        ),
+        garment_slot_analyses=[
+            TryOnGarmentSlotIdentityAnalysis(
+                slot_role=row.slot_role,
+                analysis=TryOnGarmentIdentityAnalysis.model_validate(row.analysis_json),
+            )
+            for row in sorted(garment_slot_identity_analysis_rows or [], key=lambda item: item.position)
+        ],
+        material_texture_analysis=(
+            TryOnMaterialTextureAnalysis.model_validate(material_texture_analysis_row.analysis_json)
+            if material_texture_analysis_row is not None
+            else None
+        ),
+        instruction=(
+            TryOnGenerationInstruction.model_validate(instruction_row.instruction_json)
+            if instruction_row is not None
+            else None
+        ),
         result=result,
         error=error,
     )

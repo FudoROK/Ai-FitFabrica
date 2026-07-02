@@ -17,6 +17,7 @@ services:
     restart: unless-stopped
 
   api:
+    image: fitfabrica-runtime:latest
     build:
       context: .
     command: python -m src.main
@@ -41,8 +42,7 @@ services:
     restart: unless-stopped
 
   worker:
-    build:
-      context: .
+    image: fitfabrica-runtime:latest
     command: python -m src.worker
     env_file:
       - ${APP_ENV_FILE:-.env.portable-staging.local}

@@ -33,6 +33,7 @@ class FallbackTryOnGenerationAdapter(TryOnGenerationPort):
         job_id: str,
         input_metadata: list[TryOnInputMetadata],
         stored_inputs: list[TryOnStoredInput],
+        instruction,
     ) -> TryOnResult:
         """Attempt the primary generator and use fallback only when the primary raises."""
         try:
@@ -40,6 +41,7 @@ class FallbackTryOnGenerationAdapter(TryOnGenerationPort):
                 job_id=job_id,
                 input_metadata=input_metadata,
                 stored_inputs=stored_inputs,
+                instruction=instruction,
             )
         except Exception:
             logger.exception(
@@ -50,4 +52,5 @@ class FallbackTryOnGenerationAdapter(TryOnGenerationPort):
                 job_id=job_id,
                 input_metadata=input_metadata,
                 stored_inputs=stored_inputs,
+                instruction=instruction,
             )

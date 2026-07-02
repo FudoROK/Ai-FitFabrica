@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from src.llm.contract_kinds import MEMORY_AGENT_OUTPUT_KIND, REPLY_AGENT_OUTPUT_KIND
+from src.llm.contract_kinds import REPLY_AGENT_OUTPUT_KIND
 from src.llm.core.request import LLMRequest
 from src.llm.vertex import vertex_provider as vertex_provider_module
 from src.llm.vertex.vertex_provider import VertexProvider
@@ -706,7 +706,7 @@ def test_vertex_provider_retries_retriable_errors_and_keeps_contract(monkeypatch
     assert engine_stub.calls["attempts"] == [1, 2]
 
 
-def test_vertex_provider_keeps_legacy_reply_task_alias(monkeypatch):
+def test_vertex_provider_supports_dialog_reply_task_alias(monkeypatch):
     payload = {"reply_text": "ok", "system_payload": {}}
     engine_stub = _AgentEnginesModuleStub(stream_events=[{"output": payload}])
     _patch_reasoning_engines(monkeypatch, engine_stub)

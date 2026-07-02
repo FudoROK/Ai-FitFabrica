@@ -7,6 +7,16 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, field_validator
 
+from .try_on_human_identity import (
+    TryOnHumanIdentityAnalysis,
+    TryOnHumanIdentityEvidence,
+    TryOnHumanIdentityPolicyDecision,
+    TryOnHumanIdentityPreservationTarget,
+    TryOnHumanIdentityVerdict,
+)
+from .try_on_analysis import TryOnGarmentIdentityAnalysis, TryOnGarmentSlotIdentityAnalysis, TryOnMaterialTextureAnalysis
+from .try_on_instruction import TryOnGenerationInstruction
+
 
 def utc_now() -> datetime:
     """Return the current timezone-aware UTC timestamp."""
@@ -32,6 +42,8 @@ class TryOnJobStatus(StrEnum):
 
     ACCEPTED = "accepted"
     VALIDATING_INPUTS = "validating_inputs"
+    ANALYZING_HUMAN = "analyzing_human"
+    ANALYSIS_READY = "analysis_ready"
     GENERATING = "generating"
     QUALITY_CHECKING = "quality_checking"
     REPAIRING = "repairing"
@@ -44,7 +56,9 @@ class TryOnSandboxLifecycleMode(StrEnum):
 
     COMPLETE = "complete"
     PENDING = "pending"
+    ANALYSIS_ONLY = "analysis_only"
     FAILED = "failed"
+    REPAIR_ACCEPTANCE = "repair_acceptance"
 
 
 class TryOnUploadRole(StrEnum):
@@ -52,6 +66,10 @@ class TryOnUploadRole(StrEnum):
 
     HUMAN_PHOTO = "human_photo"
     GARMENT_PHOTO = "garment_photo"
+    UPPER_GARMENT_PHOTO = "upper_garment_photo"
+    LOWER_GARMENT_PHOTO = "lower_garment_photo"
+    OUTERWEAR_GARMENT_PHOTO = "outerwear_garment_photo"
+    FULL_BODY_GARMENT_PHOTO = "full_body_garment_photo"
 
 
 class TryOnChargeStatus(StrEnum):
@@ -72,6 +90,12 @@ class TryOnErrorCode(StrEnum):
     RESULT_NOT_READY = "result_not_ready"
     JOB_FAILED = "job_failed"
     STORAGE_UNAVAILABLE = "storage_unavailable"
+    HUMAN_IDENTITY_ANALYSIS_FAILED = "human_identity_analysis_failed"
+    HUMAN_IDENTITY_INPUT_NOT_SUITABLE = "human_identity_input_not_suitable"
+    REQUIRED_ANALYSIS_FAILED = "required_analysis_failed"
+    INSTRUCTION_GENERATION_FAILED = "instruction_generation_failed"
+    GENERATION_FAILED = "generation_failed"
+    INVALID_GARMENT_COMBINATION = "invalid_garment_combination"
 
 
 class TryOnInputMetadata(BaseModel):
@@ -100,7 +124,7 @@ class TryOnStoredInput(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     role: TryOnUploadRole
-    storage_backend: Literal["in_memory", "gcs", "s3"]
+    storage_backend: Literal["in_memory", "s3"]
     uri: str = Field(min_length=1)
     bucket_name: str | None = None
     object_key: str | None = None
@@ -199,6 +223,21 @@ class TryOnError(BaseModel):
     details: dict[str, object] = Field(default_factory=dict)
 
 
+class TryOnWearControlSelection(BaseModel):
+    """Backend-validated user wear-control selection for one garment slot."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    slot_role: str = Field(min_length=1)
+    garment_type: str = Field(min_length=1)
+    requested_control_code: str = Field(min_length=1)
+    resolved_control_code: str = Field(min_length=1)
+    display_name: str = Field(min_length=1)
+    instruction_template: str = Field(min_length=1)
+    risk_level: str = Field(min_length=1)
+    resolved_by: str = Field(min_length=1)
+
+
 class TryOnJob(BaseModel):
     """Backend-owned aggregate for one Try-On sandbox job."""
 
@@ -212,8 +251,14 @@ class TryOnJob(BaseModel):
     updated_at: datetime = Field(default_factory=utc_now)
     input_metadata: list[TryOnInputMetadata] = Field(default_factory=list)
     stored_inputs: list[TryOnStoredInput] = Field(default_factory=list)
+    wear_control_selections: list[TryOnWearControlSelection] = Field(default_factory=list)
     status_history: list[TryOnStatusEvent] = Field(default_factory=list)
     cost_events: list[TryOnCostEvent] = Field(default_factory=list)
+    human_identity_analysis: TryOnHumanIdentityAnalysis | None = None
+    garment_identity_analysis: TryOnGarmentIdentityAnalysis | None = None
+    garment_slot_analyses: list[TryOnGarmentSlotIdentityAnalysis] = Field(default_factory=list)
+    material_texture_analysis: TryOnMaterialTextureAnalysis | None = None
+    instruction: TryOnGenerationInstruction | None = None
     result: TryOnResult | None = None
     error: TryOnError | None = None
 

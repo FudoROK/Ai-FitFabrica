@@ -8,8 +8,6 @@ from src.llm.llm_task_registry import TASK_REGISTRY, get_task_implementation, va
 EXPECTED_TASKS = {
     "dialog_reply_task",
     "profile_extract_task",
-    "memory_daily_sync_task",
-    "memory_rolling_sync_task",
 }
 
 

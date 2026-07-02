@@ -21,7 +21,7 @@ def test_build_channel_identity_from_normalized_payload():
     assert identity.ingress_source("webhook") == "whatsapp-webhook"
 
 
-def test_build_channel_identity_keeps_legacy_message_payloads_working():
+def test_build_channel_identity_keeps_message_payload_compatibility():
     identity = build_channel_identity(
         {
             "channel": "telegram",

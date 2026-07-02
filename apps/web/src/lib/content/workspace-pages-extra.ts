@@ -5,7 +5,7 @@ export const workspacePagesExtra: Record<string, WorkspacePageContent> = {
     eyebrow: "Content Package",
     title: "Контент-пакет для публикации",
     lead:
-      "Экран рассчитан под готовый набор материалов: визуалы, copy blocks, AI-заметки и статусы готовности к экспорту.",
+      "Экран рассчитан на готовый набор материалов: визуалы, текстовые блоки, AI-заметки и статусы готовности к экспорту.",
     actions: [
       { href: "/workspace/product-card", label: "Вернуться к товару", variant: "primary" },
       { href: "/workspace/history", label: "Сохранить в историю", variant: "secondary" }
@@ -32,7 +32,7 @@ export const workspacePagesExtra: Record<string, WorkspacePageContent> = {
     panels: [
       {
         title: "Package overview",
-        body: "Собирает все артефакты в одном продуктово-спокойном экране."
+        body: "Собирает все артефакты в одном спокойном продуктовом экране."
       },
       {
         title: "AI notes",
@@ -46,7 +46,7 @@ export const workspacePagesExtra: Record<string, WorkspacePageContent> = {
     placeholder: {
       eyebrow: "Package Placeholder",
       title: "Будущий контент-пакет",
-      body: "Позже сюда можно вставить реальные материалы кампании, карточки и варианты публикации.",
+      body: "Позже сюда можно встроить реальные материалы кампании, карточки и варианты публикации.",
       items: ["Visual set", "Copy set", "Readiness", "Export"]
     }
   },
@@ -95,7 +95,7 @@ export const workspacePagesExtra: Record<string, WorkspacePageContent> = {
     placeholder: {
       eyebrow: "Profile Placeholder",
       title: "Зона профиля стиля",
-      body: "Позже сюда можно вставить реальные формы, селекторы и preview влияния параметров.",
+      body: "Позже сюда можно встроить реальные формы, селекторы и preview влияния параметров.",
       items: ["Fit preferences", "Color palette", "Use cases", "Save state"]
     }
   },
@@ -144,7 +144,7 @@ export const workspacePagesExtra: Record<string, WorkspacePageContent> = {
     placeholder: {
       eyebrow: "Brand Placeholder",
       title: "Панель профиля бренда",
-      body: "Позже сюда можно вставить реальные настройки бренда, moodboard и channel presets.",
+      body: "Позже сюда можно встроить реальные настройки бренда, moodboard и channel presets.",
       items: ["Brand tone", "Channels", "Rules", "Approval"]
     }
   },
@@ -152,7 +152,7 @@ export const workspacePagesExtra: Record<string, WorkspacePageContent> = {
     eyebrow: "Credits",
     title: "Баланс и правила списания",
     lead:
-      "Экран credits теперь выглядит как системная продуктовая страница, а не как псевдо-скрин с случайными числами.",
+      "Экран credits выглядит как системная продуктовая страница, а не как псевдо-скрин со случайными числами.",
     actions: [
       { href: "/pricing", label: "Открыть тарифы", variant: "primary" },
       { href: "/workspace/history", label: "Посмотреть историю", variant: "secondary" }
@@ -173,7 +173,7 @@ export const workspacePagesExtra: Record<string, WorkspacePageContent> = {
       },
       {
         title: "No credits state",
-        body: "Экран должен уметь спокойно объяснить блокировку и предложить пополнение."
+        body: "Экран должен спокойно объяснить блокировку и предложить пополнение."
       }
     ],
     panels: [
@@ -187,13 +187,13 @@ export const workspacePagesExtra: Record<string, WorkspacePageContent> = {
       },
       {
         title: "Top-up flow",
-        body: "Подключается после billing-интеграции и может жить в отдельном безопасном сценарии."
+        body: "Подключается после billing-интеграции и живет в отдельном безопасном сценарии."
       }
     ],
     placeholder: {
       eyebrow: "Credits Placeholder",
       title: "Зона баланса и операций",
-      body: "Позже сюда можно вставить live balance, usage chart и top-up module.",
+      body: "Позже сюда можно встроить live balance, usage chart и top-up module.",
       items: ["Balance", "Usage", "No credits", "Top-up CTA"]
     }
   },
@@ -214,7 +214,7 @@ export const workspacePagesExtra: Record<string, WorkspacePageContent> = {
     checklist: [
       {
         title: "Список запусков",
-        body: "Каждая запись должна отображать тип сценария, дату, статус и доступные действия."
+        body: "Каждая запись должна показывать тип сценария, дату, статус и доступные действия."
       },
       {
         title: "Повторное использование",
@@ -228,7 +228,7 @@ export const workspacePagesExtra: Record<string, WorkspacePageContent> = {
     panels: [
       {
         title: "History rail",
-        body: "Список запусков становится центральным продуктовым элементом страницы."
+        body: "Список запусков становится центральным продуктовыми элементом страницы."
       },
       {
         title: "Selected item",
@@ -236,13 +236,13 @@ export const workspacePagesExtra: Record<string, WorkspacePageContent> = {
       },
       {
         title: "Operational audit",
-        body: "Этот экран удобно расширять audit-метаданными, когда они появятся на backend."
+        body: "Экран удобно расширять audit-метаданными, когда они появятся на backend."
       }
     ],
     placeholder: {
       eyebrow: "History Placeholder",
       title: "Список сохраненных запусков",
-      body: "Позже сюда можно вставить реальную историю, фильтры, quick actions и preview выбранной записи.",
+      body: "Позже сюда можно встроить реальную историю, фильтры, quick actions и preview выбранной записи.",
       items: ["Flow list", "Filters", "Preview", "Rerun action"]
     }
   }

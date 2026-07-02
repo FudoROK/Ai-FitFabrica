@@ -15,9 +15,13 @@ if [[ ! -f "${ENV_FILE}" ]]; then
   exit 1
 fi
 
-python scripts/platform_foundation_smoke.py --env-file "${ENV_FILE}" --require-ready
-docker compose -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" up --build -d
+docker compose -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" build api
+docker compose -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" run --rm --no-deps api \
+  python scripts/platform_foundation_smoke.py --require-ready
+docker compose -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" up -d
 docker compose -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" exec -T api alembic upgrade head
+docker compose -f "${COMPOSE_FILE}" --env-file "${ENV_FILE}" exec -T api \
+  python scripts/business_catalog_search_index_readiness.py --require-db
 
 STATUS_ENDPOINT_TOKEN="$(grep -E '^STATUS_ENDPOINT_TOKEN=' "${ENV_FILE}" | tail -n 1 | cut -d '=' -f 2- || true)"
 if [[ -n "${STATUS_ENDPOINT_TOKEN}" ]]; then

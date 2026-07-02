@@ -60,7 +60,7 @@ def test_fake_provider_timeout_failure():
     assert result.error.retriable is True
 
 
-def test_fake_provider_keeps_legacy_reply_task_alias() -> None:
+def test_fake_provider_supports_dialog_reply_task_alias() -> None:
     provider = FakeProvider(task_outputs={"dialog_reply_task": {"text": "legacy", "json": {"answer": "yes"}}})
 
     result = provider.generate(_request(task="dialog_reply_task"))

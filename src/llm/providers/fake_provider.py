@@ -22,6 +22,7 @@ class _StructuredReasoningResult:
 
 class FakeProvider:
     provider_name = "fake"
+    supports_artifacts = False
 
     def __init__(
         self,

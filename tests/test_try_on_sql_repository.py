@@ -11,6 +11,9 @@ from src.domain.try_on import (
     TryOnChargeStatus,
     TryOnCostEvent,
     TryOnGenerationMode,
+    TryOnHumanIdentityAnalysis,
+    TryOnHumanIdentityPreservationTarget,
+    TryOnHumanIdentityVerdict,
     TryOnInputMetadata,
     TryOnJob,
     TryOnJobStatus,
@@ -79,6 +82,28 @@ def _job() -> TryOnJob:
                 charged_credits=0,
             )
         ],
+        human_identity_analysis=TryOnHumanIdentityAnalysis(
+            invocation_id="invocation-1",
+            prompt_version="human_identity.v1",
+            contract_version="human_identity.contract.v1",
+            face_visibility="fully_visible",
+            pose_summary="Front-facing pose.",
+            body_region_visibility=["face", "torso"],
+            subject_count=1,
+            crop_quality="full_body",
+            try_on_body_coverage="sufficient",
+            occlusion_risk="low",
+            required_regions_missing=[],
+            preservation_targets=[
+                TryOnHumanIdentityPreservationTarget(
+                    attribute_name="face",
+                    preservation_reason="Preserve visible identity.",
+                )
+            ],
+            confidence=0.95,
+            uncertainty_level="low",
+            verdict=TryOnHumanIdentityVerdict.ALLOWED,
+        ),
         result=TryOnResult(
             job_id="try_on_123",
             workflow_type=TryOnWorkflowType.TRY_ON,
@@ -118,14 +143,17 @@ async def test_sql_try_on_repository_round_trips_job_aggregate() -> None:
     repository = SqlTryOnJobRepository(session_factory=session_factory)
     job = _job()
 
-    await repository.save(job)
-    saved = await repository.get(job.job_id)
+    try:
+        await repository.save(job)
+        saved = await repository.get(job.job_id)
 
-    assert saved is not None
-    assert saved.job_id == job.job_id
-    assert saved.generation_mode == TryOnGenerationMode.SANDBOX_FAKE
-    assert saved.stored_inputs[0].object_key == "tenant/job/human.png"
-    assert saved.result is not None
-    assert saved.result.result_image.url == "/images/shared/try-on-sandbox-result.webp"
-
-    await engine.dispose()
+        assert saved is not None
+        assert saved.job_id == job.job_id
+        assert saved.generation_mode == TryOnGenerationMode.SANDBOX_FAKE
+        assert saved.stored_inputs[0].object_key == "tenant/job/human.png"
+        assert saved.human_identity_analysis is not None
+        assert saved.human_identity_analysis.invocation_id == "invocation-1"
+        assert saved.result is not None
+        assert saved.result.result_image.url == "/images/shared/try-on-sandbox-result.webp"
+    finally:
+        await engine.dispose()

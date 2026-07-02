@@ -3,6 +3,7 @@ import logging
 import pytest
 
 from src.settings import load_settings
+from src.services.runtime.feature_flags import resolve_feature_flags
 from src.utils.log_redaction import RedactingLogFilter
 
 
@@ -26,20 +27,20 @@ def _set_minimal_valid_vertex_env(monkeypatch):
 def _clear_settings_cache(monkeypatch):
     load_settings.cache_clear()
     monkeypatch.setenv("ENVIRONMENT", "test")
-    for key in REQUIRED_ENV_KEYS + ["LLM_PROVIDER", "VERTEX_PROJECT", "VERTEX_LOCATION", "VERTEX_AGENT_RESOURCE", "ENV", "DEBUG", "LOG_LEVEL", "CRM_PROVIDER", "CALENDAR_PROVIDER", "MESSAGING_PROVIDER", "KNOWLEDGE_PROVIDER", "HUBSPOT_SYNC_ENABLED"]:
+    for key in REQUIRED_ENV_KEYS + ["LLM_PROVIDER", "VERTEX_PROJECT", "VERTEX_LOCATION", "VERTEX_AGENT_RESOURCE", "IMAGE_EDITING_PROVIDER", "IMAGE_EDITING_MODEL", "IMAGE_EDITING_ROOT_PREFIX", "ENV", "DEBUG", "LOG_LEVEL", "CRM_PROVIDER", "CALENDAR_PROVIDER", "MESSAGING_PROVIDER", "KNOWLEDGE_PROVIDER", "HUBSPOT_SYNC_ENABLED"]:
         monkeypatch.delenv(key, raising=False)
     yield
     load_settings.cache_clear()
 
 
-def test_load_settings_fails_without_required_vertex_agent_resource(monkeypatch):
+def test_load_settings_vertex_direct_runtime_does_not_require_agent_resource(monkeypatch):
     _set_minimal_valid_vertex_env(monkeypatch)
     monkeypatch.delenv("VERTEX_AGENT_RESOURCE", raising=False)
 
-    with pytest.raises(ValueError) as exc:
-        load_settings()
+    settings = load_settings()
 
-    assert "VERTEX_AGENT_RESOURCE" in str(exc.value)
+    assert settings.llm.provider == "vertex"
+    assert settings.llm.vertex_agent_resource is None
 
 
 def test_load_settings_vertex_mode(monkeypatch):
@@ -49,6 +50,19 @@ def test_load_settings_vertex_mode(monkeypatch):
 
     assert settings.llm.provider == "vertex"
     assert settings.llm.model
+
+
+def test_load_settings_configures_google_genai_image_editing(monkeypatch):
+    _set_minimal_valid_vertex_env(monkeypatch)
+    monkeypatch.setenv("IMAGE_EDITING_PROVIDER", "google_genai")
+    monkeypatch.setenv("IMAGE_EDITING_MODEL", "imagen-edit-test")
+    monkeypatch.setenv("IMAGE_EDITING_ROOT_PREFIX", "fitfabrica-staging")
+
+    settings = load_settings()
+
+    assert settings.image_editing_provider == "google_genai"
+    assert settings.image_editing_model == "imagen-edit-test"
+    assert settings.image_editing_root_prefix == "fitfabrica-staging"
 
 
 def test_load_settings_fake_mode_does_not_require_vertex_project(monkeypatch):
@@ -61,29 +75,57 @@ def test_load_settings_fake_mode_does_not_require_vertex_project(monkeypatch):
     assert settings.llm.provider == "fake"
 
 
-
-def test_load_settings_gemini_structured_mode_requires_memory_runtime_resource_when_memory_summary_enabled(monkeypatch):
+def test_load_settings_reads_admin_business_catalog_flag(monkeypatch):
     _set_minimal_valid_vertex_env(monkeypatch)
-    monkeypatch.setenv("LLM_PROVIDER", "gemini_structured")
-    monkeypatch.delenv("VERTEX_AGENT_RESOURCE", raising=False)
-    monkeypatch.delenv("VERTEX_MEMORY_DAILY_AGENT_RESOURCE", raising=False)
-    monkeypatch.delenv("VERTEX_MEMORY_ROLLING_AGENT_RESOURCE", raising=False)
-
-    with pytest.raises(ValueError) as exc:
-        load_settings()
-
-    assert "VERTEX_MEMORY_DAILY_AGENT_RESOURCE and VERTEX_MEMORY_ROLLING_AGENT_RESOURCE" in str(exc.value)
-
-
-def test_load_settings_gemini_structured_mode_allows_missing_vertex_agent_resource_when_memory_summary_disabled(monkeypatch):
-    _set_minimal_valid_vertex_env(monkeypatch)
-    monkeypatch.setenv("LLM_PROVIDER", "gemini_structured")
-    monkeypatch.setenv("MEMORY_SUMMARY_ENABLED", "false")
-    monkeypatch.delenv("VERTEX_AGENT_RESOURCE", raising=False)
+    monkeypatch.setenv("ENABLE_ADMIN_BUSINESS_CATALOG", "true")
 
     settings = load_settings()
 
-    assert settings.llm.provider == "gemini_structured"
+    assert settings.enable_admin_business_catalog is True
+
+
+def test_load_settings_reads_admin_costs_flag(monkeypatch):
+    _set_minimal_valid_vertex_env(monkeypatch)
+    monkeypatch.setenv("ENABLE_ADMIN_COSTS", "true")
+
+    settings = load_settings()
+
+    assert settings.enable_admin_costs is True
+
+
+def test_load_settings_defaults_search_engine_discovery_to_disabled(monkeypatch):
+    _set_minimal_valid_vertex_env(monkeypatch)
+
+    settings = load_settings()
+
+    assert settings.enable_search_engine_discovery is False
+    assert settings.search_engine_discovery_provider == "disabled"
+    assert settings.search_engine_discovery_daily_limit == 0
+    assert settings.search_engine_discovery_api_key is None
+
+
+def test_load_settings_reads_search_engine_discovery_config(monkeypatch):
+    _set_minimal_valid_vertex_env(monkeypatch)
+    monkeypatch.setenv("ENABLE_SEARCH_ENGINE_DISCOVERY", "true")
+    monkeypatch.setenv("SEARCH_ENGINE_DISCOVERY_PROVIDER", "google_programmable_search")
+    monkeypatch.setenv("SEARCH_ENGINE_DISCOVERY_DAILY_LIMIT", "100")
+    monkeypatch.setenv("SEARCH_ENGINE_DISCOVERY_API_KEY", "secret-key")
+
+    settings = load_settings()
+
+    assert settings.enable_search_engine_discovery is True
+    assert settings.search_engine_discovery_provider == "google_programmable_search"
+    assert settings.search_engine_discovery_daily_limit == 100
+    assert settings.search_engine_discovery_api_key == "secret-key"
+
+
+def test_feature_flags_expose_search_engine_discovery(monkeypatch):
+    _set_minimal_valid_vertex_env(monkeypatch)
+    monkeypatch.setenv("ENABLE_SEARCH_ENGINE_DISCOVERY", "true")
+
+    flags = resolve_feature_flags(load_settings())
+
+    assert flags.search_engine_discovery_enabled() is True
 
 
 def test_load_settings_gemini_structured_requires_vertex_project(monkeypatch):

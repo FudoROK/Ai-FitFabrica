@@ -5,6 +5,7 @@ from types import SimpleNamespace
 from google.adk.agents import BaseAgent
 
 from src.entrypoints import runtime_dependencies as deps
+from src.entrypoints.runtime_dependency_contracts import FitFabricaAgentRuntimeDependencies
 
 
 def _settings() -> SimpleNamespace:
@@ -66,6 +67,29 @@ def test_fitfabrica_agent_runtime_dependencies_expose_product_agent_roots(monkey
     assert runtime.pricing_deploy_config.name == "pricing_agent"
     assert runtime.product_card_deploy_config.name == "product_card_agent"
     assert runtime.cost_credits_deploy_config.name == "cost_credits_agent"
+
+
+def test_fitfabrica_agent_runtime_dependency_contracts_do_not_use_any_for_agent_roots() -> None:
+    agent_fields = (
+        "orchestrator_agent",
+        "user_profile_agent",
+        "business_profile_agent",
+        "human_identity_agent",
+        "garment_identity_agent",
+        "material_texture_agent",
+        "try_on_agent",
+        "quality_verifier_agent",
+        "repair_agent",
+        "fashion_stylist_agent",
+        "marketplace_agent",
+        "trend_agent",
+        "pricing_agent",
+        "product_card_agent",
+        "cost_credits_agent",
+    )
+
+    for field_name in agent_fields:
+        assert FitFabricaAgentRuntimeDependencies.__annotations__[field_name] == "BaseAgent"
 
 
 def test_try_on_runtime_dependencies_remain_backend_owned_after_agent_bundle_is_added(monkeypatch) -> None:

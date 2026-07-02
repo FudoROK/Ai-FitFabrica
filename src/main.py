@@ -5,11 +5,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .entrypoints.http_routes import build_http_router
-from .entrypoints.runtime_dependencies import (
-    dialog_service,
-    memory_summary_service,
-    safe_memory_summary_response,
-)
 from .settings import Settings
 from .settings import load_settings
 
@@ -24,7 +19,7 @@ def configure_cors(target_app: FastAPI, target_settings: Settings) -> None:
         allow_origins=target_settings.cors_allowed_origins,
         allow_origin_regex=target_settings.cors_allowed_origin_regex,
         allow_credentials=False,
-        allow_methods=["GET", "POST", "OPTIONS"],
+        allow_methods=["GET", "POST", "PUT", "OPTIONS"],
         allow_headers=["*"],
     )
 
@@ -41,19 +36,6 @@ def build_app(target_settings: Settings | None = None) -> FastAPI:
 
 settings = load_settings()
 app = build_app(settings)
-
-
-# Backward-compatible test shims.
-def _dialog_service():
-    return dialog_service(app.state.settings)
-
-
-def _memory_summary_service():
-    return memory_summary_service(app.state.settings)
-
-
-def _safe_memory_summary_response(*, result):
-    return safe_memory_summary_response(result=result)
 
 
 if __name__ == "__main__":

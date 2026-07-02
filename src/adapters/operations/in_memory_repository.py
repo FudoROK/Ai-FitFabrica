@@ -58,6 +58,25 @@ class InMemoryOperationsRepository:
         """Return the requested in-memory queue job."""
         return self._jobs.get(job_id)
 
+    async def claim_stale_processing_job(self, *, stale_before, now) -> QueueJobRecord | None:
+        """Return one stale processing job to queued state for worker recovery."""
+        stale_jobs = sorted(
+            (
+                job
+                for job in self._jobs.values()
+                if job.status == QueueJobStatus.PROCESSING
+                and job.updated_at <= stale_before
+                and job.attempt_count < job.max_attempts
+            ),
+            key=lambda job: job.updated_at,
+        )
+        if not stale_jobs:
+            return None
+        job = stale_jobs[0]
+        updated = job.model_copy(update={"status": QueueJobStatus.QUEUED, "updated_at": now})
+        self._jobs[job.job_id] = updated
+        return updated
+
     async def mark_job_processing(self, *, job_id: str, now) -> QueueJobRecord:
         """Mark the requested in-memory queue job as processing."""
         job = self._jobs[job_id]

@@ -26,16 +26,37 @@ secrets
 *.p12
 
 # Non-runtime project zones
+apps
 docs
 tests
 /contracts
-scripts
+scripts/*
+!scripts/platform_foundation_smoke.py
+!scripts/business_catalog_search_index_readiness.py
+!scripts/reindex_business_catalog_search.py
+test-assets
+output
+tmp
+plugins
+deploy
+sait
+.agents
+.firebase
+.playwright-mcp
 
 # Local build artifacts
 dist
 build
 *.egg-info
 *.log
+*.tar
+*.tar.gz
+*.zip
+*.png
+*.jpg
+*.jpeg
+*.webp
+vm-workspace-*.sh
 
 # IDE / OS
 .idea

@@ -12,7 +12,11 @@ export function PublicHeader() {
   return (
     <header className="border-b border-[var(--border)] bg-[var(--background)]">
       <div className="site-container flex min-h-[82px] items-center justify-between gap-8">
-        <Link className="font-[family-name:var(--font-manrope)] text-[2.1rem] font-bold tracking-[-0.04em]" href="/">
+        <Link
+          aria-label="Go to home page"
+          className="brand-mark inline-flex items-center rounded-full transition-transform duration-200 hover:-translate-y-0.5 hover:scale-[1.02] active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-4"
+          href="/"
+        >
           AI FitFabrica
         </Link>
         <nav className="hidden items-center gap-8 lg:flex">

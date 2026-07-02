@@ -30,6 +30,10 @@ ruff_cache/
 dist/
 build/
 *.egg-info/
+tmp/
+backend-deploy.tar.gz
+try-on-result-*.png
+tryon-ui-*.png
 
 # secrets (never commit)
 .env
@@ -46,3 +50,21 @@ __pycache__/
 .pytest_cache/
 
 src/agents/.adk/
+
+# local browser/audit artifacts
+.tmp-chrome-*/
+chrome-20*/
+import-*.log
+import-*.txt
+importtime*.log
+audit-*.png
+workspace-*.png
+for-you-*.png
+home-hero.png
+business-page.png
+
+# local deployment / extracted reference artifacts
+vm-workspace-*.sh
+docs/*_extracted.txt
+docs/working_area_design.pdf
+docs/working_area_design_extracted.txt

@@ -10,9 +10,7 @@ from ..contract_kinds import canonicalize_contract_kind
 from ..vertex.vertex_parser import (
     collect_output_from_events,
     event_preview,
-    is_memory_contract_kind,
     resolve_contract_selector,
-    selector_mode_name,
 )
 from ..vertex.vertex_session import resolve_session
 
@@ -59,23 +57,12 @@ def invoke_session_flow(
 
     contract_kind = canonicalize_contract_kind(structured_contract.get("kind")) if isinstance(structured_contract, dict) else None
     selector = resolve_contract_selector(contract_kind=contract_kind)
-    selected_mode = selector_mode_name(contract_kind=contract_kind)
     parsed = collect_output_from_events(
         events,
         contract_selector=selector,
         contract_kind=contract_kind,
         correlation_id=correlation_id,
     )
-    if is_memory_contract_kind(contract_kind):
-        logger.info(
-            "MEMORY_CONTRACT_SELECTOR_OUTCOME",
-            extra={
-                "correlation_id": correlation_id,
-                "selector_mode": selected_mode,
-                "event_count": len(events),
-                "output_is_dict": isinstance(parsed.get("output"), dict),
-            },
-        )
     parsed["session_id"] = session_id
     parsed["session_created"] = session_created
     parsed["structured_mode"] = stream_result["structured_mode"]

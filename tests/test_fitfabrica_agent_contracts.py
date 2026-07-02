@@ -25,6 +25,11 @@ def test_human_identity_contract_exposes_backend_preservation_targets() -> None:
         face_visibility="fully_visible",
         pose_summary="front-facing standing pose",
         body_region_visibility=["face", "torso", "arms"],
+        subject_count=1,
+        crop_quality="full_body",
+        try_on_body_coverage="sufficient",
+        occlusion_risk="low",
+        required_regions_missing=[],
         preservation_targets=[
             HumanIdentityPreservationTarget(
                 attribute_name="face",
@@ -42,6 +47,16 @@ def test_human_identity_contract_exposes_backend_preservation_targets() -> None:
 def test_garment_identity_contract_keeps_structured_preserved_details() -> None:
     contract = GarmentIdentityContract(
         garment_type="dress",
+        garment_count=1,
+        target_garment_index=1,
+        target_garment_description="black fitted midi dress",
+        garment_visibility="mostly_visible",
+        crop_quality="minor_crop",
+        try_on_garment_coverage="sufficient",
+        product_card_coverage="sufficient",
+        occlusion_risk="low",
+        required_regions_missing=[],
+        ambiguous_target=False,
         dominant_color="black",
         silhouette_summary="fitted midi dress",
         preserved_details=["belt", "collar", "sleeve length"],
@@ -99,6 +114,18 @@ def test_repair_instruction_contract_returns_editing_steps() -> None:
         editing_instructions=[
             "restore collar edge continuity",
             "repair fingers without changing pose",
+        ],
+        region_instructions=[
+            {
+                "region": "collar",
+                "instruction": "restore collar edge continuity",
+                "preserve": ["face", "pose"],
+            },
+            {
+                "region": "hands",
+                "instruction": "repair fingers without changing pose",
+                "preserve": ["pose", "garment"],
+            },
         ],
         confidence=0.73,
         limitations=["logo restoration is not requested in this pass"],

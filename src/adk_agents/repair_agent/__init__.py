@@ -1,5 +1,5 @@
 """Contract exports for the FitFabrica repair agent."""
 
-from .contracts import RepairInstructionContract
+from .contracts import RepairAgentRequest, RepairDefectInput, RepairInstructionContract, RepairRegionInstruction
 
-__all__ = ["RepairInstructionContract"]
+__all__ = ["RepairAgentRequest", "RepairInstructionContract", "RepairDefectInput", "RepairRegionInstruction"]

@@ -25,6 +25,7 @@ class FakeTryOnGenerationAdapter(TryOnGenerationPort):
         job_id: str,
         input_metadata: list[TryOnInputMetadata],
         stored_inputs: list[TryOnStoredInput],
+        instruction,
     ) -> TryOnResult:
         """Build the sandbox result without calling real AI generation infrastructure."""
         return TryOnResult(

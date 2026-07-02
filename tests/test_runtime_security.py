@@ -18,7 +18,6 @@ def _base_settings(**overrides) -> Settings:
         "VERTEX_AGENT_RESOURCE": "test-agent",
         "HUBSPOT_ACCESS_TOKEN": "test-hubspot-token",
         "ENVIRONMENT": "test",
-        "memory_summary_enabled": False,
         "PUBLIC_STATUS_ENDPOINTS_ENABLED": False,
         "STATUS_ENDPOINT_TOKEN": "status-token",
     }
@@ -107,3 +106,26 @@ def test_dockerfile_runs_as_non_root_and_keeps_healthcheck_local():
     assert "useradd --system" in dockerfile
     assert "USER app" in dockerfile
     assert "http://127.0.0.1:8080/health" in dockerfile
+
+
+def test_active_http_surface_excludes_legacy_memory_summary_task():
+    response = TestClient(app).post("/tasks/memory-summary", json={"lead_id": "lead-1"})
+
+    assert response.status_code == 404
+
+
+def test_cors_allows_wear_control_put_requests():
+    settings = _base_settings(CORS_ALLOWED_ORIGINS="http://localhost:3000")
+    cors_app = __import__("src.main", fromlist=["build_app"]).build_app(settings)
+
+    response = TestClient(cors_app).options(
+        "/api/jobs/job-1/wear-controls",
+        headers={
+            "Origin": "http://localhost:3000",
+            "Access-Control-Request-Method": "PUT",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.headers["access-control-allow-origin"] == "http://localhost:3000"
+    assert "PUT" in response.headers["access-control-allow-methods"]

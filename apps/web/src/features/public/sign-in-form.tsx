@@ -59,33 +59,40 @@ export function SignInForm() {
         <div className="border-b-2 border-black pb-4">Войти</div>
         <div className="pb-4 text-[var(--text-secondary)]">Регистрация</div>
       </div>
+
       <button className="site-pill-button mt-8 w-full" type="button">
-        <span className="text-[1.6rem]">G</span>
+        <span className="ui-label-strong">G</span>
         <span>Продолжить с Google</span>
       </button>
+
       <div className="my-8 flex items-center gap-4 text-[var(--text-muted)]">
         <div className="h-px flex-1 bg-[var(--border)]" />
-        <span className="text-[1.1rem] font-semibold uppercase tracking-[0.18em]">или</span>
+        <span className="eyebrow">или</span>
         <div className="h-px flex-1 bg-[var(--border)]" />
       </div>
-      <label className="grid gap-3 text-[1.1rem] font-semibold">
+
+      <label className="public-form-label grid gap-3">
         <span>Email</span>
         <input className="site-input" onChange={(event) => setEmail(event.target.value)} type="email" value={email} />
       </label>
+
       <div className="mt-6 flex items-center justify-between">
-        <span className="text-[1.1rem] font-semibold">Пароль</span>
+        <span className="public-form-label">Пароль</span>
         <button className="site-pill-button site-pill-button--compact" type="button">
           Забыли пароль?
         </button>
       </div>
+
       <label className="relative mt-3 block">
         <input className="site-input pr-14" onChange={(event) => setPassword(event.target.value)} type="password" value={password} />
         <span className="absolute right-5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]">
           <MaterialIcon name="visibility" />
         </span>
       </label>
+
       {error ? <p className="mt-6 rounded-2xl bg-[#fce8e6] px-5 py-4 text-sm font-medium text-[var(--error)]">{error}</p> : null}
       {success ? <p className="mt-6 rounded-2xl bg-[var(--success-soft)] px-5 py-4 text-sm font-medium text-[var(--success)]">{success}</p> : null}
+
       <SiteButton className="mt-8 w-full" type="submit" disabled={isSubmitting}>
         {isSubmitting ? "Проверяем доступ" : "Войти"}
       </SiteButton>

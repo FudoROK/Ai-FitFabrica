@@ -54,6 +54,9 @@ async def test_product_card_records_charge_through_billing_core() -> None:
                 created_at=now,
             )
 
+        async def save_garment_analysis(self, analysis):
+            return analysis
+
         async def mark_completed(self, job_id: str, *, now):
             from src.domain.product_card import ProductCardJobRecord
 
@@ -75,12 +78,28 @@ async def test_product_card_records_charge_through_billing_core() -> None:
             return None
 
     class _GenerationStub:
-        async def generate(self, *, request, asset_keys):
+        async def generate(self, *, request, garment_analysis):
             return ProductCardDraft(
                 title=request.title_hint or "Generated",
                 description="Generated product card",
                 bullet_points=["one"],
                 attributes={"category": "dress"},
+            )
+
+    class _GarmentAnalysisStub:
+        async def analyze(self, *, job_id, asset_keys):
+            from src.domain.product_card import ProductCardGarmentAnalysis
+
+            return ProductCardGarmentAnalysis(
+                job_id=job_id,
+                invocation_id="garment-invocation-1",
+                prompt_version="garment_identity.v1",
+                contract_version="garment_identity.contract.v1",
+                garment_type="dress",
+                dominant_color="blue",
+                silhouette_summary="Midi dress.",
+                confidence=0.95,
+                uncertainty_level="low",
             )
 
     billing_repository = InMemoryBillingRepository()
@@ -92,6 +111,7 @@ async def test_product_card_records_charge_through_billing_core() -> None:
     service = ProductCardWorkflowService(
         file_storage=_FileStorageStub(),
         repository=_RepositoryStub(),
+        garment_identity_analyzer=_GarmentAnalysisStub(),
         generation_adapter=_GenerationStub(),
         clock=_utc_now,
         billing_service=billing_service,

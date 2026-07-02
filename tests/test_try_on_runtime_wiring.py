@@ -5,7 +5,7 @@ from types import SimpleNamespace
 from src.entrypoints import runtime_dependencies as deps
 
 
-def _settings(environment: str = "prod"):
+def _settings(environment: str = "test"):
     return SimpleNamespace(
         environment=environment,
         llm=SimpleNamespace(provider="fake"),
@@ -28,7 +28,7 @@ def _settings(environment: str = "prod"):
 
 
 def test_try_on_runtime_dependencies_prefer_sql_when_portable_sql_exists(monkeypatch):
-    settings = _settings()
+    settings = _settings(environment="prod")
     monkeypatch.setattr(
         deps,
         "portable_infrastructure",
@@ -39,8 +39,16 @@ def test_try_on_runtime_dependencies_prefer_sql_when_portable_sql_exists(monkeyp
 
     assert runtime.job_repository.__class__.__name__ == "SqlTryOnJobRepository"
     assert runtime.workflow_service._repository is runtime.job_repository
-    assert runtime.quality_verifier.__class__.__name__ == "ModelBackedTryOnQualityVerifier"
+    assert runtime.human_identity_analyzer.__class__.__name__ == "HumanIdentityAnalysisAdapter"
+    assert runtime.garment_identity_analyzer.__class__.__name__ == "TryOnGarmentIdentityAnalysisAdapter"
+    assert runtime.garment_identity_analyzer._taxonomy_service.__class__.__name__ == "GarmentTaxonomyService"
+    assert runtime.material_texture_analyzer.__class__.__name__ == "TryOnMaterialTextureAnalysisAdapter"
+    assert runtime.analysis_bundle_service.__class__.__name__ == "TryOnAnalysisBundleService"
+    assert runtime.quality_verifier.__class__.__name__ == "TryOnQualityVerifierAgentAdapter"
+    assert runtime.quality_verifier._preferred_model == "gemini-2.5-flash"
     assert runtime.repair_adapter.__class__.__name__ == "ProviderRuntimeTryOnRepairAdapter"
+    assert runtime.repair_adapter._repair_instruction_planner.__class__.__name__ == "TryOnRepairAgentPlanner"
+    assert runtime.repair_adapter._repair_instruction_planner._preferred_model == "gemini-2.5-flash"
     assert runtime.stylist_adapter.__class__.__name__ == "ModelBackedTryOnStylist"
 
 
@@ -56,6 +64,8 @@ def test_try_on_runtime_dependencies_are_cached(monkeypatch):
     second = deps.try_on_runtime_dependencies(settings)
 
     assert first is second
+    assert first.garment_identity_analyzer.__class__.__name__ == "DeterministicTryOnGarmentIdentityAnalysisAdapter"
+    assert first.material_texture_analyzer.__class__.__name__ == "DeterministicTryOnMaterialTextureAnalysisAdapter"
 
 
 def test_try_on_runtime_dependencies_can_select_provider_runtime_generation(monkeypatch):
@@ -98,6 +108,110 @@ def test_try_on_runtime_dependencies_can_select_vertex_virtual_try_on_generation
     runtime = deps.try_on_runtime_dependencies(settings)
 
     assert runtime.generation_adapter.__class__.__name__ == "VertexVirtualTryOnGenerationAdapter"
+
+
+def test_try_on_runtime_dependencies_disable_stub_repair_for_real_vertex_generation(monkeypatch):
+    settings = _settings(environment="prod")
+    settings.try_on_generation_backend = "vertex_virtual_try_on"
+    settings.enable_real_try_on_generation = True
+    settings.vertex_project = "fitfabrica-test"
+    settings.vertex_virtual_try_on_location = "global"
+    settings.vertex_virtual_try_on_model = "virtual-try-on-001"
+    monkeypatch.setattr(
+        deps,
+        "portable_infrastructure",
+        lambda _settings: SimpleNamespace(sql_session_factory="session-factory", object_storage="storage"),
+    )
+    monkeypatch.setattr(
+        deps,
+        "provider_runtime",
+        lambda _settings: SimpleNamespace(
+            agent_runtime=object(),
+            image_editing=SimpleNamespace(provider_name="stub_image_editing"),
+            structured_reasoning=None,
+            embedding_provider=None,
+        ),
+    )
+    monkeypatch.setattr(
+        deps,
+        "VertexVirtualTryOnClient",
+        lambda **kwargs: SimpleNamespace(**kwargs),
+    )
+
+    runtime = deps.try_on_runtime_dependencies(settings)
+
+    assert runtime.generation_adapter.__class__.__name__ == "VertexVirtualTryOnGenerationAdapter"
+    assert runtime.repair_adapter is None
+
+
+def test_try_on_runtime_dependencies_allow_provider_repair_for_real_vertex_generation(monkeypatch):
+    settings = _settings(environment="prod")
+    settings.try_on_generation_backend = "vertex_virtual_try_on"
+    settings.enable_real_try_on_generation = True
+    settings.vertex_project = "fitfabrica-test"
+    settings.vertex_virtual_try_on_location = "global"
+    settings.vertex_virtual_try_on_model = "virtual-try-on-001"
+    monkeypatch.setattr(
+        deps,
+        "portable_infrastructure",
+        lambda _settings: SimpleNamespace(sql_session_factory="session-factory", object_storage="storage"),
+    )
+    monkeypatch.setattr(
+        deps,
+        "provider_runtime",
+        lambda _settings: SimpleNamespace(
+            agent_runtime=object(),
+            image_editing=SimpleNamespace(provider_name="google_genai_image_editing"),
+            structured_reasoning=None,
+            embedding_provider=None,
+        ),
+    )
+    monkeypatch.setattr(
+        deps,
+        "VertexVirtualTryOnClient",
+        lambda **kwargs: SimpleNamespace(**kwargs),
+    )
+
+    runtime = deps.try_on_runtime_dependencies(settings)
+
+    assert runtime.generation_adapter.__class__.__name__ == "VertexVirtualTryOnGenerationAdapter"
+    assert runtime.repair_adapter.__class__.__name__ == "ProviderRuntimeTryOnRepairAdapter"
+    assert runtime.repair_adapter._repair_instruction_planner.__class__.__name__ == "TryOnRepairAgentPlanner"
+
+
+def test_try_on_runtime_dependencies_disable_deterministic_repair_for_real_vertex_generation(monkeypatch):
+    settings = _settings(environment="prod")
+    settings.try_on_generation_backend = "vertex_virtual_try_on"
+    settings.try_on_repair_backend = "deterministic"
+    settings.enable_real_try_on_generation = True
+    settings.vertex_project = "fitfabrica-test"
+    settings.vertex_virtual_try_on_location = "global"
+    settings.vertex_virtual_try_on_model = "virtual-try-on-001"
+    monkeypatch.setattr(
+        deps,
+        "portable_infrastructure",
+        lambda _settings: SimpleNamespace(sql_session_factory="session-factory", object_storage="storage"),
+    )
+    monkeypatch.setattr(
+        deps,
+        "provider_runtime",
+        lambda _settings: SimpleNamespace(
+            agent_runtime=object(),
+            image_editing=SimpleNamespace(provider_name="stub_image_editing"),
+            structured_reasoning=None,
+            embedding_provider=None,
+        ),
+    )
+    monkeypatch.setattr(
+        deps,
+        "VertexVirtualTryOnClient",
+        lambda **kwargs: SimpleNamespace(**kwargs),
+    )
+
+    runtime = deps.try_on_runtime_dependencies(settings)
+
+    assert runtime.generation_adapter.__class__.__name__ == "VertexVirtualTryOnGenerationAdapter"
+    assert runtime.repair_adapter is None
 
 
 def test_try_on_runtime_dependencies_can_wrap_vertex_generation_with_provider_fallback(monkeypatch):

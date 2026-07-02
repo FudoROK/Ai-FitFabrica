@@ -12,6 +12,7 @@ from src.domain.try_on import (
     TryOnStoredInput,
 )
 from src.use_cases.try_on.ports import TryOnQualityVerifierPort
+from src.use_cases.try_on.quality_policy import TryOnQualityPolicy
 
 
 class DeterministicTryOnQualityVerifier(TryOnQualityVerifierPort):
@@ -21,6 +22,7 @@ class DeterministicTryOnQualityVerifier(TryOnQualityVerifierPort):
         """Store the object-storage dependency and minimum artifact sanity threshold."""
         self._object_storage = object_storage
         self._minimum_generated_bytes = minimum_generated_bytes
+        self._quality_policy = TryOnQualityPolicy(minimum_pass_confidence=0.8)
 
     async def verify(
         self,
@@ -58,6 +60,23 @@ class DeterministicTryOnQualityVerifier(TryOnQualityVerifierPort):
                 ),
             ),
         ]
+
+        garment_slot_roles = _garment_slot_roles(input_metadata)
+        stored_garment_slot_roles = _garment_slot_roles(stored_inputs)
+        if len(garment_slot_roles) > 1:
+            slots_match = garment_slot_roles == stored_garment_slot_roles
+            checks.append(
+                TryOnQualityCheck(
+                    name="outfit_slot_input_shape",
+                    status="passed" if slots_match else "failed",
+                    confidence=0.86 if slots_match else 0.22,
+                    message=(
+                        f"Quality verifier retained outfit garment slots: {', '.join(garment_slot_roles)}."
+                        if slots_match
+                        else "Quality verifier detected mismatch between request garment slots and stored inputs."
+                    ),
+                )
+            )
 
         artifact_bytes = b""
         if artifact_object_key:
@@ -97,24 +116,28 @@ class DeterministicTryOnQualityVerifier(TryOnQualityVerifierPort):
 
         failed_checks = [check for check in checks if check.status == "failed"]
         if failed_checks:
-            return TryOnQualityReport(
-                verdict="reject",
-                confidence=0.24,
-                checks=checks,
-                limitations=[
-                    "Result was rejected by backend deterministic verification before user exposure."
-                ],
+            return self._quality_policy.evaluate(
+                TryOnQualityReport(
+                    verdict="reject",
+                    confidence=0.24,
+                    checks=checks,
+                    limitations=[
+                        "Result was rejected by backend deterministic verification before user exposure."
+                    ],
+                )
             )
 
         warning_checks = [check for check in checks if check.status == "warning"]
         if warning_checks:
-            return TryOnQualityReport(
-                verdict="repair_recommended",
-                confidence=0.61,
-                checks=checks,
-                limitations=[
-                    "A local backend repair pass is recommended before the result is exposed to the user."
-                ],
+            return self._quality_policy.evaluate(
+                TryOnQualityReport(
+                    verdict="repair_recommended",
+                    confidence=0.61,
+                    checks=checks,
+                    limitations=[
+                        "A local backend repair pass is recommended before the result is exposed to the user."
+                    ],
+                )
             )
 
         limitations = [
@@ -125,9 +148,16 @@ class DeterministicTryOnQualityVerifier(TryOnQualityVerifierPort):
                 "Provider-runtime image editing still persists deterministic placeholder-like artifacts until the dedicated image-byte path is fully upgraded."
             )
 
-        return TryOnQualityReport(
-            verdict="pass",
-            confidence=0.86 if generation_mode == TryOnGenerationMode.VERTEX_VIRTUAL_TRY_ON else 0.74,
-            checks=checks,
-            limitations=limitations,
+        return self._quality_policy.evaluate(
+            TryOnQualityReport(
+                verdict="pass",
+                confidence=0.86 if generation_mode == TryOnGenerationMode.VERTEX_VIRTUAL_TRY_ON else 0.74,
+                checks=checks,
+                limitations=limitations,
+            )
         )
+
+
+def _garment_slot_roles(items: list[TryOnInputMetadata] | list[TryOnStoredInput]) -> list[str]:
+    """Return garment slot roles in request/storage order, excluding the human input."""
+    return [item.role.value for item in items if item.role.value != "human_photo"]

@@ -75,7 +75,17 @@ curl -H "X-Status-Token: <STATUS_ENDPOINT_TOKEN>" http://127.0.0.1:8080/health
 ## Portable Runtime Readiness Gate
 
 ```bash
-python scripts/platform_foundation_smoke.py --env-file .env.portable-remote-staging.local --require-ready
+docker compose -f docker-compose.portable-staging.yml --env-file .env.portable-remote-staging.local build api
+docker compose -f docker-compose.portable-staging.yml --env-file .env.portable-remote-staging.local run --rm --no-deps api python scripts/platform_foundation_smoke.py --require-ready
+```
+
+## B2B Catalog Search Index Readiness Gate
+
+Run this after `alembic upgrade head` and after the API container is up. It verifies that the deployed database has the B2B search-index columns, the indexing runtime is wired, and the worker has the `business_catalog_search_index` handler.
+
+```bash
+docker compose -f docker-compose.portable-staging.yml --env-file .env.portable-remote-staging.local exec -T api \
+  python scripts/business_catalog_search_index_readiness.py --require-db
 ```
 
 ## Try-On Activation Dry Run

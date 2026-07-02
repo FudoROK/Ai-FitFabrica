@@ -20,6 +20,7 @@ class TryOnJobRow(SqlBase):
     generation_mode: Mapped[str] = mapped_column(String(32), nullable=False)
     status: Mapped[str] = mapped_column(String(32), nullable=False)
     input_metadata_json: Mapped[list[dict[str, object]]] = mapped_column("input_metadata", JSON, nullable=False, default=list)
+    wear_control_selections_json: Mapped[list[dict[str, object]]] = mapped_column("wear_control_selections", JSON, nullable=False, default=list)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
 
@@ -43,6 +44,78 @@ class TryOnStoredInputRow(SqlBase):
     size_bytes: Mapped[int] = mapped_column(Integer, nullable=False)
     sha256: Mapped[str] = mapped_column(String(64), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class TryOnHumanIdentityAnalysisRow(SqlBase):
+    """Validated Human Identity analysis bound one-to-one to a Try-On job."""
+
+    __tablename__ = "try_on_human_identity_analyses"
+
+    job_id: Mapped[str] = mapped_column(ForeignKey("try_on_jobs.job_id", ondelete="CASCADE"), primary_key=True)
+    invocation_id: Mapped[str] = mapped_column(String(128), nullable=False, index=True)
+    prompt_version: Mapped[str] = mapped_column(String(128), nullable=False)
+    contract_version: Mapped[str] = mapped_column(String(128), nullable=False)
+    verdict: Mapped[str] = mapped_column(String(32), nullable=False)
+    confidence: Mapped[float] = mapped_column(nullable=False)
+    uncertainty_level: Mapped[str] = mapped_column(String(32), nullable=False)
+    analysis_json: Mapped[dict[str, object]] = mapped_column("analysis", JSON, nullable=False)
+    completed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class TryOnGarmentIdentityAnalysisRow(SqlBase):
+    """Validated Garment Identity analysis bound one-to-one to a Try-On job."""
+
+    __tablename__ = "try_on_garment_identity_analyses"
+
+    job_id: Mapped[str] = mapped_column(ForeignKey("try_on_jobs.job_id", ondelete="CASCADE"), primary_key=True)
+    invocation_id: Mapped[str] = mapped_column(String(128), nullable=False, index=True)
+    confidence: Mapped[float] = mapped_column(nullable=False)
+    uncertainty_level: Mapped[str] = mapped_column(String(32), nullable=False)
+    analysis_json: Mapped[dict[str, object]] = mapped_column("analysis", JSON, nullable=False)
+    completed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class TryOnGarmentSlotIdentityAnalysisRow(SqlBase):
+    """Validated Garment Identity analysis bound to one outfit garment slot."""
+
+    __tablename__ = "try_on_garment_slot_identity_analyses"
+    __table_args__ = (UniqueConstraint("job_id", "slot_role", name="uq_try_on_garment_slot_identity_job_role"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    job_id: Mapped[str] = mapped_column(ForeignKey("try_on_jobs.job_id", ondelete="CASCADE"), nullable=False, index=True)
+    position: Mapped[int] = mapped_column(Integer, nullable=False)
+    slot_role: Mapped[str] = mapped_column(String(64), nullable=False)
+    invocation_id: Mapped[str] = mapped_column(String(128), nullable=False, index=True)
+    confidence: Mapped[float] = mapped_column(nullable=False)
+    uncertainty_level: Mapped[str] = mapped_column(String(32), nullable=False)
+    analysis_json: Mapped[dict[str, object]] = mapped_column("analysis", JSON, nullable=False)
+    completed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class TryOnMaterialTextureAnalysisRow(SqlBase):
+    """Validated Material / Texture analysis bound one-to-one to a Try-On job."""
+
+    __tablename__ = "try_on_material_texture_analyses"
+
+    job_id: Mapped[str] = mapped_column(ForeignKey("try_on_jobs.job_id", ondelete="CASCADE"), primary_key=True)
+    invocation_id: Mapped[str] = mapped_column(String(128), nullable=False, index=True)
+    confidence: Mapped[float] = mapped_column(nullable=False)
+    uncertainty_level: Mapped[str] = mapped_column(String(32), nullable=False)
+    analysis_json: Mapped[dict[str, object]] = mapped_column("analysis", JSON, nullable=False)
+    completed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class TryOnInstructionRow(SqlBase):
+    """Validated generation instruction bound one-to-one to a Try-On job."""
+
+    __tablename__ = "try_on_instructions"
+
+    job_id: Mapped[str] = mapped_column(ForeignKey("try_on_jobs.job_id", ondelete="CASCADE"), primary_key=True)
+    invocation_id: Mapped[str] = mapped_column(String(128), nullable=False, index=True)
+    confidence: Mapped[float] = mapped_column(nullable=False)
+    uncertainty_level: Mapped[str] = mapped_column(String(32), nullable=False)
+    instruction_json: Mapped[dict[str, object]] = mapped_column("instruction", JSON, nullable=False)
+    completed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
 
 
 class TryOnStatusEventRow(SqlBase):
@@ -104,3 +177,4 @@ Index("ix_try_on_jobs_status_created_at", TryOnJobRow.status, TryOnJobRow.create
 Index("ix_try_on_stored_inputs_job_id_position", TryOnStoredInputRow.job_id, TryOnStoredInputRow.position)
 Index("ix_try_on_status_events_job_id_position", TryOnStatusEventRow.job_id, TryOnStatusEventRow.position)
 Index("ix_try_on_cost_events_job_id_position", TryOnCostEventRow.job_id, TryOnCostEventRow.position)
+Index("ix_try_on_garment_slot_identity_job_position", TryOnGarmentSlotIdentityAnalysisRow.job_id, TryOnGarmentSlotIdentityAnalysisRow.position)

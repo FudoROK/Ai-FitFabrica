@@ -17,8 +17,6 @@ from .tasks.helpers.task_request_builder import ProviderRequestParts, provider_p
 from .tasks.profile_extract_task import register_profile_extract_schema
 
 logger = logging.getLogger(__name__)
-_MEMORY_DAILY_RUNTIME_TASKS = frozenset({"memory_daily_sync_task"})
-_MEMORY_ROLLING_RUNTIME_TASKS = frozenset({"memory_rolling_sync_task"})
 _REPLY_RUNTIME_TASKS = REPLY_RUNTIME_TASKS
 
 
@@ -38,8 +36,6 @@ class LLMService:
         self.provider = provider or get_provider(self.settings)
         self.provider_runtime = provider_runtime or build_provider_runtime(self.settings)
         self._structured_runtime_provider: LLMProvider | None = None
-        self._memory_daily_runtime_provider: LLMProvider | None = None
-        self._memory_rolling_runtime_provider: LLMProvider | None = None
         register_profile_extract_schema()
         validate_task_registry()
 
@@ -177,21 +173,6 @@ class LLMService:
         return LLMResult(task=task, ok=False, error={"kind": kind, "message": message})
 
     def _select_provider_for_task(self, task: TaskName) -> tuple[LLMProvider, ProviderRoutingDecision]:
-        if task in _MEMORY_DAILY_RUNTIME_TASKS:
-            memory_provider = self._get_memory_daily_runtime_provider()
-            if memory_provider is None:
-                raise RuntimeError(
-                    "memory_daily_runtime_resource_missing: set VERTEX_MEMORY_DAILY_AGENT_RESOURCE for memory_daily_sync_task"
-                )
-            return memory_provider, ProviderRoutingDecision(path_name="memory_daily_runtime", structured_provider_used=False)
-        if task in _MEMORY_ROLLING_RUNTIME_TASKS:
-            memory_provider = self._get_memory_rolling_runtime_provider()
-            if memory_provider is None:
-                raise RuntimeError(
-                    "memory_rolling_runtime_resource_missing: set VERTEX_MEMORY_ROLLING_AGENT_RESOURCE for memory_rolling_sync_task"
-                )
-            return memory_provider, ProviderRoutingDecision(path_name="memory_rolling_runtime", structured_provider_used=False)
-
         routing = select_provider_path(task)
         if task in _REPLY_RUNTIME_TASKS:
             structured_provider = self._structured_runtime_provider or self.provider_runtime.structured_reasoning
@@ -207,18 +188,3 @@ class LLMService:
         if structured_provider is None:
             raise RuntimeError("structured_provider_unavailable: configure provider_runtime.structured_reasoning")
         return structured_provider, routing
-
-    def _get_memory_daily_runtime_provider(self) -> LLMProvider | None:
-        if self._memory_daily_runtime_provider is not None:
-            return self._memory_daily_runtime_provider
-
-        self._memory_daily_runtime_provider = self.provider_runtime.memory_daily_agent_runtime
-        return self._memory_daily_runtime_provider
-
-
-    def _get_memory_rolling_runtime_provider(self) -> LLMProvider | None:
-        if self._memory_rolling_runtime_provider is not None:
-            return self._memory_rolling_runtime_provider
-
-        self._memory_rolling_runtime_provider = self.provider_runtime.memory_rolling_agent_runtime
-        return self._memory_rolling_runtime_provider

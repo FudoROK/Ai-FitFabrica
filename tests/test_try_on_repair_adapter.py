@@ -67,3 +67,40 @@ async def test_deterministic_repair_adapter_creates_repaired_artifact_variant() 
     assert repaired.result_image._artifact_object_key.endswith("/repair_image/repair.png")
     assert repaired.result_image.url.startswith("memory://fitfabrica/tenants/public/try-on/job-1/repair_image/")
     assert len(storage.get_bytes(repaired.result_image._artifact_object_key)) >= 64
+
+
+@pytest.mark.asyncio
+async def test_deterministic_repair_adapter_refuses_failed_quality_checks() -> None:
+    storage = InMemoryObjectStorage()
+    source_key = "fitfabrica/tenants/public/try-on/job-1/result_image/result.png"
+    storage.put_bytes(object_key=source_key, payload=b"tiny", content_type="image/png")
+    adapter = DeterministicTryOnRepairAdapter(
+        object_storage=storage,
+        tenant_id="public",
+        root_prefix="fitfabrica",
+        signed_url_ttl_seconds=900,
+    )
+    unsafe_report = TryOnQualityReport(
+        verdict="repair_recommended",
+        confidence=0.8,
+        checks=[
+            TryOnQualityCheck(
+                name="face_preservation",
+                status="failed",
+                confidence=0.9,
+                message="Face changed.",
+            )
+        ],
+        limitations=["Not locally repairable."],
+    )
+
+    repaired = await adapter.repair(
+        job_id="job-1",
+        generation_mode=TryOnGenerationMode.VERTEX_VIRTUAL_TRY_ON,
+        stored_inputs=[],
+        result=_result(source_key),
+        quality_report=unsafe_report,
+    )
+
+    assert repaired.result_image._artifact_object_key == source_key
+    assert any(check.name == "repair_policy_blocked" for check in repaired.quality_report.checks)

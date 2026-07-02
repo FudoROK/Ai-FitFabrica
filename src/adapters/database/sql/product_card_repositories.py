@@ -6,12 +6,13 @@ from sqlalchemy import select
 
 from src.domain.product_card import (
     ProductCardDraft,
+    ProductCardGarmentAnalysis,
     ProductCardJobRecord,
     ProductCardRequest,
     ProductCardVersionRecord,
 )
 
-from .product_card_models import ProductCardJobRow, ProductCardSourceAssetRow, ProductCardVersionRow
+from .product_card_models import ProductCardGarmentAnalysisRow, ProductCardJobRow, ProductCardSourceAssetRow, ProductCardVersionRow
 from .product_card_serialization import job_record_from_rows, version_record_from_row
 
 
@@ -34,6 +35,7 @@ class SqlProductCardRepository:
         job_row = ProductCardJobRow(
             job_id=job_id,
             status="accepted",
+            category=request.category,
             target_channel=request.target_channel,
             brand_tone=request.brand_tone,
             title_hint=request.title_hint,
@@ -77,6 +79,31 @@ class SqlProductCardRepository:
             await session.commit()
         return version_record_from_row(version_row)
 
+    async def save_garment_analysis(self, analysis: ProductCardGarmentAnalysis) -> ProductCardGarmentAnalysis:
+        """Persist one validated reusable garment analysis."""
+        row = ProductCardGarmentAnalysisRow(
+            job_id=analysis.job_id,
+            invocation_id=analysis.invocation_id,
+            prompt_version=analysis.prompt_version,
+            contract_version=analysis.contract_version,
+            garment_type=analysis.garment_type,
+            dominant_color=analysis.dominant_color,
+            confidence=analysis.confidence,
+            uncertainty_level=analysis.uncertainty_level,
+            analysis_json=analysis.model_dump(mode="json"),
+            completed_at=analysis.completed_at,
+        )
+        async with self._session_factory() as session:
+            await session.merge(row)
+            await session.commit()
+        return analysis
+
+    async def get_garment_analysis(self, job_id: str) -> ProductCardGarmentAnalysis | None:
+        """Return the saved garment analysis for one Product Card job."""
+        async with self._session_factory() as session:
+            row = await session.get(ProductCardGarmentAnalysisRow, job_id)
+            return None if row is None else ProductCardGarmentAnalysis.model_validate(row.analysis_json)
+
     async def get_latest_version(self, job_id: str) -> ProductCardVersionRecord | None:
         """Return the latest generated version for the requested job identifier."""
         async with self._session_factory() as session:
@@ -103,6 +130,27 @@ class SqlProductCardRepository:
             ).all()
             return job_record_from_rows(job_row=job_row, asset_rows=list(asset_rows))
 
+    async def list_recent(self, *, limit: int) -> list[ProductCardJobRecord]:
+        """Return recent persisted product-card jobs for workspace history surfaces."""
+        async with self._session_factory() as session:
+            job_rows = (
+                await session.scalars(
+                    select(ProductCardJobRow)
+                    .order_by(ProductCardJobRow.updated_at.desc())
+                    .limit(limit)
+                )
+            ).all()
+            jobs: list[ProductCardJobRecord] = []
+            for job_row in job_rows:
+                asset_rows = (
+                    await session.scalars(
+                        select(ProductCardSourceAssetRow)
+                        .where(ProductCardSourceAssetRow.job_id == job_row.job_id)
+                    )
+                ).all()
+                jobs.append(job_record_from_rows(job_row=job_row, asset_rows=list(asset_rows)))
+            return jobs
+
     async def mark_completed(self, job_id: str, *, now) -> ProductCardJobRecord:
         """Mark the requested job as completed and return the updated job record."""
         async with self._session_factory() as session:
@@ -110,6 +158,23 @@ class SqlProductCardRepository:
             if job_row is None:
                 raise LookupError(f"Unknown product-card job: {job_id}")
             job_row.status = "completed"
+            job_row.updated_at = now
+            asset_rows = (
+                await session.scalars(
+                    select(ProductCardSourceAssetRow)
+                    .where(ProductCardSourceAssetRow.job_id == job_id)
+                )
+            ).all()
+            await session.commit()
+            return job_record_from_rows(job_row=job_row, asset_rows=list(asset_rows))
+
+    async def mark_failed(self, job_id: str, *, now) -> ProductCardJobRecord:
+        """Mark the requested job as failed and return the updated job record."""
+        async with self._session_factory() as session:
+            job_row = await session.get(ProductCardJobRow, job_id)
+            if job_row is None:
+                raise LookupError(f"Unknown product-card job: {job_id}")
+            job_row.status = "failed"
             job_row.updated_at = now
             asset_rows = (
                 await session.scalars(

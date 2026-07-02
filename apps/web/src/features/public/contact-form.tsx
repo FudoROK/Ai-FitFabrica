@@ -29,9 +29,9 @@ function getApiBaseUrl(): string {
 }
 
 const toolOptions = [
-  "Виртуальная примерочная (Widget)",
-  "Генерация лукбуков",
-  "AI Стилист"
+  "Виртуальная примерка",
+  "Карточки товара и контент",
+  "AI-стилист и рекомендации"
 ];
 
 export function ContactForm() {
@@ -67,7 +67,7 @@ export function ContactForm() {
         message: [
           `Размер каталога: ${form.size}`,
           `Тип бизнеса: ${form.type}`,
-          form.tools.length ? `Интересующие инструменты: ${form.tools.join(", ")}` : undefined
+          form.tools.length ? `Интересующие сценарии: ${form.tools.join(", ")}` : undefined
         ]
           .filter(Boolean)
           .join("\n"),
@@ -75,7 +75,7 @@ export function ContactForm() {
       });
 
       if (!response.ok) {
-        setError("Сервер не принял заявку. Проверьте данные и повторите.");
+        setError("Сервер не принял заявку. Проверьте данные и повторите отправку.");
         return;
       }
 
@@ -90,23 +90,22 @@ export function ContactForm() {
 
   return (
     <form className="site-card rounded-[2.75rem] p-14" onSubmit={handleSubmit}>
-      <h2 className="font-[family-name:var(--font-manrope)] text-[4rem] font-bold leading-[0.95] tracking-[-0.05em]">
-        Запросить демо
-      </h2>
+      <h2 className="public-form-title">Запросить демонстрацию</h2>
+
       <div className="mt-10 grid gap-8 md:grid-cols-2">
-        <label className="grid gap-3 text-[1.1rem] font-semibold">
+        <label className="public-form-label grid gap-3">
           <span>Имя</span>
           <input className="site-input" onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))} value={form.name} />
         </label>
-        <label className="grid gap-3 text-[1.1rem] font-semibold">
-          <span>Рабочий Email</span>
+        <label className="public-form-label grid gap-3">
+          <span>Рабочий email</span>
           <input className="site-input" onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))} type="email" value={form.email} />
         </label>
-        <label className="grid gap-3 text-[1.1rem] font-semibold">
+        <label className="public-form-label grid gap-3">
           <span>Название бренда / компании</span>
           <input className="site-input" onChange={(event) => setForm((current) => ({ ...current, company: event.target.value }))} value={form.company} />
         </label>
-        <label className="grid gap-3 text-[1.1rem] font-semibold">
+        <label className="public-form-label grid gap-3">
           <span>Размер каталога (SKU)</span>
           <select className="site-select appearance-none" onChange={(event) => setForm((current) => ({ ...current, size: event.target.value }))} value={form.size}>
             <option>&lt; 100</option>
@@ -116,7 +115,8 @@ export function ContactForm() {
           </select>
         </label>
       </div>
-      <label className="mt-8 grid gap-3 text-[1.1rem] font-semibold">
+
+      <label className="public-form-label mt-8 grid gap-3">
         <span>Тип бизнеса</span>
         <select className="site-select appearance-none" onChange={(event) => setForm((current) => ({ ...current, type: event.target.value }))} value={form.type}>
           <option>Ритейлер одежды</option>
@@ -125,14 +125,15 @@ export function ContactForm() {
           <option>Контент-студия</option>
         </select>
       </label>
+
       <div className="mt-10">
-        <p className="text-[1.1rem] font-semibold">Интересующие инструменты (можно выбрать несколько)</p>
+        <p className="public-form-label">Интересующие сценарии</p>
         <div className="mt-5 grid gap-4">
           {toolOptions.map((tool) => {
             const checked = form.tools.includes(tool);
 
             return (
-              <label className="flex items-center gap-4 text-[1.15rem] text-[var(--text-secondary)]" key={tool}>
+              <label className="public-body flex items-center gap-4" key={tool}>
                 <input
                   checked={checked}
                   className="h-7 w-7 accent-[var(--ai)]"
@@ -152,16 +153,20 @@ export function ContactForm() {
           })}
         </div>
       </div>
+
       {error ? <p className="mt-6 rounded-2xl bg-[#fce8e6] px-5 py-4 text-sm font-medium text-[var(--error)]">{error}</p> : null}
       {success ? <p className="mt-6 rounded-2xl bg-[var(--success-soft)] px-5 py-4 text-sm font-medium text-[var(--success)]">{success}</p> : null}
+
       <SiteButton className="mt-10 w-full" icon="arrow_forward" type="submit" variant="violet" disabled={isSubmitting}>
         {isSubmitting ? "Отправляем заявку" : "Запросить демо"}
       </SiteButton>
+
       <p className="mt-10 text-center text-[0.95rem] font-semibold tracking-[0.08em] text-[var(--text-muted)]">
-        Нажимая кнопку, вы соглашаетесь с условиями обработки персональных данных.
+        Отправляя форму, вы соглашаетесь на обработку контактных данных для связи по демонстрации.
       </p>
+
       <div className="mt-8 flex gap-4 text-[var(--text-secondary)]">
-        <MaterialIcon className="text-[1.4rem]" name="mail" />
+        <MaterialIcon className="ui-label-strong" name="mail" />
         <span>hello@fitfabrica.ai</span>
       </div>
     </form>

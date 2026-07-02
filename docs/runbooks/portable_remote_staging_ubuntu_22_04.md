@@ -118,7 +118,8 @@ Telegram and Pub/Sub ingress are removed from this contour. The deployment basel
 Before starting containers:
 
 ```bash
-python scripts/platform_foundation_smoke.py --env-file .env.portable-remote-staging.local --require-ready
+docker compose -f docker-compose.portable-staging.yml --env-file .env.portable-remote-staging.local build api
+docker compose -f docker-compose.portable-staging.yml --env-file .env.portable-remote-staging.local run --rm --no-deps api python scripts/platform_foundation_smoke.py --require-ready
 ```
 
 Expected result:

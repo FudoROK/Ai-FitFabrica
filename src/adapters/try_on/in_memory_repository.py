@@ -24,3 +24,13 @@ class InMemoryTryOnJobRepository(TryOnJobRepositoryPort):
         """Return a saved job by identifier, if present."""
         async with self._lock:
             return self._jobs.get(job_id)
+
+    async def list_recent(self, *, limit: int) -> list[TryOnJob]:
+        """Return the most recently updated jobs from the in-memory store."""
+        async with self._lock:
+            jobs = sorted(
+                self._jobs.values(),
+                key=lambda job: job.updated_at,
+                reverse=True,
+            )
+            return jobs[:limit]

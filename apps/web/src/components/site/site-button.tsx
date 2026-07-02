@@ -41,7 +41,7 @@ function ButtonContent({
 }) {
   return (
     <>
-      {icon ? <MaterialIcon className="text-[1.15rem]" name={icon} /> : null}
+      {icon ? <MaterialIcon className="button-icon" name={icon} /> : null}
       <span>{children}</span>
     </>
   );

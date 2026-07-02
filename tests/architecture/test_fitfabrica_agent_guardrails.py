@@ -22,7 +22,7 @@ PRODUCT_AGENT_DIRS = [
 ]
 
 
-def test_fitfabrica_agent_runtime_bundle_does_not_expose_legacy_or_temporary_agents() -> None:
+def test_fitfabrica_agent_runtime_bundle_does_not_expose_removed_or_temporary_agents() -> None:
     text = Path("src/entrypoints/runtime_dependencies.py").read_text(encoding="utf-8")
 
     assert "fitfabrica_agent_runtime_dependencies" in text
@@ -63,5 +63,5 @@ def test_temporary_daily_memory_agent_package_is_removed_from_active_tree() -> N
     assert not Path("src/adk_agents/daily_memory_agent_tmp20260425_024853").exists()
 
 
-def test_legacy_primary_adk_agent_package_is_removed_from_active_tree() -> None:
+def test_removed_primary_adk_agent_package_is_absent_from_active_tree() -> None:
     assert not Path("src/adk_agents/primary_agent").exists()

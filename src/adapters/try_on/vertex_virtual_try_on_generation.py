@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from src.adapters.ai import VertexVirtualTryOnClient
+from src.adapters.ai.vertex_virtual_try_on_client import VertexVirtualTryOnClient
 from src.adapters.storage.contracts import ObjectStorage
 from src.adapters.storage.object_naming import build_media_object_key
 from src.domain.try_on import (
@@ -46,6 +46,7 @@ class VertexVirtualTryOnGenerationAdapter(TryOnGenerationPort):
         job_id: str,
         input_metadata: list[TryOnInputMetadata],
         stored_inputs: list[TryOnStoredInput],
+        instruction,
     ) -> TryOnResult:
         """Load stored inputs, call Vertex Virtual Try-On, and persist the result artifact."""
         human_input = self._find_input(stored_inputs, TryOnUploadRole.HUMAN_PHOTO)
@@ -60,10 +61,7 @@ class VertexVirtualTryOnGenerationAdapter(TryOnGenerationPort):
             person_image_mime_type=human_input.content_type,
             garment_image_bytes=self._object_storage.get_bytes(garment_object_key),
             garment_image_mime_type=garment_input.content_type,
-            prompt=(
-                "Create a realistic virtual try-on image. Preserve the person's face, body proportions, and pose. "
-                "Apply the garment faithfully with accurate color, silhouette, and visible details."
-            ),
+            prompt=instruction.instruction_summary,
         )
         output_suffix = output_mime_type.split("/")[-1]
         output_object_key = build_media_object_key(

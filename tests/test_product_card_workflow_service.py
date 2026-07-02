@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 
 import pytest
 
-from src.domain.product_card import ProductCardDraft, ProductCardRequest
+from src.domain.product_card import ProductCardDraft, ProductCardGarmentAnalysis, ProductCardRequest
 from src.use_cases.product_card.workflow_service import ProductCardSourceFile, ProductCardWorkflowService
 
 
@@ -18,6 +18,9 @@ class _FileStorageStub:
 
 
 class _RepositoryStub:
+    failed_job_ids: list[str] = []
+    saved_analyses: list[ProductCardGarmentAnalysis] = []
+
     async def create_job(self, *, request, asset_keys, now):
         from src.domain.product_card import ProductCardJobRecord
 
@@ -59,6 +62,18 @@ class _RepositoryStub:
             updated_at=now,
         )
 
+    async def save_garment_analysis(self, analysis):
+        self.saved_analyses.append(analysis)
+        return analysis
+
+    async def get_garment_analysis(self, job_id):
+        return next((item for item in self.saved_analyses if item.job_id == job_id), None)
+
+    async def mark_failed(self, job_id: str, *, now):
+        self.failed_job_ids.append(job_id)
+        job = await self.get_job(job_id)
+        return job.model_copy(update={"status": "failed", "updated_at": now})
+
     async def get_job(self, job_id: str):
         from src.domain.product_card import ProductCardJobRecord
 
@@ -88,13 +103,41 @@ class _RepositoryStub:
 
 
 class _GenerationStub:
-    async def generate(self, *, request, asset_keys):
+    received_analysis = None
+
+    async def generate(self, *, request, garment_analysis):
+        self.received_analysis = garment_analysis
         return ProductCardDraft(
             title=request.title_hint or "Generated title",
-            description=f"Generated from {len(asset_keys)} asset(s).",
+            description=f"Generated from {garment_analysis.garment_type}.",
             bullet_points=["linen blend", "midi length"],
             attributes={"category": "dress"},
         )
+
+
+class _FailingGenerationStub:
+    async def generate(self, *, request, garment_analysis):
+        raise RuntimeError("provider failed")
+
+
+class _GarmentAnalysisStub:
+    async def analyze(self, *, job_id, asset_keys):
+        return ProductCardGarmentAnalysis(
+            job_id=job_id,
+            invocation_id="garment-invocation-1",
+            prompt_version="garment_identity.v1",
+            contract_version="garment_identity.contract.v1",
+            garment_type="dress",
+            dominant_color="blue",
+            silhouette_summary="Midi dress.",
+            confidence=0.95,
+            uncertainty_level="low",
+        )
+
+
+class _FailingGarmentAnalysisStub:
+    async def analyze(self, *, job_id, asset_keys):
+        raise RuntimeError("garment analysis failed")
 
 
 @pytest.mark.asyncio
@@ -102,6 +145,7 @@ async def test_product_card_workflow_creates_job_generates_draft_and_returns_res
     service = ProductCardWorkflowService(
         file_storage=_FileStorageStub(),
         repository=_RepositoryStub(),
+        garment_identity_analyzer=_GarmentAnalysisStub(),
         generation_adapter=_GenerationStub(),
         clock=_utc_now,
     )
@@ -130,6 +174,7 @@ async def test_product_card_workflow_exposes_saved_status_and_result_queries() -
     service = ProductCardWorkflowService(
         file_storage=_FileStorageStub(),
         repository=_RepositoryStub(),
+        garment_identity_analyzer=_GarmentAnalysisStub(),
         generation_adapter=_GenerationStub(),
         clock=_utc_now,
     )
@@ -141,3 +186,61 @@ async def test_product_card_workflow_exposes_saved_status_and_result_queries() -
     assert job.job_id == "product_card_123"
     assert version is not None
     assert version.version_id == "product_card_123_v1"
+
+
+@pytest.mark.asyncio
+async def test_product_card_workflow_marks_job_failed_when_generation_fails() -> None:
+    repository = _RepositoryStub()
+    repository.failed_job_ids = []
+    repository.saved_analyses = []
+    service = ProductCardWorkflowService(
+        file_storage=_FileStorageStub(),
+        repository=repository,
+        garment_identity_analyzer=_GarmentAnalysisStub(),
+        generation_adapter=_FailingGenerationStub(),
+        clock=_utc_now,
+    )
+
+    with pytest.raises(RuntimeError, match="provider failed"):
+        await service.execute_product_card_job(job_id="product_card_123")
+
+    assert repository.failed_job_ids == ["product_card_123"]
+
+
+@pytest.mark.asyncio
+async def test_product_card_workflow_persists_garment_analysis_before_generation() -> None:
+    repository = _RepositoryStub()
+    repository.saved_analyses = []
+    generation = _GenerationStub()
+    service = ProductCardWorkflowService(
+        file_storage=_FileStorageStub(),
+        repository=repository,
+        garment_identity_analyzer=_GarmentAnalysisStub(),
+        generation_adapter=generation,
+        clock=_utc_now,
+    )
+
+    await service.execute_product_card_job(job_id="product_card_123")
+
+    assert repository.saved_analyses[0].garment_type == "dress"
+    assert generation.received_analysis == repository.saved_analyses[0]
+
+
+@pytest.mark.asyncio
+async def test_product_card_workflow_blocks_generation_when_garment_analysis_fails() -> None:
+    repository = _RepositoryStub()
+    repository.failed_job_ids = []
+    generation = _GenerationStub()
+    service = ProductCardWorkflowService(
+        file_storage=_FileStorageStub(),
+        repository=repository,
+        garment_identity_analyzer=_FailingGarmentAnalysisStub(),
+        generation_adapter=generation,
+        clock=_utc_now,
+    )
+
+    with pytest.raises(RuntimeError, match="garment analysis failed"):
+        await service.execute_product_card_job(job_id="product_card_123")
+
+    assert generation.received_analysis is None
+    assert repository.failed_job_ids == ["product_card_123"]

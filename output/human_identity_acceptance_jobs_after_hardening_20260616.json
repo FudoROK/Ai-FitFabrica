@@ -1,0 +1,330 @@
+[
+  {
+    "file": "blurry_dark.jpg",
+    "size_bytes": 179030,
+    "job_id": "try_on_21779db9d9b541d7a983dde6355ff728",
+    "create_status_code": 202,
+    "final_status": "failed",
+    "status_payload": {
+      "job_id": "try_on_21779db9d9b541d7a983dde6355ff728",
+      "workflow_type": "try_on",
+      "status": "failed",
+      "status_history": [
+        {
+          "status": "accepted",
+          "stage": "accepted",
+          "message": "Job accepted.",
+          "occurred_at": "2026-06-16T13:36:24.320823Z"
+        },
+        {
+          "status": "analyzing_human",
+          "stage": "human_identity_analysis",
+          "message": "Analyzing human preservation constraints.",
+          "occurred_at": "2026-06-16T13:36:24.790213Z"
+        },
+        {
+          "status": "failed",
+          "stage": "failed",
+          "message": "Human photo is not suitable for Try-On generation.",
+          "occurred_at": "2026-06-16T13:36:49.909376Z"
+        }
+      ],
+      "cost_events": [
+        {
+          "event_type": "try_on_sandbox_generation",
+          "estimated_units": 0,
+          "charge_status": "not_charged",
+          "charged_credits": 0,
+          "occurred_at": "2026-06-16T13:36:49.909395Z"
+        }
+      ]
+    }
+  },
+  {
+    "file": "cropped_face_only.jpg",
+    "size_bytes": 1608477,
+    "job_id": "try_on_b67af7d176b64d62b0e9992b938bd701",
+    "create_status_code": 202,
+    "final_status": "failed",
+    "status_payload": {
+      "job_id": "try_on_b67af7d176b64d62b0e9992b938bd701",
+      "workflow_type": "try_on",
+      "status": "failed",
+      "status_history": [
+        {
+          "status": "accepted",
+          "stage": "accepted",
+          "message": "Job accepted.",
+          "occurred_at": "2026-06-16T13:37:09.348394Z"
+        },
+        {
+          "status": "analyzing_human",
+          "stage": "human_identity_analysis",
+          "message": "Analyzing human preservation constraints.",
+          "occurred_at": "2026-06-16T13:37:09.421315Z"
+        },
+        {
+          "status": "failed",
+          "stage": "failed",
+          "message": "Human photo is not suitable for Try-On generation.",
+          "occurred_at": "2026-06-16T13:37:41.285923Z"
+        }
+      ],
+      "cost_events": [
+        {
+          "event_type": "try_on_sandbox_generation",
+          "estimated_units": 0,
+          "charge_status": "not_charged",
+          "charged_credits": 0,
+          "occurred_at": "2026-06-16T13:37:41.285954Z"
+        }
+      ]
+    }
+  },
+  {
+    "file": "face_hidden.jpg",
+    "size_bytes": 6904824,
+    "job_id": "try_on_c58f1d8b513e4e1e831df63d475922db",
+    "create_status_code": 202,
+    "final_status": "failed",
+    "status_payload": {
+      "job_id": "try_on_c58f1d8b513e4e1e831df63d475922db",
+      "workflow_type": "try_on",
+      "status": "failed",
+      "status_history": [
+        {
+          "status": "accepted",
+          "stage": "accepted",
+          "message": "Job accepted.",
+          "occurred_at": "2026-06-16T13:37:44.066578Z"
+        },
+        {
+          "status": "analyzing_human",
+          "stage": "human_identity_analysis",
+          "message": "Analyzing human preservation constraints.",
+          "occurred_at": "2026-06-16T13:37:44.135834Z"
+        },
+        {
+          "status": "failed",
+          "stage": "failed",
+          "message": "Required Try-On analysis failed.",
+          "occurred_at": "2026-06-16T13:38:31.874624Z"
+        }
+      ],
+      "cost_events": [
+        {
+          "event_type": "try_on_sandbox_generation",
+          "estimated_units": 0,
+          "charge_status": "not_charged",
+          "charged_credits": 0,
+          "occurred_at": "2026-06-16T13:38:31.874658Z"
+        }
+      ]
+    }
+  },
+  {
+    "file": "good_front.jpg",
+    "size_bytes": 506802,
+    "job_id": "try_on_c8b1d1401aab4ee29bd97945305a582b",
+    "create_status_code": 202,
+    "final_status": "failed",
+    "status_payload": {
+      "job_id": "try_on_c8b1d1401aab4ee29bd97945305a582b",
+      "workflow_type": "try_on",
+      "status": "failed",
+      "status_history": [
+        {
+          "status": "accepted",
+          "stage": "accepted",
+          "message": "Job accepted.",
+          "occurred_at": "2026-06-16T13:38:36.303933Z"
+        },
+        {
+          "status": "analyzing_human",
+          "stage": "human_identity_analysis",
+          "message": "Analyzing human preservation constraints.",
+          "occurred_at": "2026-06-16T13:38:36.367492Z"
+        },
+        {
+          "status": "failed",
+          "stage": "failed",
+          "message": "Required Try-On analysis failed.",
+          "occurred_at": "2026-06-16T13:38:52.910252Z"
+        }
+      ],
+      "cost_events": [
+        {
+          "event_type": "try_on_sandbox_generation",
+          "estimated_units": 0,
+          "charge_status": "not_charged",
+          "charged_credits": 0,
+          "occurred_at": "2026-06-16T13:38:52.910297Z"
+        }
+      ]
+    }
+  },
+  {
+    "file": "multiple_people.jpg",
+    "size_bytes": 200970,
+    "job_id": "try_on_b7b55791c96240329f9021e065c590c4",
+    "create_status_code": 202,
+    "final_status": "failed",
+    "status_payload": {
+      "job_id": "try_on_b7b55791c96240329f9021e065c590c4",
+      "workflow_type": "try_on",
+      "status": "failed",
+      "status_history": [
+        {
+          "status": "accepted",
+          "stage": "accepted",
+          "message": "Job accepted.",
+          "occurred_at": "2026-06-16T13:38:57.798027Z"
+        },
+        {
+          "status": "analyzing_human",
+          "stage": "human_identity_analysis",
+          "message": "Analyzing human preservation constraints.",
+          "occurred_at": "2026-06-16T13:38:57.862234Z"
+        },
+        {
+          "status": "failed",
+          "stage": "failed",
+          "message": "Human photo is not suitable for Try-On generation.",
+          "occurred_at": "2026-06-16T13:39:19.946886Z"
+        }
+      ],
+      "cost_events": [
+        {
+          "event_type": "try_on_sandbox_generation",
+          "estimated_units": 0,
+          "charge_status": "not_charged",
+          "charged_credits": 0,
+          "occurred_at": "2026-06-16T13:39:19.946902Z"
+        }
+      ]
+    }
+  },
+  {
+    "file": "multiple_people_masks.jpg",
+    "size_bytes": 4741092,
+    "job_id": "try_on_e76bff9a50c542fd98ec64ec5e71a1a9",
+    "create_status_code": 202,
+    "final_status": "failed",
+    "status_payload": {
+      "job_id": "try_on_e76bff9a50c542fd98ec64ec5e71a1a9",
+      "workflow_type": "try_on",
+      "status": "failed",
+      "status_history": [
+        {
+          "status": "accepted",
+          "stage": "accepted",
+          "message": "Job accepted.",
+          "occurred_at": "2026-06-16T13:39:25.646522Z"
+        },
+        {
+          "status": "analyzing_human",
+          "stage": "human_identity_analysis",
+          "message": "Analyzing human preservation constraints.",
+          "occurred_at": "2026-06-16T13:39:25.703913Z"
+        },
+        {
+          "status": "failed",
+          "stage": "failed",
+          "message": "Required Try-On analysis failed.",
+          "occurred_at": "2026-06-16T13:40:01.549790Z"
+        }
+      ],
+      "cost_events": [
+        {
+          "event_type": "try_on_sandbox_generation",
+          "estimated_units": 0,
+          "charge_status": "not_charged",
+          "charged_credits": 0,
+          "occurred_at": "2026-06-16T13:40:01.549871Z"
+        }
+      ]
+    }
+  },
+  {
+    "file": "not_human.jpg",
+    "size_bytes": 7076448,
+    "job_id": "try_on_f54ab6cb560f476f9292716d19765359",
+    "create_status_code": 202,
+    "final_status": "failed",
+    "status_payload": {
+      "job_id": "try_on_f54ab6cb560f476f9292716d19765359",
+      "workflow_type": "try_on",
+      "status": "failed",
+      "status_history": [
+        {
+          "status": "accepted",
+          "stage": "accepted",
+          "message": "Job accepted.",
+          "occurred_at": "2026-06-16T13:41:28.180544Z"
+        },
+        {
+          "status": "analyzing_human",
+          "stage": "human_identity_analysis",
+          "message": "Analyzing human preservation constraints.",
+          "occurred_at": "2026-06-16T13:41:28.241262Z"
+        },
+        {
+          "status": "failed",
+          "stage": "failed",
+          "message": "Required Try-On analysis failed.",
+          "occurred_at": "2026-06-16T13:41:56.404745Z"
+        }
+      ],
+      "cost_events": [
+        {
+          "event_type": "try_on_sandbox_generation",
+          "estimated_units": 0,
+          "charge_status": "not_charged",
+          "charged_credits": 0,
+          "occurred_at": "2026-06-16T13:41:56.404767Z"
+        }
+      ]
+    }
+  },
+  {
+    "file": "side_pose.jpg",
+    "size_bytes": 312278,
+    "job_id": "try_on_c79d620628e04bd08752cd5ee107b1d3",
+    "create_status_code": 202,
+    "final_status": "failed",
+    "status_payload": {
+      "job_id": "try_on_c79d620628e04bd08752cd5ee107b1d3",
+      "workflow_type": "try_on",
+      "status": "failed",
+      "status_history": [
+        {
+          "status": "accepted",
+          "stage": "accepted",
+          "message": "Job accepted.",
+          "occurred_at": "2026-06-16T13:42:05.115840Z"
+        },
+        {
+          "status": "analyzing_human",
+          "stage": "human_identity_analysis",
+          "message": "Analyzing human preservation constraints.",
+          "occurred_at": "2026-06-16T13:42:05.168756Z"
+        },
+        {
+          "status": "failed",
+          "stage": "failed",
+          "message": "Try-On instruction generation failed.",
+          "occurred_at": "2026-06-16T13:42:51.069487Z"
+        }
+      ],
+      "cost_events": [
+        {
+          "event_type": "try_on_sandbox_generation",
+          "estimated_units": 0,
+          "charge_status": "not_charged",
+          "charged_credits": 0,
+          "occurred_at": "2026-06-16T13:42:51.069521Z"
+        }
+      ]
+    }
+  }
+]

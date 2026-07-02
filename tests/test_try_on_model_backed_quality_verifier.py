@@ -113,3 +113,6 @@ async def test_model_backed_quality_verifier_overrides_baseline_with_structured_
 
     assert report.verdict == "repair_recommended"
     assert any(check.name == "model_backed_verdict" for check in report.checks)
+    prompt = verifier._structured_reasoning_provider.requests[0].prompt
+    assert "garment_slot_roles" in prompt
+    assert "garment_photo" in prompt

@@ -1,6 +1,6 @@
 """FitFabrica Try-On ADK agent assembly."""
 
-from typing import Any
+from collections.abc import AsyncIterator
 
 from google.adk.agents import llm_agent
 from google.adk.sessions import vertex_ai_session_service
@@ -32,7 +32,7 @@ root_agent = _root_llm_agent
 _runtime_app = AdkApp(agent=root_agent, session_service_builder=session_service_builder)
 
 
-async def stream_query(query: str, user_id: str = "test") -> Any:
+async def stream_query(query: str, user_id: str = "test") -> AsyncIterator[object]:
     """Streaming query helper for local/runtime debugging."""
     async for chunk in _runtime_app.async_stream_query(message=query, user_id=user_id):
         yield chunk

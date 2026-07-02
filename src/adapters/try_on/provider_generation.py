@@ -46,6 +46,7 @@ class TryOnProviderGenerationAdapter(TryOnGenerationPort):
         job_id: str,
         input_metadata: list[TryOnInputMetadata],
         stored_inputs: list[TryOnStoredInput],
+        instruction,
     ) -> TryOnResult:
         """Generate a backend-owned Try-On artifact through provider-runtime editing."""
         human_input = self._find_input(stored_inputs, TryOnUploadRole.HUMAN_PHOTO)
@@ -58,13 +59,10 @@ class TryOnProviderGenerationAdapter(TryOnGenerationPort):
         editing_result = self._image_editing_provider.edit(
             ImageEditingRequest(
                 task="try_on_generation",
-                prompt=(
-                    "Generate a virtual try-on result that preserves the person identity and applies the garment. "
-                    "Use the human image as the source and the garment image as the reference."
-                ),
+                prompt=instruction.instruction_summary,
                 source_object_key=source_object_key,
                 reference_object_keys=[garment_object_key],
-                output_mime_type="image/webp",
+                output_mime_type="image/png",
             )
         )
         output_object_key = build_media_object_key(
@@ -72,11 +70,12 @@ class TryOnProviderGenerationAdapter(TryOnGenerationPort):
             workflow="try-on",
             job_id=job_id,
             role="result_image",
-            filename="result.webp",
+            filename="result.png",
             root_prefix=self._root_prefix,
         )
-        artifact_payload = (
-            f"try_on_provider_runtime:{editing_result.provider}:{editing_result.output_object_key}".encode("utf-8")
+        artifact_payload = self._read_provider_output_bytes(
+            provider=editing_result.provider,
+            output_object_key=editing_result.output_object_key,
         )
         stored_result = self._object_storage.put_bytes(
             object_key=output_object_key,
@@ -114,11 +113,11 @@ class TryOnProviderGenerationAdapter(TryOnGenerationPort):
                         name="quality_verifier_placeholder",
                         status="warning",
                         confidence=0.65,
-                        message="The current provider-runtime contour still uses deterministic placeholder artifact bytes.",
+                        message="Provider-runtime image editing returned a backend-owned generated artifact.",
                     ),
                 ],
-                limitations=[
-                    "Provider-runtime Try-On still persists a placeholder artifact until a real image byte return path is connected."
+                limitations=[] if editing_result.provider != "stub_image_editing" else [
+                    "Provider-runtime Try-On is using the local stub image-editing provider."
                 ],
             ),
             stylist_note=(
@@ -127,6 +126,12 @@ class TryOnProviderGenerationAdapter(TryOnGenerationPort):
             ),
             input_metadata=input_metadata,
         )
+
+    def _read_provider_output_bytes(self, *, provider: str, output_object_key: str) -> bytes:
+        """Read real provider output bytes, preserving stub compatibility for local tests."""
+        if provider == "stub_image_editing":
+            return f"try_on_provider_runtime:{provider}:{output_object_key}".encode("utf-8")
+        return self._object_storage.get_bytes(output_object_key)
 
     def _result_image(self, *, object_key: str, url: str) -> TryOnResultImage:
         """Build a result image and keep the internal artifact key for quality verification."""

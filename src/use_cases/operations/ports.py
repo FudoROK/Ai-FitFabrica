@@ -38,6 +38,9 @@ class OperationsRepositoryPort(Protocol):
     async def get_job(self, *, job_id: str) -> QueueJobRecord | None:
         """Return the durable queue job for the requested identifier."""
 
+    async def claim_stale_processing_job(self, *, stale_before, now) -> QueueJobRecord | None:
+        """Reclaim one stale processing job that lost its queue lease."""
+
     async def mark_job_processing(self, *, job_id: str, now) -> QueueJobRecord:
         """Mark the requested queue job as processing and increment its attempts."""
 

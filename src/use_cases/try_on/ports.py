@@ -6,11 +6,14 @@ from typing import Protocol
 from src.domain.try_on import (
     TryOnGenerationMode,
     TryOnInputMetadata,
+    TryOnHumanIdentityAnalysis,
     TryOnJob,
     TryOnResult,
     TryOnStoredInput,
     TryOnUploadRole,
 )
+from src.domain.try_on_analysis import TryOnGarmentIdentityAnalysis, TryOnMaterialTextureAnalysis
+from src.domain.try_on_instruction import TryOnGenerationInstruction
 
 
 class TryOnJobRepositoryPort(Protocol):
@@ -22,6 +25,10 @@ class TryOnJobRepositoryPort(Protocol):
 
     async def get(self, job_id: str) -> TryOnJob | None:
         """Return a Try-On job by identifier, if it exists."""
+        ...
+
+    async def list_recent(self, *, limit: int) -> list[TryOnJob]:
+        """Return the most recently updated Try-On jobs."""
         ...
 
 
@@ -42,6 +49,44 @@ class TryOnFileStoragePort(Protocol):
         ...
 
 
+class HumanIdentityAnalysisPort(Protocol):
+    """Boundary for mandatory human-preservation analysis before generation."""
+
+    async def analyze(
+        self,
+        *,
+        job_id: str,
+        stored_inputs: list[TryOnStoredInput],
+    ) -> TryOnHumanIdentityAnalysis:
+        """Return one validated and policy-evaluated human analysis snapshot."""
+
+        ...
+
+
+class GarmentIdentityAnalysisPort(Protocol):
+    """Boundary for mandatory garment analysis before generation."""
+
+    async def analyze(self, *, job_id: str, stored_inputs: list[TryOnStoredInput]) -> TryOnGarmentIdentityAnalysis:
+        """Return one validated garment snapshot."""
+        ...
+
+
+class MaterialTextureAnalysisPort(Protocol):
+    """Boundary for mandatory material analysis before generation."""
+
+    async def analyze(self, *, job_id: str, stored_inputs: list[TryOnStoredInput]) -> TryOnMaterialTextureAnalysis:
+        """Return one validated visible-material snapshot."""
+        ...
+
+
+class TryOnInstructionPort(Protocol):
+    """Boundary that converts approved analyses into a generation instruction."""
+
+    async def create(self, *, job_id: str, analysis_bundle) -> TryOnGenerationInstruction:
+        """Return one validated instruction without invoking generation."""
+        ...
+
+
 class TryOnGenerationPort(Protocol):
     """Generation boundary used by the workflow service."""
 
@@ -53,6 +98,7 @@ class TryOnGenerationPort(Protocol):
         job_id: str,
         input_metadata: list[TryOnInputMetadata],
         stored_inputs: list[TryOnStoredInput],
+        instruction: TryOnGenerationInstruction,
     ) -> TryOnResult:
         """Generate a Try-On result for validated input metadata."""
         ...

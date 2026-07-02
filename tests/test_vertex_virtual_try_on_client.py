@@ -50,3 +50,4 @@ def test_vertex_virtual_try_on_client_returns_generated_bytes() -> None:
     assert image_bytes == b"generated-image"
     assert mime_type == "image/png"
     assert sdk_client.models.calls[0]["model"] == "virtual-try-on-001"
+    assert getattr(sdk_client.models.calls[0]["source"], "prompt", None) is None

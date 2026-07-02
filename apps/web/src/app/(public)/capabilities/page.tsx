@@ -1,41 +1,80 @@
+import { SiteButton } from "@/components/site/site-button";
+
 const groups = [
   {
     title: "Для себя",
     items: [
-      ["Умная примерка", "Примеряйте одежду на свои фотографии с невероятной точностью."],
-      ["Анализ гардероба", "Загрузите фотографии своих вещей, и искусственный интеллект предложит новые сочетания."],
-      ["AI Стилист", "Получите персональные рекомендации по стилю, цветовой палитре и крою одежды."],
-      ["Поиск аналогов", "Загрузите фото понравившейся вещи, и мы найдем похожие модели дешевле."]
+      [
+        "Умная примерка",
+        "Проверьте, как вещь выглядит на вас, и получите аккуратный результат без декоративной генерации ради генерации."
+      ],
+      [
+        "Стилистические рекомендации",
+        "После примерки система подскажет сочетания, контекст использования и следующие шаги по образу."
+      ],
+      [
+        "Поиск альтернатив",
+        "Если вещь не подходит по цене, посадке или стилю, workflow продолжается в поиск похожих вариантов."
+      ]
     ]
   },
   {
     title: "Для бизнеса",
     items: [
-      ["Генерация карточек", "Автоматическое создание продающих описаний, заголовков и SEO-тегов."],
-      ["Фото на модели", "Генерируйте студийные фотографии вашей одежды на виртуальных моделях."],
-      ["Контент-пакет", "Создавайте готовые образы для социальных сетей и маркетплейсов."],
-      ["Аналитика цен", "Получайте ИИ-рекомендации по оптимальному ценообразованию."]
+      [
+        "Карточки товара",
+        "Собирайте title, описание, атрибуты и визуальный комплект вокруг одного SKU в управляемом процессе."
+      ],
+      [
+        "Контент-пакеты",
+        "Готовьте визуалы и тексты для маркетплейсов, сайта и социальных каналов без ручной пересборки."
+      ],
+      [
+        "Операционный контур",
+        "Настраивайте бренд, правила публикации и рабочие потоки через typed workspace-панели."
+      ]
     ]
   }
-];
+] as const;
 
 export default function CapabilitiesPage() {
   return (
     <main className="pb-20 pt-12">
-      <section className="site-container text-center">
-        <h1 className="mx-auto max-w-[700px] font-[family-name:var(--font-manrope)] text-[clamp(3.4rem,7vw,5.6rem)] font-bold leading-[0.95] tracking-[-0.06em]">Инструменты будущего</h1>
-        <p className="mx-auto mt-6 max-w-[760px] text-[1.35rem] leading-8 text-[var(--text-secondary)]">Откройте для себя интеллектуальные решения на базе ИИ. Независимо от того, обновляете ли вы личный гардероб или масштабируете модный бизнес, наши алгоритмы обеспечат идеальный результат.</p>
+      <section className="site-container">
+        <div className="rounded-[2.5rem] border border-[var(--border)] bg-[linear-gradient(135deg,#faf4ec_0%,#f4ece3_100%)] px-8 py-12 shadow-[0_28px_80px_rgba(20,20,20,0.08)] lg:px-12 lg:py-14">
+          <p className="eyebrow">Возможности</p>
+          <h1 className="hero-title mt-5 max-w-[860px]">Три продуктовых направления в одной системе</h1>
+          <p className="hero-lead mt-6 max-w-[760px]">
+            FitFabrica не сводится к одному AI-экрану. Платформа покрывает примерку, товарный контент
+            и рабочие процессы бренда, а каждый маршрут продолжает предыдущий, а не обрывает его.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-4">
+            <SiteButton href="/workspace">Открыть workspace</SiteButton>
+            <SiteButton href="/how-it-works" variant="secondary">Посмотреть flow</SiteButton>
+          </div>
+        </div>
       </section>
-      <section className="site-container mt-24 grid gap-16">
-        {groups.map((group) => (
+
+      <section className="site-container mt-16 grid gap-10">
+        {groups.map((group, groupIndex) => (
           <div key={group.title}>
-            <h2 className="font-[family-name:var(--font-manrope)] text-[3rem] font-bold tracking-[-0.05em]">{group.title}</h2>
-            <div className="mt-8 grid gap-6 lg:grid-cols-2">
+            <div className="flex items-end justify-between gap-6">
+              <div>
+                <p className="eyebrow">{groupIndex === 0 ? "B2C" : "B2B"}</p>
+                <h2 className="section-title mt-3">{group.title}</h2>
+              </div>
+            </div>
+            <div className="mt-8 grid gap-6 lg:grid-cols-3">
               {group.items.map(([title, body], index) => (
-                <article className={`site-card p-8 ${index % 2 === 1 ? "bg-[var(--surface-alt)]" : ""}`} key={title}>
-                  <h3 className="font-[family-name:var(--font-manrope)] text-[2rem] font-bold tracking-[-0.04em]">{title}</h3>
-                  <p className="mt-4 text-[1.05rem] leading-8 text-[var(--text-secondary)]">{body}</p>
-                  <p className="mt-8 text-sm font-semibold">{index < 2 ? "Попробовать →" : "Узнать больше →"}</p>
+                <article
+                  key={title}
+                  className={`site-card p-8 ${index === 1 ? "bg-[var(--surface-alt)]" : ""}`}
+                >
+                  <div className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--ai)]">
+                    {groupIndex === 0 ? `0${index + 1}` : `1${index + 1}`}
+                  </div>
+                  <h3 className="workspace-card-title mt-4">{title}</h3>
+                  <p className="public-body mt-4">{body}</p>
                 </article>
               ))}
             </div>

@@ -9,4 +9,15 @@ def test_product_card_workflow_stays_backend_owned_and_provider_neutral() -> Non
 
     assert "gemini" not in text
     assert "vertex" not in text
+    assert "openai" not in text
+    assert "anthropic" not in text
+    assert "src.adk_agents" not in text
     assert "product-card" in readme
+
+
+def test_product_card_agent_generation_does_not_reinspect_image_artifacts() -> None:
+    text = Path("src/adapters/agents/product_card_generation.py").read_text(encoding="utf-8").lower()
+
+    assert "objectstorage" not in text
+    assert "artifact_references=[]" in text
+    assert "garment_analysis" in text

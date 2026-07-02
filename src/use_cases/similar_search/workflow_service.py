@@ -12,10 +12,13 @@ from src.domain.vector_search import VectorSearchFilter, VectorSearchQuery
 from src.use_cases.similar_search.ports import (
     SimilarSearchCatalogRepositoryPort,
     SimilarSearchEmbeddingPort,
+    SimilarSearchLocalCatalogSearchPort,
     SimilarSearchVectorRetrieverPort,
 )
 from src.use_cases.similar_search.query_preparation import build_similarity_query_profile
 from src.use_cases.similar_search.ranking import rank_similar_products
+
+_GARMENT_PHOTO_MIN_SIMILARITY = 0.62
 
 
 class SimilarSearchWorkflowService:
@@ -27,11 +30,13 @@ class SimilarSearchWorkflowService:
         embedding_provider: SimilarSearchEmbeddingPort,
         vector_retriever: SimilarSearchVectorRetrieverPort,
         catalog_repository: SimilarSearchCatalogRepositoryPort,
+        local_catalog_search: SimilarSearchLocalCatalogSearchPort | None = None,
     ) -> None:
         """Store explicit boundaries for similar-search orchestration."""
         self._embedding_provider = embedding_provider
         self._vector_retriever = vector_retriever
         self._catalog_repository = catalog_repository
+        self._local_catalog_search = local_catalog_search
 
     async def search(self, request: SimilarSearchRequest) -> SimilarSearchResponse:
         """Execute the backend-owned similar-search workflow."""
@@ -78,11 +83,69 @@ class SimilarSearchWorkflowService:
                         similarity_score=hit.score,
                     )
                 )
+        hydrated_matches = _filter_matches_by_category(
+            matches=hydrated_matches,
+            category=profile.category,
+        )
+        hydrated_matches = _filter_matches_by_similarity(
+            matches=hydrated_matches,
+            min_similarity=_minimum_similarity_for_request(request),
+        )
+        if not hydrated_matches and self._local_catalog_search is not None:
+            hydrated_matches = await self._local_catalog_search.search_approved_matches(
+                profile=profile,
+                limit=request.limit,
+            )
+            hydrated_matches = _filter_matches_by_category(
+                matches=hydrated_matches,
+                category=profile.category,
+            )
+            hydrated_matches = _filter_matches_by_similarity(
+                matches=hydrated_matches,
+                min_similarity=_minimum_similarity_for_request(request),
+            )
 
         return SimilarSearchResponse(
             results=rank_similar_products(
                 hydrated_products=hydrated_matches,
                 budget_max=profile.budget_max,
                 reference_price=profile.reference_price,
+                user_country_code=request.user_country_code,
+                user_city=request.user_city,
             )
         )
+
+
+def _filter_matches_by_category(*, matches: list[HydratedCatalogMatch], category: str | None) -> list[HydratedCatalogMatch]:
+    """Keep garment-photo search results inside the requested garment category."""
+
+    normalized_category = _normalize_category(category)
+    if not normalized_category:
+        return matches
+    return [
+        match
+        for match in matches
+        if _normalize_category(match.product.category) == normalized_category
+    ]
+
+
+def _filter_matches_by_similarity(*, matches: list[HydratedCatalogMatch], min_similarity: float | None) -> list[HydratedCatalogMatch]:
+    """Remove weak matches before location ranking can promote them."""
+
+    if min_similarity is None:
+        return matches
+    return [match for match in matches if match.similarity_score >= min_similarity]
+
+
+def _minimum_similarity_for_request(request: SimilarSearchRequest) -> float | None:
+    """Return the minimum acceptable match score for visual garment searches."""
+
+    if request.source_type == "garment_photo":
+        return _GARMENT_PHOTO_MIN_SIMILARITY
+    return None
+
+
+def _normalize_category(value: str | None) -> str:
+    """Normalize catalog and agent category labels for conservative matching."""
+
+    return (value or "").strip().casefold()

@@ -5,6 +5,7 @@ import pytest
 from src.adapters.storage.in_memory_object_storage import InMemoryObjectStorage
 from src.adapters.try_on.vertex_virtual_try_on_generation import VertexVirtualTryOnGenerationAdapter
 from src.domain.try_on import TryOnInputMetadata, TryOnStoredInput, TryOnUploadRole
+from src.domain.try_on_instruction import TryOnGenerationInstruction
 
 
 class _FakeVertexVirtualTryOnClient:
@@ -93,6 +94,14 @@ async def test_vertex_virtual_try_on_generation_persists_real_provider_bytes() -
                 sha256="b" * 64,
             ),
         ],
+        instruction=TryOnGenerationInstruction(
+            invocation_id="instruction-1",
+            prompt_version="try_on.v1",
+            contract_version="try_on.contract.v1",
+            instruction_summary="Preserve the approved person and garment.",
+            confidence=0.9,
+            uncertainty_level="low",
+        ),
     )
 
     assert fake_client.calls[0]["person_image_bytes"] == b"human-bytes"

@@ -6,6 +6,7 @@ from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from .base import SqlBase
+from .similar_search_models import SimilarSearchClickEventRow  # noqa: F401
 
 
 class PortableRuntimeMetadataRow(SqlBase):

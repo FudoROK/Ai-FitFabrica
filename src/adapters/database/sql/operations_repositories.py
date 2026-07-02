@@ -64,6 +64,28 @@ class SqlOperationsRepository:
             row = await session.get(QueueJobRow, job_id)
             return None if row is None else queue_job_from_row(row)
 
+    async def claim_stale_processing_job(self, *, stale_before, now) -> QueueJobRecord | None:
+        """Return one stale processing job to queued state for worker recovery."""
+        async with self._session_factory() as session:
+            row = (
+                await session.scalars(
+                    select(QueueJobRow)
+                    .where(
+                        QueueJobRow.status == "processing",
+                        QueueJobRow.updated_at <= stale_before,
+                        QueueJobRow.attempt_count < QueueJobRow.max_attempts,
+                    )
+                    .order_by(QueueJobRow.updated_at.asc())
+                    .limit(1)
+                )
+            ).first()
+            if row is None:
+                return None
+            row.status = "queued"
+            row.updated_at = now
+            await session.commit()
+            return queue_job_from_row(row)
+
     async def mark_job_processing(self, *, job_id: str, now) -> QueueJobRecord:
         """Mark the requested durable queue job as processing."""
         async with self._session_factory() as session:

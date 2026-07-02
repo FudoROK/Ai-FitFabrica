@@ -35,32 +35,14 @@ def test_firestore_write_discipline_holds() -> None:
     assert violations == []
 
 
-def test_dialog_service_stays_thin_facade() -> None:
-    text = _read("src/services/dialog/dialog_service.py")
-    forbidden_tokens = (
-        "extract_patch(",
-        "non_empty_patch(",
-        "derive_lead_state_flags(",
-        "build_hubspot_profile_from_lead(",
-        "map_domain_profile_to_hubspot_properties(",
-        "normalize_lead_patch(",
-        "build_extraction_prompt(",
-        "generate_reply_use_case.llm_service =",
-        "handle_inbound_message_use_case.llm_service =",
-    )
-    for token in forbidden_tokens:
-        assert token not in text
-
-    required_tokens = (
-        "self.inbound_gate_service.prepare(",
-        "self.dialog_orchestrator.execute(",
-        "DialogPipelineAssembler(",
-    )
-    for token in required_tokens:
-        assert token in text
+def test_legacy_dialog_service_layer_is_removed() -> None:
+    assert not Path("src/services/dialog/dialog_service.py").exists()
+    assert not Path("src/services/dialog/dialog_pipeline_assembler.py").exists()
+    assert not Path("src/services/inbound/inbound_gate_service.py").exists()
+    assert not Path("src/services/context/core_context_builder.py").exists()
 
 
-def test_legacy_bridges_are_removed() -> None:
+def test_removed_bridge_modules_do_not_return() -> None:
     assert not Path("src/services/hubspot_service.py").exists()
     assert not Path("src/services/crm/service.py").exists()
     assert not Path("src/services/crm/idempotency.py").exists()
@@ -70,15 +52,12 @@ def test_legacy_bridges_are_removed() -> None:
 def test_ingestion_crm_split_is_preserved() -> None:
     ingest_uc = _read("src/use_cases/lead/ingest_lead_patch_use_case.py")
     workflow_uc = _read("src/use_cases/lead/process_lead_workflow_output_use_case.py")
-    inbound_uc = _read("src/use_cases/dialog/handle_inbound_message_use_case.py")
 
     for forbidden in ("hubspot_service", "upsert_contact_properties", "ensure_contact_id"):
         assert forbidden not in ingest_uc
 
     assert "ingest_lead_patch_use_case.execute(" in workflow_uc
     assert "sync_lead_crm_use_case.execute(" not in workflow_uc
-    assert "process_lead_workflow_output_use_case.execute(" in inbound_uc
-    assert "def _ingest_workflow_output(" not in inbound_uc
 
 
 def test_transitional_scope_is_guarded() -> None:
@@ -97,27 +76,15 @@ def test_transitional_scope_is_guarded() -> None:
     assert Path("src/adapters").exists()
 
 
-def test_memory_runtime_uses_task_registry_path() -> None:
-    memory_runtime = _read("src/memory_layer/services/memory_sync_llm_service.py")
-    memory_orchestrator = _read("src/memory_layer/services/memory_sync_port.py")
-    assert "self.llm_service.run(" in memory_runtime
-    assert 'task="memory_daily_sync_task"' in memory_runtime
-    assert "VertexProvider" not in memory_runtime
-    assert "_run_memory_agent(" not in memory_runtime
-    assert "atomic_save_memory_artifacts(" not in memory_orchestrator
+def test_legacy_memory_runtime_layer_is_removed() -> None:
+    assert not Path("src/memory_layer").exists()
+    assert not Path("src/runtime_agents/memory_agent").exists()
+    assert not Path("src/llm/tasks/memory").exists()
+    assert not Path("src/domain/memory").exists()
 
 
 def test_runtime_and_llm_paths_do_not_import_adk_agents() -> None:
     checked_files = [
-        "src/memory_layer/services/memory_sync_llm_service.py",
-        "src/memory_layer/services/memory_sync_port.py",
-        "src/memory_layer/use_cases/process_daily_agent_output_use_case.py",
-        "src/memory_layer/use_cases/process_rolling_memory_agent_output_use_case.py",
-        "src/memory_layer/use_cases/apply_daily_agent_output_use_case.py",
-        "src/memory_layer/use_cases/apply_rolling_memory_agent_output_use_case.py",
-        "src/llm/tasks/helpers/memory_output_parser.py",
-        "src/llm/tasks/memory/memory_daily_sync_task.py",
-        "src/llm/tasks/memory/memory_rolling_sync_task.py",
         *[str(path.relative_to(REPO_ROOT)) for path in (REPO_ROOT / "src/runtime_agents").rglob("*.py")],
     ]
 
@@ -131,6 +98,4 @@ def test_llm_structured_routing_policy_matches_current_registry_tasks() -> None:
     routing = _read("src/llm/provider_routing.py")
     assert "REPLY_RUNTIME_TASKS" in routing
     assert '"profile_extract_task"' in routing
-    assert '"memory_daily_sync_task"' in routing
-    assert '"memory_rolling_sync_task"' in routing
     assert '"legacy_memory_daily_summary_task"' not in routing

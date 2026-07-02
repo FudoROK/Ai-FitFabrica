@@ -61,6 +61,26 @@ img {
   max-width: 100%;
 }
 
+.media-zoom {
+  overflow: hidden;
+}
+
+.media-zoom > img,
+.media-zoom .media-zoom-media {
+  transform-origin: center center;
+  transition:
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.media-zoom:hover > img,
+.media-zoom:focus-within > img,
+.media-zoom:hover .media-zoom-media,
+.media-zoom:focus-within .media-zoom-media {
+  transform: scale(1.04);
+}
+
 .material-symbols-outlined {
   display: inline-flex;
   align-items: center;
@@ -208,6 +228,194 @@ img {
 .button-primary,
 .button-secondary {
   background: transparent;
+}
+
+.eyebrow {
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.hero-title {
+  font-family: var(--font-manrope), sans-serif;
+  font-size: clamp(3.2rem, 6vw, 56px);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.06em;
+}
+
+.hero-lead,
+.section-copy,
+.visual-panel-body {
+  font-size: clamp(1.2rem, 2vw, 1.45rem);
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.section-title {
+  font-family: var(--font-manrope), sans-serif;
+  font-size: clamp(2.5rem, 3.8vw, 3rem);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -0.05em;
+}
+
+.metric-label,
+.step-index {
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.metric-value {
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+}
+
+.visual-panel-title,
+.feature-card h3,
+.story-card h3,
+.step-row h3 {
+  font-family: var(--font-manrope), sans-serif;
+  font-size: clamp(1.75rem, 2.4vw, 2rem);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.04em;
+}
+
+.feature-card p,
+.story-card p,
+.step-row p {
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.public-form-title {
+  font-family: var(--font-manrope), sans-serif;
+  font-size: clamp(2.4rem, 3.6vw, 3rem);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -0.05em;
+}
+
+.public-form-label {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.public-body {
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.workspace-hero-title {
+  font-family: var(--font-manrope), sans-serif;
+  font-size: clamp(3.2rem, 5vw, 4.75rem);
+  font-weight: 700;
+  line-height: 0.98;
+  letter-spacing: -0.06em;
+}
+
+.workspace-hero-lead {
+  font-size: clamp(1.125rem, 1.8vw, 1.35rem);
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.workspace-page-title {
+  font-family: var(--font-manrope), sans-serif;
+  font-size: clamp(2.5rem, 4vw, 4.1rem);
+  font-weight: 700;
+  line-height: 0.98;
+  letter-spacing: -0.06em;
+}
+
+.workspace-page-lead {
+  font-size: clamp(1.05rem, 1.55vw, 1.2rem);
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.workspace-section-title {
+  font-family: var(--font-manrope), sans-serif;
+  font-size: clamp(1.85rem, 2.6vw, 2.35rem);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -0.05em;
+}
+
+.workspace-card-title {
+  font-family: var(--font-manrope), sans-serif;
+  font-size: clamp(1.28rem, 1.85vw, 1.65rem);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.04em;
+}
+
+.workspace-body {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.workspace-meta {
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.workspace-kpi {
+  font-size: clamp(3rem, 4vw, 3.8rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.ui-label-strong {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.ui-chip-text {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.ui-metric-inline {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.ui-progress-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.brand-mark {
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+.brand-mark-sidebar {
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+.button-icon {
+  font-size: 1.125rem;
 }
 
 .workspace-shell,
@@ -359,5 +567,71 @@ img {
 @media (max-width: 1024px) {
   .site-container {
     padding-inline: 1.25rem;
+  }
+
+  .workspace-page-title {
+    font-size: clamp(2rem, 9vw, 2.7rem);
+  }
+
+  .workspace-page-lead {
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+}
+
+@media (min-width: 1024px) and (max-height: 760px) {
+  .workspace-shell,
+  .workspace-desktop-layout {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+
+  .workspace-desktop-layout {
+    align-items: flex-start;
+  }
+
+  .workspace-sidebar {
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    max-height: 100dvh;
+  }
+
+  .workspace-content-pane {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+
+  .workspace-main,
+  .workspace-status {
+    height: auto;
+    overflow: visible;
+  }
+
+  .tryon-layout {
+    height: auto;
+    overflow: visible;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tryon-layout > * {
+    overflow: visible;
+  }
+
+  .upload-card {
+    max-width: none;
+    min-height: 230px;
+  }
+
+  .upload-card .media-zoom,
+  .upload-card > div:first-of-type {
+    height: 140px;
+  }
+
+  .result-card {
+    height: auto;
+    min-height: 300px;
   }
 }

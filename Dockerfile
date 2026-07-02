@@ -20,7 +20,13 @@ RUN pip install --upgrade pip
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY --chown=app:app . .
+RUN mkdir -p /app/scripts
+COPY --chown=app:app alembic.ini ./
+COPY --chown=app:app alembic ./alembic
+COPY --chown=app:app scripts/platform_foundation_smoke.py ./scripts/platform_foundation_smoke.py
+COPY --chown=app:app scripts/business_catalog_search_index_readiness.py ./scripts/business_catalog_search_index_readiness.py
+COPY --chown=app:app scripts/reindex_business_catalog_search.py ./scripts/reindex_business_catalog_search.py
+COPY --chown=app:app src ./src
 # Fail fast if the application sources were not copied. This typically happens
 # when the build context is set to ./src instead of the repository root, which
 # would produce an image without the src/ package and break python -m src.main.

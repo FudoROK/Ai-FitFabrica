@@ -170,3 +170,58 @@ async def test_deterministic_try_on_quality_verifier_recommends_repair_for_tiny_
 
     assert report.verdict == "repair_recommended"
     assert any(check.name == "generated_artifact_size_sanity" and check.status == "warning" for check in report.checks)
+
+
+@pytest.mark.asyncio
+async def test_deterministic_try_on_quality_verifier_records_multi_garment_slot_shape() -> None:
+    storage = InMemoryObjectStorage()
+    object_key = "fitfabrica/tenants/public/try-on/job-1/result_image/result.png"
+    storage.put_bytes(object_key=object_key, payload=b"x" * 128, content_type="image/png")
+    verifier = DeterministicTryOnQualityVerifier(object_storage=storage)
+
+    report = await verifier.verify(
+        job_id="job-1",
+        generation_mode=TryOnGenerationMode.VERTEX_VIRTUAL_TRY_ON,
+        input_metadata=[
+            _metadata(TryOnUploadRole.HUMAN_PHOTO),
+            _metadata(TryOnUploadRole.UPPER_GARMENT_PHOTO),
+            _metadata(TryOnUploadRole.LOWER_GARMENT_PHOTO),
+        ],
+        stored_inputs=[
+            _stored(TryOnUploadRole.HUMAN_PHOTO),
+            _stored(TryOnUploadRole.UPPER_GARMENT_PHOTO),
+            _stored(TryOnUploadRole.LOWER_GARMENT_PHOTO),
+        ],
+        result=_generated_result(object_key=object_key),
+    )
+
+    assert report.verdict == "pass"
+    assert any(
+        check.name == "outfit_slot_input_shape"
+        and check.status == "passed"
+        and "upper_garment_photo, lower_garment_photo" in check.message
+        for check in report.checks
+    )
+
+
+def _metadata(role: TryOnUploadRole) -> TryOnInputMetadata:
+    return TryOnInputMetadata(
+        role=role,
+        filename=f"{role.value}.jpg",
+        content_type="image/jpeg",
+        size_bytes=10,
+        sha256="a" * 64,
+    )
+
+
+def _stored(role: TryOnUploadRole) -> TryOnStoredInput:
+    return TryOnStoredInput(
+        role=role,
+        storage_backend="in_memory",
+        uri=f"memory://fitfabrica/{role.value}",
+        object_key=f"fitfabrica/{role.value}",
+        object_name=f"fitfabrica/{role.value}",
+        content_type="image/jpeg",
+        size_bytes=10,
+        sha256="a" * 64,
+    )

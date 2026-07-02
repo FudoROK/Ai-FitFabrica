@@ -17,6 +17,7 @@ def job_record_from_rows(
     return ProductCardJobRecord(
         job_id=job_row.job_id,
         status=job_row.status,
+        category=job_row.category,
         target_channel=job_row.target_channel,
         brand_tone=job_row.brand_tone,
         title_hint=job_row.title_hint,

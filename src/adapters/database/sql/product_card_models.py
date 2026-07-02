@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, Index, Integer, JSON, String, Text
+from sqlalchemy import DateTime, Float, ForeignKey, Index, Integer, JSON, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from .base import SqlBase
@@ -17,6 +17,7 @@ class ProductCardJobRow(SqlBase):
 
     job_id: Mapped[str] = mapped_column(String(64), primary_key=True)
     status: Mapped[str] = mapped_column(String(32), nullable=False)
+    category: Mapped[str] = mapped_column(String(128), nullable=False, default="uncategorized")
     target_channel: Mapped[str] = mapped_column(String(64), nullable=False)
     brand_tone: Mapped[str] = mapped_column(String(128), nullable=False)
     title_hint: Mapped[str | None] = mapped_column(String(255), nullable=True)
@@ -34,6 +35,26 @@ class ProductCardSourceAssetRow(SqlBase):
     object_key: Mapped[str] = mapped_column(Text, nullable=False)
     position: Mapped[int] = mapped_column(Integer, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class ProductCardGarmentAnalysisRow(SqlBase):
+    """Validated reusable garment analysis bound one-to-one to a Product Card job."""
+
+    __tablename__ = "product_card_garment_analyses"
+
+    job_id: Mapped[str] = mapped_column(
+        ForeignKey("product_card_jobs.job_id", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    invocation_id: Mapped[str] = mapped_column(String(128), nullable=False, index=True)
+    prompt_version: Mapped[str] = mapped_column(String(128), nullable=False)
+    contract_version: Mapped[str] = mapped_column(String(128), nullable=False)
+    garment_type: Mapped[str] = mapped_column(String(128), nullable=False)
+    dominant_color: Mapped[str] = mapped_column(String(128), nullable=False)
+    confidence: Mapped[float] = mapped_column(Float, nullable=False)
+    uncertainty_level: Mapped[str] = mapped_column(String(32), nullable=False)
+    analysis_json: Mapped[dict[str, object]] = mapped_column("analysis", JSON, nullable=False)
+    completed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
 
 
 class ProductCardVersionRow(SqlBase):

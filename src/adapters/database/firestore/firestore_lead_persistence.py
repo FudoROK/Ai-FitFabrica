@@ -6,25 +6,14 @@ from typing import Optional
 
 from src.domain.models import Lead
 from src.adapters.database.firestore.storage_primitives import (
-    acquire_memory_write_guard,
     apply_lead_patch,
     create_or_get_canonical_lead,
-    create_rolling_artifact,
-    fetch_daily_summary,
-    fetch_latest_daily_summary,
-    fetch_current_rolling_pointer,
-    fetch_rolling_artifact,
-    fetch_rolling_summary,
     fetch_messages_in_window,
     fetch_recent_messages,
     get_lead_by_id,
-    release_memory_write_guard,
-    promote_rolling_pointer,
     update_lead,
     update_lead_activity,
-    update_rolling_summary,
     upsert_crm_contact_binding,
-    write_daily_summary,
     write_extraction_attempt,
 )
 from src.adapters.database.firestore.message_store import _append_message_with_ttl_and_return_id
@@ -138,120 +127,6 @@ class FirestoreLeadMessagesRepository:
             limit=limit,
         )
 
-
-class FirestoreLeadSummariesRepository:
-    """Daily/rolling summary persistence."""
-
-    async def fetch_daily_summary(self, *, lead_id: str, memory_day_key: str) -> Optional[dict]:
-        return await run_blocking(fetch_daily_summary, lead_id, memory_day_key)
-
-    async def fetch_latest_daily_summary(self, *, lead_id: str) -> Optional[dict]:
-        return await run_blocking(fetch_latest_daily_summary, lead_id)
-
-    async def write_daily_summary(
-        self,
-        *,
-        lead_id: str,
-        memory_day_key: str,
-        summary_text: str,
-        open_questions: list[str],
-        carry_forward_notes: list[str],
-        learned_facts: list[str],
-        changed_facts: list[str],
-        memory_relevance_flags: list[str],
-        created_at: datetime,
-        messages_used_count: Optional[int] = None,
-        source_window_start: Optional[datetime] = None,
-        source_window_end: Optional[datetime] = None,
-    ) -> bool:
-        return await run_blocking(
-            write_daily_summary,
-            lead_id=lead_id,
-            memory_day_key=memory_day_key,
-            summary_text=summary_text,
-            open_questions=open_questions,
-            carry_forward_notes=carry_forward_notes,
-            learned_facts=learned_facts,
-            changed_facts=changed_facts,
-            memory_relevance_flags=memory_relevance_flags,
-            created_at=created_at,
-            messages_used_count=messages_used_count,
-            source_window_start=source_window_start,
-            source_window_end=source_window_end,
-        )
-
-    async def acquire_memory_write_guard(
-        self,
-        *,
-        lead_id: str,
-        idempotency_key: str,
-        created_at: datetime,
-    ) -> bool:
-        return await run_blocking(
-            acquire_memory_write_guard,
-            lead_id=lead_id,
-            idempotency_key=idempotency_key,
-            created_at=created_at,
-        )
-
-    async def release_memory_write_guard(self, *, lead_id: str, idempotency_key: str) -> None:
-        await run_blocking(
-            release_memory_write_guard,
-            lead_id=lead_id,
-            idempotency_key=idempotency_key,
-        )
-
-
-    async def fetch_rolling_summary(self, *, lead_id: str) -> Optional[dict]:
-        return await run_blocking(fetch_rolling_summary, lead_id=lead_id)
-
-    async def create_rolling_artifact(
-        self,
-        *,
-        lead_id: str,
-        artifact_id: str,
-        artifact_payload: dict[str, object],
-    ) -> bool:
-        return await run_blocking(
-            create_rolling_artifact,
-            lead_id=lead_id,
-            artifact_id=artifact_id,
-            artifact_payload=artifact_payload,
-        )
-
-    async def promote_rolling_pointer(
-        self,
-        *,
-        lead_id: str,
-        artifact_id: str,
-        pointer_payload: dict[str, object],
-    ) -> bool:
-        return await run_blocking(
-            promote_rolling_pointer,
-            lead_id=lead_id,
-            artifact_id=artifact_id,
-            pointer_payload=pointer_payload,
-        )
-
-    async def fetch_current_rolling_pointer(self, *, lead_id: str) -> Optional[dict]:
-        return await run_blocking(fetch_current_rolling_pointer, lead_id=lead_id)
-
-    async def fetch_rolling_artifact(self, *, lead_id: str, artifact_id: str) -> Optional[dict]:
-        return await run_blocking(fetch_rolling_artifact, lead_id=lead_id, artifact_id=artifact_id)
-
-    async def update_rolling_summary(
-        self,
-        *,
-        lead_id: str,
-        rolling_update: dict[str, object],
-        updated_at: datetime,
-    ) -> bool:
-        return await run_blocking(
-            update_rolling_summary,
-            lead_id=lead_id,
-            rolling_update=rolling_update,
-            updated_at=updated_at,
-        )
 
 class FirestoreLeadCrmBindingRepository:
     """CRM binding persistence for leads."""

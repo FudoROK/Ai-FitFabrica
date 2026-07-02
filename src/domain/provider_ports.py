@@ -34,6 +34,7 @@ class AgentRuntimePort(Protocol):
     """Port for agent-runtime style providers."""
 
     provider_name: str
+    supports_artifacts: bool
 
     def generate(self, request: LLMRequest) -> LLMResult:
         """Run the provider through the existing LLM request contract."""

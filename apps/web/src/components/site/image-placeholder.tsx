@@ -25,7 +25,7 @@ export function ImagePlaceholder({
   chips = []
 }: ImagePlaceholderProps) {
   return (
-    <div className={`site-placeholder rounded-[2rem] ${className ?? ""}`.trim()}>
+    <div className={`site-placeholder media-zoom rounded-[2rem] transition-transform duration-700 ease-out hover:scale-[1.015] ${className ?? ""}`.trim()}>
       <div className={`absolute inset-0 bg-gradient-to-br ${getAccentClasses(accent)}`} />
       {split ? <div className="absolute inset-y-0 left-1/2 w-px bg-white/50" /> : null}
       <div className="absolute inset-x-8 bottom-8 z-10 flex flex-wrap gap-2">
