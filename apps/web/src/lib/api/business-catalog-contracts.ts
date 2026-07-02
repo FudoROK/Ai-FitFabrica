@@ -21,6 +21,28 @@ export type BusinessCatalogImportStatus =
 
 export type BusinessCatalogTenantTier = "standard" | "large";
 
+export type AdminMarketplaceDiscoveryCandidateStatus =
+  | "pending"
+  | "needs_review"
+  | "approved"
+  | "rejected"
+  | "archived";
+
+export type AdminMarketplaceDiscoveryCandidateSourceType =
+  | "instagram"
+  | "open_web"
+  | "manual"
+  | "other"
+  | "local_catalog"
+  | "partner_feed"
+  | "official_api"
+  | "seller_connected_store"
+  | "admin_verified_link"
+  | "instagram_business"
+  | "public_web_allowed"
+  | "search_engine_discovery"
+  | "instagram_public_discovery";
+
 export type BusinessMerchant = {
   merchant_id: string;
   owner_id: string;
@@ -107,6 +129,56 @@ export type AdminBusinessCatalogCredentials = {
 
 export type AdminBusinessCatalogPendingProductsResponse = {
   products: BusinessProduct[];
+};
+
+export type AdminMarketplaceDiscoveryCandidate = {
+  candidate_id: string;
+  workspace_id?: string | null;
+  business_id?: string | null;
+  connector_kind: string;
+  source_type: AdminMarketplaceDiscoveryCandidateSourceType;
+  source_url: string;
+  image_url?: string | null;
+  media_url?: string | null;
+  source_title: string;
+  title?: string | null;
+  name?: string | null;
+  brand?: string | null;
+  source_snippet?: string | null;
+  platform_hint?: string | null;
+  category?: string | null;
+  country_code?: string | null;
+  city?: string | null;
+  price_amount?: number | null;
+  currency?: string | null;
+  raw_payload: Record<string, unknown>;
+  metadata: Record<string, unknown>;
+  status: AdminMarketplaceDiscoveryCandidateStatus;
+  rejection_reason?: string | null;
+  approved_at?: string | null;
+  rejected_at?: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type AdminMarketplaceDiscoveryCandidateFilters = {
+  status?: AdminMarketplaceDiscoveryCandidateStatus;
+  source_type?: AdminMarketplaceDiscoveryCandidateSourceType;
+  category?: string;
+  city?: string;
+  limit?: number;
+};
+
+export type AdminMarketplaceDiscoveryCandidateListResponse = {
+  candidates: AdminMarketplaceDiscoveryCandidate[];
+};
+
+export type AdminMarketplaceDiscoveryCandidateMutationResponse = {
+  candidate: AdminMarketplaceDiscoveryCandidate;
+};
+
+export type AdminRejectMarketplaceDiscoveryCandidatePayload = {
+  reason?: string | null;
 };
 
 export type AdminRejectBusinessCatalogProductPayload = {

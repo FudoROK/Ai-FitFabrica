@@ -16,6 +16,16 @@ def test_admin_business_catalog_page_exists_and_uses_typed_actions() -> None:
     assert "getAdminSimilarSearchAnalytics" in feature_source
     assert "SimilarSearchAnalyticsPanel" in feature_source
     assert "Similar Search Analytics" in feature_source
+    assert "getAdminMarketplaceDiscoveryCandidates" in feature_source
+    assert "approveAdminMarketplaceDiscoveryCandidate" in feature_source
+    assert "rejectAdminMarketplaceDiscoveryCandidate" in feature_source
+    assert "archiveAdminMarketplaceDiscoveryCandidate" in feature_source
+    assert "Discovery Candidates" in feature_source
+    assert "DiscoveryCandidateReviewPanel" in feature_source
+    assert "DiscoveryCandidateFilters" in feature_source
+    assert "Reject reason" in feature_source
+    assert "source_url" in feature_source
+    assert "marketplace candidates discovered from approved search sources" in feature_source
     assert "getBusinessProductReviewReadiness" in feature_source
     assert "getBusinessProductReviewSummary" in feature_source
     assert "Review readiness" in feature_source
@@ -52,12 +62,20 @@ def test_admin_business_catalog_page_exists_and_uses_typed_actions() -> None:
     assert "NEXT_PUBLIC_ENABLE_ADMIN_BUSINESS_CATALOG_UI" in feature_source
     assert "AdminBusinessCatalogCredentials" in contracts_source
     assert "AdminBusinessCatalogPendingProductsResponse" in contracts_source
+    assert "AdminMarketplaceDiscoveryCandidate" in contracts_source
+    assert "AdminMarketplaceDiscoveryCandidateStatus" in contracts_source
+    assert "AdminMarketplaceDiscoveryCandidateListResponse" in contracts_source
+    assert "AdminRejectMarketplaceDiscoveryCandidatePayload" in contracts_source
     assert "AdminRejectBusinessCatalogProductPayload" in contracts_source
     assert "SimilarSearchClickAnalyticsResponse" in contracts_source
     assert "getAdminBusinessCatalogPendingProducts" in client_source
     assert "approveAdminBusinessCatalogProduct" in client_source
     assert "rejectAdminBusinessCatalogProduct" in client_source
     assert "getAdminSimilarSearchAnalytics" in client_source
+    assert "getAdminMarketplaceDiscoveryCandidates" in client_source
+    assert "approveAdminMarketplaceDiscoveryCandidate" in client_source
+    assert "rejectAdminMarketplaceDiscoveryCandidate" in client_source
+    assert "archiveAdminMarketplaceDiscoveryCandidate" in client_source
 
 
 def test_admin_business_catalog_page_is_not_public_workspace_action() -> None:
