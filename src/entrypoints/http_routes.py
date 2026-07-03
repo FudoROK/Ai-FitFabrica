@@ -13,6 +13,7 @@ from .garment_taxonomy_routes import router as garment_taxonomy_router
 from .outfit_builder_routes import router as outfit_builder_router
 from .pricing_routes import router as pricing_router
 from .product_card_routes import router as product_card_router
+from .public_request_routes import router as public_request_router
 from .similar_search_routes import router as similar_search_router
 from .status_routes import router as status_router
 from .try_on_routes import router as try_on_router
@@ -26,6 +27,7 @@ def build_http_router() -> APIRouter:
     """Build the active HTTP surface for one runtime profile."""
     router = APIRouter()
     router.include_router(status_router)
+    router.include_router(public_request_router)
     router.include_router(admin_business_catalog_router)
     router.include_router(admin_cost_router)
     router.include_router(admin_taxonomy_router)

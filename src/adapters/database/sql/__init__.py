@@ -13,6 +13,7 @@ from .business_catalog_models import (
 from .catalog_models import MarketplaceOfferRow, PriceSnapshotRow, ProductRow
 from .engine import build_async_engine
 from .identity_models import ChannelIdentityRow, IdentityBindingRow, IdentityResolutionAuditRow, LeadRow, PersonRow
+from .public_request_models import PublicDemoRequestRow
 from .similar_search_models import SimilarSearchClickEventRow
 from .garment_taxonomy_models import (
     GarmentTaxonomyAuditLogRow,
@@ -49,6 +50,7 @@ __all__ = [
     "ProductRow",
     "MarketplaceOfferRow",
     "PriceSnapshotRow",
+    "PublicDemoRequestRow",
     "PersonRow",
     "LeadRow",
     "ChannelIdentityRow",

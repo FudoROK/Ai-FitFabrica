@@ -7,7 +7,7 @@ import { SiteButton } from "@/components/site/site-button";
 
 export function PublicHeader() {
   const pathname = usePathname();
-  const isSignIn = pathname === "/sign-in";
+  const isSignIn = pathname === "/sign-in" || pathname === "/login";
 
   return (
     <header className="border-b border-[var(--border)] bg-[var(--background)]">
@@ -35,7 +35,7 @@ export function PublicHeader() {
           })}
         </nav>
         <div className="hidden items-center gap-4 lg:flex">
-          <Link className={`text-sm font-semibold ${pathname === "/sign-in" ? "text-black" : "text-[var(--text-secondary)]"}`} href="/sign-in">
+          <Link className={`text-sm font-semibold ${isSignIn ? "text-black" : "text-[var(--text-secondary)]"}`} href="/login">
             Войти
           </Link>
           <SiteButton href="/workspace/new-fitting" variant={isSignIn ? "secondary" : "primary"}>

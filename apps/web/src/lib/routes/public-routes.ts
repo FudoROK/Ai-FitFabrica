@@ -10,6 +10,6 @@ export const publicRoutes: NavRoute[] = [
 
 export const publicFooterRoutes: NavRoute[] = [
   { href: "/privacy", label: "Приватность" },
-  { href: "/contacts", label: "Контакты" },
+  { href: "/contact", label: "Контакты" },
   { href: "/pricing", label: "Условия" }
 ];
