@@ -62,6 +62,7 @@ Workspace:
 ## Active API Routes
 
 - `GET /health`
+- `GET /ready`
 - `GET /time`
 - `GET /api/workspace/bootstrap`
 - `GET /api/workspace/capabilities`

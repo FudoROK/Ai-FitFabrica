@@ -54,7 +54,7 @@ def test_has_valid_token_uses_constant_time_compare(monkeypatch):
     assert captured["pair"] == ("status-token", "status-token")
 
 
-@pytest.mark.parametrize("endpoint", ["/health", "/time"])
+@pytest.mark.parametrize("endpoint", ["/health", "/time", "/ready"])
 def test_status_endpoints_reject_non_loopback_without_token(endpoint):
     app.state.settings = _base_settings()
 
@@ -64,7 +64,7 @@ def test_status_endpoints_reject_non_loopback_without_token(endpoint):
     assert response.json() == {"error": "unauthorized"}
 
 
-@pytest.mark.parametrize("endpoint", ["/health", "/time"])
+@pytest.mark.parametrize("endpoint", ["/health", "/time", "/ready"])
 def test_status_endpoints_accept_valid_status_token(endpoint):
     app.state.settings = _base_settings()
 
@@ -73,7 +73,7 @@ def test_status_endpoints_accept_valid_status_token(endpoint):
     assert response.status_code == 200
 
 
-@pytest.mark.parametrize("endpoint", ["/health", "/time"])
+@pytest.mark.parametrize("endpoint", ["/health", "/time", "/ready"])
 def test_status_endpoints_allow_public_opt_in(endpoint):
     app.state.settings = _base_settings(PUBLIC_STATUS_ENDPOINTS_ENABLED=True, STATUS_ENDPOINT_TOKEN=None)
 
@@ -82,7 +82,7 @@ def test_status_endpoints_allow_public_opt_in(endpoint):
     assert response.status_code == 200
 
 
-@pytest.mark.parametrize("endpoint", ["/health", "/time"])
+@pytest.mark.parametrize("endpoint", ["/health", "/time", "/ready"])
 def test_status_endpoints_allow_loopback_without_token(endpoint):
     app.state.settings = _base_settings()
 

@@ -23,6 +23,8 @@ Plan B focused on work that can be completed before Google/Gemini billing is res
 - Updated public navigation/footer to prefer `/login` and `/contact`.
 - Canonicalized remaining public CTAs from legacy `/contacts` to `/contact`, while keeping `/contacts` as a compatibility alias.
 - Added frontend no-billing guardrails so active workspace pages use loading/error/empty shell states instead of silently rendering blank content when workspace bootstrap is unavailable.
+- Added protected `GET /ready` no-billing readiness diagnostics. The endpoint reports SQL, Redis, object storage, Qdrant, auth, billing, AI provider, image editing, search discovery, and admin-surface configuration without calling paid providers.
+- Extended status endpoint security guardrails so `/ready` follows the same token/loopback/public-opt-in policy as `/health` and `/time`.
 
 ## SQL Tables Added
 
@@ -42,6 +44,7 @@ Stores public website demo/contact requests:
 
 - `POST /demo-request`: persists public contact/demo requests in PostgreSQL when SQL is configured.
 - `POST /auth/sign-in`: intentionally does not authenticate yet; it fails closed until the production auth contour is connected.
+- `GET /ready`: returns a backend-owned no-billing readiness map, expected blockers, flows safe to test before billing, and post-billing checks.
 
 ## Verification
 
@@ -58,10 +61,12 @@ Fresh local verification passed:
 - no-billing frontend guardrails -> `2 passed`
 - workspace/public adjacent frontend guardrails -> `8 passed`
 - refreshed web `typecheck`, `lint`, and `build` after route/state hardening -> passed
+- `pytest tests/test_status_routes_health_runtime.py tests/test_runtime_security.py -q` -> passed after adding `/ready`
 
 ## Remaining Work After Billing/Auth Restoration
 
 - Connect production authentication provider and replace the fail-closed `/auth/sign-in` behavior with real session creation.
+- Restore backend billing core/provider access and clear `/ready` blockers for `billing`, `auth`, `ai_provider`, and approved discovery sources.
 - Run paid provider smokes for Gemini/Vertex-backed flows.
 - Run browser-level acceptance for Try-On, B2B category validation, Product Card, Similar Search garment-photo, and billing guardrails.
 - Keep admin UI and candidate review behind bearer-token protected admin routes.
