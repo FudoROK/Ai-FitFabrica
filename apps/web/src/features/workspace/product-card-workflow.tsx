@@ -4,6 +4,7 @@ import type { ChangeEvent, FormEvent } from "react";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { SiteButton } from "@/components/site/site-button";
+import { WorkspaceShellState } from "@/features/workspace/workspace-shell-state";
 import { useWorkspaceRuntime } from "@/features/workspace/workspace-runtime";
 import { WebApiClient } from "@/lib/api/client";
 import { getApiBaseUrl } from "@/lib/api/config";
@@ -36,7 +37,7 @@ async function fileToBase64(file: File): Promise<string> {
 }
 
 export function ProductCardWorkflow() {
-  const { bootstrap, hasCapability: workspaceHasCapability, refresh } = useWorkspaceRuntime();
+  const { bootstrap, error: bootstrapError, hasCapability: workspaceHasCapability, isLoading, refresh } = useWorkspaceRuntime();
   const [image, setImage] = useState<SelectedImage>(emptyImage);
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
@@ -130,7 +131,9 @@ export function ProductCardWorkflow() {
     }
   }
 
-  if (!bootstrap) return null;
+  if (!bootstrap) {
+    return <WorkspaceShellState error={bootstrapError} hasBootstrap={Boolean(bootstrap)} isLoading={isLoading} onRetry={refresh} />;
+  }
 
   return (
     <form className="grid gap-5 xl:grid-cols-[1.05fr_0.95fr]" onSubmit={handleSubmit}>

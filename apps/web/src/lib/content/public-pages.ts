@@ -52,7 +52,7 @@ export const publicPages: Record<string, PublicPageContent> = {
     cta: {
       title: "Соберите первый сценарий без пересъемки",
       body: "Запустите примерку или обсудите подключение FitFabrica для контент-команды и каталога.",
-      action: { href: "/contacts", label: "Запросить демонстрацию", variant: "primary" }
+      action: { href: "/contact", label: "Запросить демонстрацию", variant: "primary" }
     }
   },
   forYou: {
@@ -115,7 +115,7 @@ export const publicPages: Record<string, PublicPageContent> = {
     lead:
       "FitFabrica объединяет визуалы, карточку товара, описания и AI-подсказки в одном рабочем потоке, который готов к backend-интеграции.",
     actions: [
-      { href: "/contacts", label: "Запросить демо", variant: "primary" },
+      { href: "/contact", label: "Запросить демо", variant: "primary" },
       { href: "/workspace/product-card", label: "Открыть product workflow", variant: "secondary" }
     ],
     metrics: [
@@ -160,7 +160,7 @@ export const publicPages: Record<string, PublicPageContent> = {
     cta: {
       title: "Покажите текущий контент-процесс",
       body: "Мы сможем собрать более точный enterprise-поток под бренд, каналы продаж и объем каталога.",
-      action: { href: "/contacts", label: "Обсудить внедрение", variant: "primary" }
+      action: { href: "/contact", label: "Обсудить внедрение", variant: "primary" }
     }
   },
   capabilities: {
@@ -224,7 +224,7 @@ export const publicPages: Record<string, PublicPageContent> = {
       "FitFabrica ведет пользователя от входных данных к результату через короткие и понятные этапы с проверками качества и следующими действиями.",
     actions: [
       { href: "/workspace/new-fitting", label: "Открыть новый сценарий", variant: "primary" },
-      { href: "/contacts", label: "Нужна консультация", variant: "secondary" }
+      { href: "/contact", label: "Нужна консультация", variant: "secondary" }
     ],
     metrics: [
       { label: "Шаг 1", value: "Входные данные" },

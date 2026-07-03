@@ -106,7 +106,7 @@ export const workspacePagesExtra: Record<string, WorkspacePageContent> = {
       "Рабочий экран для настройки бренда, правил контента и каналов продаж без фальшивого каталожного скрина.",
     actions: [
       { href: "/workspace/product-card", label: "Вернуться к товару", variant: "primary" },
-      { href: "/contacts", label: "Обсудить интеграцию", variant: "secondary" }
+      { href: "/contact", label: "Обсудить интеграцию", variant: "secondary" }
     ],
     status: [
       { label: "Объект", value: "Brand settings" },

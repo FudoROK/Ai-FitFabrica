@@ -2,16 +2,19 @@
 
 import { ProductCardWorkflow } from "@/features/workspace/product-card-workflow";
 import { WorkspaceLockedProductionActions } from "@/features/workspace/workspace-locked-production-actions";
+import { WorkspaceShellState } from "@/features/workspace/workspace-shell-state";
 import { useWorkspaceRuntime } from "@/features/workspace/workspace-runtime";
 
 export function WorkspaceProductCardOverview() {
-  const { bootstrap, hasCapability } = useWorkspaceRuntime();
+  const { bootstrap, error, hasCapability, isLoading, refresh } = useWorkspaceRuntime();
   const hasBusinessTemplates = hasCapability("business_templates");
   const canPublish = hasCapability("marketplace_publish");
   const canImportCatalog = hasCapability("catalog_import");
   const canSyncCatalog = hasCapability("catalog_sync");
 
-  if (!bootstrap) return null;
+  if (!bootstrap) {
+    return <WorkspaceShellState error={error} hasBootstrap={Boolean(bootstrap)} isLoading={isLoading} onRetry={refresh} />;
+  }
 
   return (
     <main className="px-6 py-8 lg:px-8 lg:py-10">

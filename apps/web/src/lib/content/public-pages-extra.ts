@@ -7,7 +7,7 @@ export const publicPagesExtra: Record<string, PublicPageContent> = {
     lead:
       "Страница тарифов теперь показывает продуманную продуктовую рамку. Финальные цены, лимиты и billing-правила позже подключаются к backend-контрактам.",
     actions: [
-      { href: "/contacts", label: "Обсудить тариф", variant: "primary" },
+      { href: "/contact", label: "Обсудить тариф", variant: "primary" },
       { href: "/workspace/credits", label: "Открыть credits workspace", variant: "secondary" }
     ],
     metrics: [
@@ -52,7 +52,7 @@ export const publicPagesExtra: Record<string, PublicPageContent> = {
     cta: {
       title: "Нужна схема тарификации под бренд",
       body: "Покажите объем каталога и командный контур, чтобы привязать тариф к реальной операционной нагрузке.",
-      action: { href: "/contacts", label: "Обсудить pricing", variant: "primary" }
+      action: { href: "/contact", label: "Обсудить pricing", variant: "primary" }
     }
   },
   privacy: {
@@ -61,7 +61,7 @@ export const publicPagesExtra: Record<string, PublicPageContent> = {
     lead:
       "Эта страница оформлена как понятная enterprise-коммуникация: какие данные используются, где проходят проверки и как система должна быть подключена к backend-политикам.",
     actions: [
-      { href: "/contacts", label: "Запросить security review", variant: "primary" },
+      { href: "/contact", label: "Запросить security review", variant: "primary" },
       { href: "/workspace/business-profile", label: "Открыть business profile", variant: "secondary" }
     ],
     metrics: [
@@ -106,7 +106,7 @@ export const publicPagesExtra: Record<string, PublicPageContent> = {
     cta: {
       title: "Нужна отдельная архитектурная проверка",
       body: "Подготовим требования к хранению данных и внешним интеграциям до production-подключения.",
-      action: { href: "/contacts", label: "Связаться с командой", variant: "primary" }
+      action: { href: "/contact", label: "Связаться с командой", variant: "primary" }
     }
   }
 };

@@ -35,7 +35,7 @@ export default function PricingPage() {
                 <li key={item}>{item}</li>
               ))}
             </ul>
-            <SiteButton className="mt-10 w-full" href="/contacts" variant={variant}>
+            <SiteButton className="mt-10 w-full" href="/contact" variant={variant}>
               {cta}
             </SiteButton>
           </article>

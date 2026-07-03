@@ -51,7 +51,7 @@ export default function BusinessPage() {
                 <SiteButton href="/workspace/product-card" variant="violet">
                   Открыть product workflow
                 </SiteButton>
-                <SiteButton href="/contacts" variant="secondary">
+                <SiteButton href="/contact" variant="secondary">
                   Обсудить внедрение
                 </SiteButton>
               </div>

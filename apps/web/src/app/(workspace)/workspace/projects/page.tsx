@@ -1,13 +1,14 @@
 "use client";
 
 import { SiteButton } from "@/components/site/site-button";
+import { WorkspaceShellState } from "@/features/workspace/workspace-shell-state";
 import { useWorkspaceRuntime } from "@/features/workspace/workspace-runtime";
 
 export default function WorkspaceProjectsPage() {
-  const { bootstrap } = useWorkspaceRuntime();
+  const { bootstrap, error, isLoading, refresh } = useWorkspaceRuntime();
 
   if (!bootstrap) {
-    return null;
+    return <WorkspaceShellState error={error} hasBootstrap={Boolean(bootstrap)} isLoading={isLoading} onRetry={refresh} />;
   }
 
   return (

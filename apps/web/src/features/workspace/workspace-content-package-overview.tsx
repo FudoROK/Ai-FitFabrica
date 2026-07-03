@@ -5,10 +5,11 @@ import { useWorkspaceCapabilityVerdict } from "@/features/workspace/use-workspac
 import { WorkspaceCapabilitySummaryPanel } from "@/features/workspace/workspace-capability-summary-panel";
 import { WorkspaceLockedProductionActions } from "@/features/workspace/workspace-locked-production-actions";
 import { WorkspaceActionCard } from "@/features/workspace/workspace-section-primitives";
+import { WorkspaceShellState } from "@/features/workspace/workspace-shell-state";
 import { useWorkspaceRuntime } from "@/features/workspace/workspace-runtime";
 
 export function WorkspaceContentPackageOverview() {
-  const { bootstrap, hasCapability } = useWorkspaceRuntime();
+  const { bootstrap, error, hasCapability, isLoading, refresh } = useWorkspaceRuntime();
   const canManualExport = hasCapability("manual_export");
   const canPublish = hasCapability("marketplace_publish");
   const canImportCatalog = hasCapability("catalog_import");
@@ -19,7 +20,7 @@ export function WorkspaceContentPackageOverview() {
   });
 
   if (!bootstrap) {
-    return null;
+    return <WorkspaceShellState error={error} hasBootstrap={Boolean(bootstrap)} isLoading={isLoading} onRetry={refresh} />;
   }
 
   const summaryItems = [

@@ -21,6 +21,8 @@ Plan B focused on work that can be completed before Google/Gemini billing is res
 - Added required public route aliases `/login` and `/contact`.
 - Updated public sign-in UI to remove decorative Google OAuth and password-recovery buttons until real auth contracts exist.
 - Updated public navigation/footer to prefer `/login` and `/contact`.
+- Canonicalized remaining public CTAs from legacy `/contacts` to `/contact`, while keeping `/contacts` as a compatibility alias.
+- Added frontend no-billing guardrails so active workspace pages use loading/error/empty shell states instead of silently rendering blank content when workspace bootstrap is unavailable.
 
 ## SQL Tables Added
 
@@ -53,6 +55,9 @@ Fresh local verification passed:
 - `npm run build` -> passed
 - targeted backend/frontend adjacent suite -> `32 passed`
 - full backend pytest -> `1141 passed`, with one existing Authlib deprecation warning
+- no-billing frontend guardrails -> `2 passed`
+- workspace/public adjacent frontend guardrails -> `8 passed`
+- refreshed web `typecheck`, `lint`, and `build` after route/state hardening -> passed
 
 ## Remaining Work After Billing/Auth Restoration
 
