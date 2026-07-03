@@ -10,6 +10,17 @@ export type SignInDto = {
   password: string;
 };
 
+export type AuthSessionResponse = {
+  authenticated: boolean;
+  auth_configured: boolean;
+  user: null;
+};
+
+export type AuthLogoutResponse = {
+  ok: boolean;
+  authenticated: boolean;
+};
+
 export type TryOnWorkflowType = "try_on";
 
 export type TryOnJobStatus =

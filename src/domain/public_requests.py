@@ -35,3 +35,18 @@ class SignInAttemptResult(BaseModel):
     ok: bool = False
     code: str = "auth_not_configured"
     message: str = "Authentication is not configured for this environment."
+
+
+class AuthSessionState(BaseModel):
+    """Public auth session state exposed to the thin frontend."""
+
+    authenticated: bool = False
+    auth_configured: bool = False
+    user: None = None
+
+
+class AuthLogoutResult(BaseModel):
+    """Result returned after idempotent public logout."""
+
+    ok: bool = True
+    authenticated: bool = False

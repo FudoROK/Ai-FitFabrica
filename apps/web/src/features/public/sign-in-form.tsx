@@ -37,6 +37,13 @@ export function SignInForm() {
 
     try {
       const client = new WebApiClient(baseUrl);
+      const session = await client.getAuthSession();
+
+      if (!session.auth_configured) {
+        setError("Production auth не подключен. Вход будет доступен после подключения auth/session provider.");
+        return;
+      }
+
       const response = await client.signIn({ email: email.trim(), password });
 
       if (!response.ok) {

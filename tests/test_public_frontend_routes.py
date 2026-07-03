@@ -14,3 +14,11 @@ def test_sign_in_form_has_no_decorative_auth_buttons() -> None:
     assert "Продолжить с Google" not in source
     assert "Забыли пароль?" not in source
     assert "client.signIn" in source
+
+
+def test_sign_in_form_checks_auth_session_contract() -> None:
+    source = Path("apps/web/src/features/public/sign-in-form.tsx").read_text(encoding="utf-8")
+
+    assert "client.getAuthSession" in source
+    assert "auth_configured" in source
+    assert "auth не подключен" in source

@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Protocol
 from uuid import uuid4
 
-from src.domain.public_requests import DemoRequest, SignInAttemptResult
+from src.domain.public_requests import AuthLogoutResult, AuthSessionState, DemoRequest, SignInAttemptResult
 
 
 class DemoRequestRepository(Protocol):
@@ -47,6 +47,16 @@ class PublicRequestService:
 
         del email
         return SignInAttemptResult()
+
+    async def get_auth_session(self) -> AuthSessionState:
+        """Return the current unauthenticated state until production auth is configured."""
+
+        return AuthSessionState()
+
+    async def logout(self) -> AuthLogoutResult:
+        """Return an idempotent logout result without requiring an active session."""
+
+        return AuthLogoutResult()
 
 
 def _optional_text(value: str | None) -> str | None:

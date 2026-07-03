@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 
 from src.adapters.database.sql.public_request_repositories import SqlDemoRequestRepository
 from src.adapters.public_requests import InMemoryDemoRequestRepository
-from src.domain.public_requests import DemoRequest, PublicEmail
+from src.domain.public_requests import AuthLogoutResult, AuthSessionState, DemoRequest, PublicEmail
 from src.entrypoints.runtime_dependencies import portable_infrastructure
 from src.settings import Settings
 from src.use_cases.public_requests import PublicRequestService
@@ -39,6 +39,21 @@ class SignInPayload(BaseModel):
 
     email: PublicEmail
     password: str = Field(min_length=1, max_length=1024)
+
+
+class AuthSessionResponse(BaseModel):
+    """Current public auth session state."""
+
+    authenticated: bool
+    auth_configured: bool
+    user: None
+
+
+class AuthLogoutResponse(BaseModel):
+    """Public logout response."""
+
+    ok: bool
+    authenticated: bool
 
 
 def _settings(request: Request) -> Settings:
@@ -93,3 +108,28 @@ async def sign_in(payload: SignInPayload, request: Request) -> JSONResponse:
             },
         },
     )
+
+
+@router.get("/auth/session", response_model=AuthSessionResponse)
+async def auth_session(request: Request) -> AuthSessionResponse:
+    """Return the current public auth session without creating frontend state."""
+
+    state: AuthSessionState = await _service(_settings(request)).get_auth_session()
+    return AuthSessionResponse(
+        authenticated=state.authenticated,
+        auth_configured=state.auth_configured,
+        user=state.user,
+    )
+
+
+@router.post("/auth/logout", response_model=AuthLogoutResponse)
+async def logout(request: Request) -> JSONResponse:
+    """Clear the public session cookie idempotently."""
+
+    result: AuthLogoutResult = await _service(_settings(request)).logout()
+    response = JSONResponse(
+        status_code=200,
+        content={"ok": result.ok, "authenticated": result.authenticated},
+    )
+    response.delete_cookie("fitfabrica_session", path="/")
+    return response

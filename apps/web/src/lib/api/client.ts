@@ -35,6 +35,8 @@ import type {
 } from "@/lib/api/business-catalog-contracts";
 import type {
   ApiErrorResponse,
+  AuthLogoutResponse,
+  AuthSessionResponse,
   CreditBalanceResponse,
   CreditLedgerResponse,
   DemoRequestDto,
@@ -90,6 +92,28 @@ export class WebApiClient {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
+  }
+
+  public async getAuthSession(): Promise<AuthSessionResponse> {
+    const response = await fetch(`${this.baseUrl}/auth/session`);
+
+    if (!response.ok) {
+      throw new Error(await this.errorMessage(response));
+    }
+
+    return response.json() as Promise<AuthSessionResponse>;
+  }
+
+  public async logout(): Promise<AuthLogoutResponse> {
+    const response = await fetch(`${this.baseUrl}/auth/logout`, {
+      method: "POST",
+    });
+
+    if (!response.ok) {
+      throw new Error(await this.errorMessage(response));
+    }
+
+    return response.json() as Promise<AuthLogoutResponse>;
   }
 
   public async createTryOnJob(payload: FormData): Promise<TryOnJobCreatedResponse> {

@@ -75,3 +75,29 @@ def test_sign_in_route_fails_closed_until_auth_is_configured() -> None:
     assert response.status_code == 503
     assert response.json()["error"]["code"] == "auth_not_configured"
     assert "secret" not in response.text
+
+
+def test_auth_session_route_reports_unauthenticated_state() -> None:
+    client = _client()
+
+    response = client.get("/auth/session")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "authenticated": False,
+        "auth_configured": False,
+        "user": None,
+    }
+
+
+def test_auth_logout_route_is_idempotent_and_clears_session_cookie() -> None:
+    client = _client()
+
+    response = client.post("/auth/logout")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "ok": True,
+        "authenticated": False,
+    }
+    assert "fitfabrica_session=" in response.headers["set-cookie"]
