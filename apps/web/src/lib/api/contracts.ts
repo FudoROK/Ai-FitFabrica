@@ -21,6 +21,22 @@ export type AuthLogoutResponse = {
   authenticated: boolean;
 };
 
+export type ReadinessServiceStatus = "configured" | "ready" | "blocked" | "disabled";
+
+export type ReadinessService = {
+  status: ReadinessServiceStatus;
+  detail: string;
+};
+
+export type NoBillingReadinessResponse = {
+  ok: boolean;
+  mode: "no_billing_preparation";
+  services: Record<string, ReadinessService>;
+  blockers: string[];
+  safe_without_billing: string[];
+  post_billing_checks: string[];
+};
+
 export type TryOnWorkflowType = "try_on";
 
 export type TryOnJobStatus =

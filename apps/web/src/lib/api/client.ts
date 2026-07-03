@@ -41,6 +41,7 @@ import type {
   CreditLedgerResponse,
   DemoRequestDto,
   GarmentWearControlListResponse,
+  NoBillingReadinessResponse,
   ProductCardCreatePayload,
   ProductCardGarmentAnalysisResponse,
   ProductCardJobResponse,
@@ -114,6 +115,20 @@ export class WebApiClient {
     }
 
     return response.json() as Promise<AuthLogoutResponse>;
+  }
+
+  public async getNoBillingReadiness(statusToken: string): Promise<NoBillingReadinessResponse> {
+    const response = await fetch(`${this.baseUrl}/ready`, {
+      headers: {
+        "X-Status-Token": statusToken,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(await this.errorMessage(response));
+    }
+
+    return response.json() as Promise<NoBillingReadinessResponse>;
   }
 
   public async createTryOnJob(payload: FormData): Promise<TryOnJobCreatedResponse> {

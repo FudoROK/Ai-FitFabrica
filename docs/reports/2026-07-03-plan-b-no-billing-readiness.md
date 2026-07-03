@@ -25,6 +25,7 @@ Plan B focused on work that can be completed before Google/Gemini billing is res
 - Added frontend no-billing guardrails so active workspace pages use loading/error/empty shell states instead of silently rendering blank content when workspace bootstrap is unavailable.
 - Added protected `GET /ready` no-billing readiness diagnostics. The endpoint reports SQL, Redis, object storage, Qdrant, auth, billing, AI provider, image editing, search discovery, and admin-surface configuration without calling paid providers.
 - Extended status endpoint security guardrails so `/ready` follows the same token/loopback/public-opt-in policy as `/health` and `/time`.
+- Added internal frontend route `/admin/readiness` behind `NEXT_PUBLIC_ENABLE_ADMIN_READINESS_UI=true`. The page uses the typed API client, requires `STATUS_ENDPOINT_TOKEN`, reads backend `/ready`, and renders blockers, safe no-billing flows, service statuses, and post-billing checks.
 
 ## SQL Tables Added
 
@@ -45,6 +46,7 @@ Stores public website demo/contact requests:
 - `POST /demo-request`: persists public contact/demo requests in PostgreSQL when SQL is configured.
 - `POST /auth/sign-in`: intentionally does not authenticate yet; it fails closed until the production auth contour is connected.
 - `GET /ready`: returns a backend-owned no-billing readiness map, expected blockers, flows safe to test before billing, and post-billing checks.
+- `/admin/readiness`: internal admin diagnostics UI for the same readiness contract; not linked from workspace navigation.
 
 ## Verification
 
@@ -62,6 +64,8 @@ Fresh local verification passed:
 - workspace/public adjacent frontend guardrails -> `8 passed`
 - refreshed web `typecheck`, `lint`, and `build` after route/state hardening -> passed
 - `pytest tests/test_status_routes_health_runtime.py tests/test_runtime_security.py -q` -> passed after adding `/ready`
+- `pytest tests/test_admin_readiness_page.py -q` -> passed after adding `/admin/readiness`
+- `npm run typecheck` -> passed after adding typed frontend readiness contracts
 
 ## Remaining Work After Billing/Auth Restoration
 

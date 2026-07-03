@@ -59,6 +59,13 @@ Workspace:
 - `/workspace/style-profile`
 - `/workspace/chat`
 
+Internal admin:
+
+- `/admin/readiness`
+- `/admin/business-catalog`
+- `/admin/business-accounts`
+- `/admin/taxonomy`
+
 ## Active API Routes
 
 - `GET /health`
