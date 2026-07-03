@@ -34,13 +34,18 @@ Public:
 - `/capabilities`
 - `/pricing`
 - `/how-it-works`
+- `/contact`
 - `/contacts`
 - `/privacy`
+- `/login`
 - `/sign-in`
 
 Workspace:
 
 - `/workspace`
+- `/workspace/business-catalog`
+- `/workspace/business-catalog/import`
+- `/workspace/business-catalog/new`
 - `/workspace/new-fitting`
 - `/workspace/try-on`
 - `/workspace/try-on/new`

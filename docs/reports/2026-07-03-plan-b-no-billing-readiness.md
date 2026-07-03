@@ -26,6 +26,7 @@ Plan B focused on work that can be completed before Google/Gemini billing is res
 - Added protected `GET /ready` no-billing readiness diagnostics. The endpoint reports SQL, Redis, object storage, Qdrant, auth, billing, AI provider, image editing, search discovery, and admin-surface configuration without calling paid providers.
 - Extended status endpoint security guardrails so `/ready` follows the same token/loopback/public-opt-in policy as `/health` and `/time`.
 - Added internal frontend route `/admin/readiness` behind `NEXT_PUBLIC_ENABLE_ADMIN_READINESS_UI=true`. The page uses the typed API client, requires `STATUS_ENDPOINT_TOKEN`, reads backend `/ready`, and renders blockers, safe no-billing flows, service statuses, and post-billing checks.
+- Added frontend acceptance guardrails that keep README route documentation aligned with the Next app tree, prevent `href="#"` placeholder links, and require active frontend forms to use real submit handlers.
 
 ## SQL Tables Added
 
@@ -66,6 +67,8 @@ Fresh local verification passed:
 - `pytest tests/test_status_routes_health_runtime.py tests/test_runtime_security.py -q` -> passed after adding `/ready`
 - `pytest tests/test_admin_readiness_page.py -q` -> passed after adding `/admin/readiness`
 - `npm run typecheck` -> passed after adding typed frontend readiness contracts
+- `pytest tests/test_no_billing_frontend_guardrails.py tests/test_frontend_route_documentation.py tests/test_public_frontend_routes.py tests/test_admin_readiness_page.py tests/test_admin_business_catalog_page.py tests/test_admin_business_accounts_page.py tests/test_admin_taxonomy_page.py -q` -> `15 passed`
+- `npm run lint`, `npm run typecheck`, and `npm run build` -> passed after frontend acceptance sweep; build rendered 38 active routes.
 
 ## Remaining Work After Billing/Auth Restoration
 
