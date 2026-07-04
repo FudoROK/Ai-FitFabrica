@@ -23,6 +23,7 @@ apps/web (Next.js, TypeScript)
 - `src/adk_agents` - FitFabrica product-agent catalog.
 - `tests` - backend and frontend contract/regression coverage.
 - `docs` - project documentation and runbooks.
+- `scripts/post_billing_acceptance_gate.py` - local/deployed gate before paid post-billing acceptance.
 
 ## Active Web Routes
 
