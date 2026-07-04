@@ -19,6 +19,14 @@ def test_staging_no_billing_smoke_matrix_is_safe_by_default() -> None:
     assert "auth_sign_in_fail_closed" in names
     assert "frontend_home" in names
     assert "frontend_admin_readiness" in names
+    assert "frontend_b2c_for_you" in names
+    assert "frontend_b2c_try_on_new" in names
+    assert "frontend_b2c_similar_search" in names
+    assert "frontend_b2c_outfit_builder" in names
+    assert "frontend_b2b_business_catalog" in names
+    assert "frontend_b2b_product_card" in names
+    assert "frontend_b2b_content_package" in names
+    assert "frontend_b2b_admin_business_catalog" in names
     assert "demo_request_write" not in names
 
 

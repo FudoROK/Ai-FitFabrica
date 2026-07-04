@@ -70,10 +70,22 @@ def _check_matrix(*, include_demo_request: bool) -> list[SmokeCheck]:
             payload={"email": "smoke@example.com", "password": "not-a-real-password"},
         ),
         SmokeCheck(name="frontend_home", target="web", method="GET", path="/", expected_statuses={200}),
+        SmokeCheck(name="frontend_business", target="web", method="GET", path="/business", expected_statuses={200}),
+        SmokeCheck(name="frontend_b2c_for_you", target="web", method="GET", path="/for-you", expected_statuses={200}),
+        SmokeCheck(name="frontend_pricing", target="web", method="GET", path="/pricing", expected_statuses={200}),
         SmokeCheck(name="frontend_login", target="web", method="GET", path="/login", expected_statuses={200}),
         SmokeCheck(name="frontend_contact", target="web", method="GET", path="/contact", expected_statuses={200}),
         SmokeCheck(name="frontend_workspace", target="web", method="GET", path="/workspace", expected_statuses={200}),
+        SmokeCheck(name="frontend_b2c_try_on_new", target="web", method="GET", path="/workspace/try-on/new", expected_statuses={200}),
+        SmokeCheck(name="frontend_b2c_similar_search", target="web", method="GET", path="/workspace/similar-search", expected_statuses={200}),
+        SmokeCheck(name="frontend_b2c_outfit_builder", target="web", method="GET", path="/workspace/outfit-builder", expected_statuses={200}),
+        SmokeCheck(name="frontend_b2b_business_catalog", target="web", method="GET", path="/workspace/business-catalog", expected_statuses={200}),
+        SmokeCheck(name="frontend_b2b_product_card", target="web", method="GET", path="/workspace/product-card", expected_statuses={200}),
+        SmokeCheck(name="frontend_b2b_content_package", target="web", method="GET", path="/workspace/content-package", expected_statuses={200}),
+        SmokeCheck(name="frontend_b2b_business_profile", target="web", method="GET", path="/workspace/business-profile", expected_statuses={200}),
         SmokeCheck(name="frontend_admin_readiness", target="web", method="GET", path="/admin/readiness", expected_statuses={200}),
+        SmokeCheck(name="frontend_b2b_admin_business_catalog", target="web", method="GET", path="/admin/business-catalog", expected_statuses={200}),
+        SmokeCheck(name="frontend_b2b_admin_taxonomy", target="web", method="GET", path="/admin/taxonomy", expected_statuses={200}),
     ]
     if include_demo_request:
         checks.append(

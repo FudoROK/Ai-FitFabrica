@@ -169,7 +169,7 @@ $workspace = Invoke-WebRequest `
 
 ## 10.1 No-billing staging smoke
 
-Этот smoke не вызывает платные AI/provider workflow. Он проверяет безопасные публичные поверхности после деплоя: `/health`, `/ready`, workspace bootstrap, fail-closed auth, public site routes и `/admin/readiness`.
+Этот smoke не вызывает платные AI/provider workflow. Он проверяет безопасные публичные поверхности после деплоя: `/health`, `/ready`, workspace bootstrap, fail-closed auth, public site routes, B2C workspace routes, B2B workspace routes и admin readiness/review routes.
 
 ```powershell
 cd "C:\Code\Ai Fitfabrica"

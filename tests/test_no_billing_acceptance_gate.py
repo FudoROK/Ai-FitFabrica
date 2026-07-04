@@ -13,6 +13,7 @@ from scripts import no_billing_acceptance_gate as gate
 def test_no_billing_gate_command_matrix_covers_backend_frontend_and_readiness() -> None:
     commands = gate._command_matrix(include_frontend_build=True, include_full_backend=False)
     names = {command.name for command in commands}
+    backend_command = next(command for command in commands if command.name == "backend_no_billing_guardrails")
 
     assert "backend_no_billing_guardrails" in names
     assert "client_readiness_gate" in names
@@ -23,6 +24,8 @@ def test_no_billing_gate_command_matrix_covers_backend_frontend_and_readiness() 
     assert "web_lint" in names
     assert "web_build" in names
     assert "full_backend_pytest" not in names
+    assert "tests/test_client_readiness_gate.py" in backend_command.command
+    assert "tests/test_staging_no_billing_smoke_script.py" in backend_command.command
 
 
 def test_no_billing_gate_can_include_full_backend_suite() -> None:
