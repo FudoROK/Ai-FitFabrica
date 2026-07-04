@@ -121,6 +121,10 @@ Frontend должен обращаться к публичному backend.
 cd "C:\Code\Ai Fitfabrica\apps\web"
 
 $env:NEXT_PUBLIC_API_BASE_URL="https://api.fit.aisoulfabrica.com"
+$env:NEXT_PUBLIC_ENABLE_ADMIN_READINESS_UI="true"
+$env:NEXT_PUBLIC_ENABLE_ADMIN_BUSINESS_CATALOG_UI="true"
+$env:NEXT_PUBLIC_ENABLE_ADMIN_TAXONOMY_UI="true"
+$env:NEXT_PUBLIC_ENABLE_ADMIN_BUSINESS_ACCOUNTS_UI="true"
 
 npm ci
 npm run lint
@@ -230,6 +234,10 @@ Remove-Item -LiteralPath "C:\Code\Ai Fitfabrica\backend-deploy.tar.gz" -Force
 cd "C:\Code\Ai Fitfabrica\apps\web"
 
 $env:NEXT_PUBLIC_API_BASE_URL="https://api.fit.aisoulfabrica.com"
+$env:NEXT_PUBLIC_ENABLE_ADMIN_READINESS_UI="true"
+$env:NEXT_PUBLIC_ENABLE_ADMIN_BUSINESS_CATALOG_UI="true"
+$env:NEXT_PUBLIC_ENABLE_ADMIN_TAXONOMY_UI="true"
+$env:NEXT_PUBLIC_ENABLE_ADMIN_BUSINESS_ACCOUNTS_UI="true"
 
 npm ci
 npm run lint
