@@ -46,4 +46,4 @@ After the gate is ready, run the command list emitted in `next_commands`:
 .venv\Scripts\python.exe scripts\business_catalog_staging_smoke.py
 ```
 
-Record results in `docs/reports/YYYY-MM-DD-post-billing-live-acceptance.md`.
+Copy `docs/reports/templates/post_billing_live_acceptance_template.md` to `docs/reports/YYYY-MM-DD-post-billing-live-acceptance.md` and record the results there.
