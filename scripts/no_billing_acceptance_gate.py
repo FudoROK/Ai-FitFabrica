@@ -82,6 +82,11 @@ def _command_matrix(*, include_frontend_build: bool, include_full_backend: bool)
             cwd=".",
         ),
         GateCommand(
+            name="client_readiness_gate",
+            command=(python, "scripts/client_readiness_gate.py"),
+            cwd=".",
+        ),
+        GateCommand(
             name="architecture_guardrail",
             command=(python, "scripts/check_architecture.py"),
             cwd=".",

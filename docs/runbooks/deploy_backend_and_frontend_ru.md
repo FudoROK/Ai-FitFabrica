@@ -39,6 +39,8 @@ cd "C:\Code\Ai Fitfabrica"
 
 .venv\Scripts\python.exe scripts/no_billing_acceptance_gate.py
 
+.venv\Scripts\python.exe scripts/client_readiness_gate.py
+
 .venv\Scripts\python.exe scripts\check_architecture.py
 .venv\Scripts\python.exe -m compileall -q src
 .venv\Scripts\python.exe -m pytest -q -x --maxfail=1
