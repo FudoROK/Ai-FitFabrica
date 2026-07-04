@@ -13,6 +13,7 @@ def test_required_artifact_checks_cover_post_billing_flows() -> None:
     checks = gate._local_artifact_checks()
 
     assert checks["post_billing_plan"]["status"] == "passed"
+    assert checks["pre_billing_client_acceptance_checklist"]["status"] == "passed"
     assert checks["post_billing_gate_runbook"]["status"] == "passed"
     assert checks["readiness_endpoint_tests"]["status"] == "passed"
     assert checks["frontend_readiness_ui"]["status"] == "passed"

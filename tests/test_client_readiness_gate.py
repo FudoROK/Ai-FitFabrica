@@ -9,6 +9,21 @@ import sys
 from scripts import client_readiness_gate as gate
 
 
+def test_pre_billing_client_acceptance_checklist_documents_all_flows() -> None:
+    """The human acceptance checklist must stay aligned with the client readiness matrix."""
+    checklist = gate.PROJECT_ROOT.joinpath("docs/runbooks/pre_billing_client_acceptance_checklist.md").read_text(
+        encoding="utf-8"
+    )
+
+    for flow in gate.build_flow_matrix():
+        assert str(flow["id"]) in checklist
+    assert "scripts/client_readiness_gate.py" in checklist
+    assert "scripts/no_billing_acceptance_gate.py --full-backend" in checklist
+    assert "scripts/staging_no_billing_smoke.py" in checklist
+    assert "Pass criteria" in checklist
+    assert "Blocked until billing/auth/provider activation" in checklist
+
+
 def test_flow_matrix_covers_b2c_and_b2b_customer_contours() -> None:
     """The gate must cover every customer contour we plan to test before billing."""
     matrix = gate.build_flow_matrix()

@@ -13,6 +13,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 REQUIRED_ARTIFACTS = {
     "post_billing_plan": "docs/superpowers/plans/2026-07-02-post-billing-testing-readiness-plan.md",
+    "pre_billing_client_acceptance_checklist": "docs/runbooks/pre_billing_client_acceptance_checklist.md",
     "post_billing_gate_runbook": "docs/runbooks/post_billing_acceptance_gate.md",
     "plan_b_report": "docs/reports/2026-07-03-plan-b-no-billing-readiness.md",
     "readiness_endpoint_tests": "tests/test_status_routes_health_runtime.py",
