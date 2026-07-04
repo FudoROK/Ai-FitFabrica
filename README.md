@@ -25,6 +25,7 @@ apps/web (Next.js, TypeScript)
 - `docs` - project documentation and runbooks.
 - `scripts/no_billing_acceptance_gate.py` - local gate for pre-billing backend/frontend readiness.
 - `scripts/post_billing_acceptance_gate.py` - local/deployed gate before paid post-billing acceptance.
+- `scripts/staging_no_billing_smoke.py` - safe deployed smoke for no-billing backend/frontend surfaces.
 
 ## Active Web Routes
 

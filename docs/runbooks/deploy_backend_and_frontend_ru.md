@@ -37,6 +37,8 @@ gcloud compute ssh ubuntu@fitfabrica-staging-vm `
 ```powershell
 cd "C:\Code\Ai Fitfabrica"
 
+.venv\Scripts\python.exe scripts/no_billing_acceptance_gate.py
+
 .venv\Scripts\python.exe scripts\check_architecture.py
 .venv\Scripts\python.exe -m compileall -q src
 .venv\Scripts\python.exe -m pytest -q -x --maxfail=1
@@ -158,6 +160,35 @@ $workspace = Invoke-WebRequest `
 ```
 
 Оба запроса должны вернуть `200`.
+
+## 10.1 No-billing staging smoke
+
+Этот smoke не вызывает платные AI/provider workflow. Он проверяет безопасные публичные поверхности после деплоя: `/health`, `/ready`, workspace bootstrap, fail-closed auth, public site routes и `/admin/readiness`.
+
+```powershell
+cd "C:\Code\Ai Fitfabrica"
+
+.venv\Scripts\python.exe scripts/staging_no_billing_smoke.py `
+  --api-base-url "https://api.fit.aisoulfabrica.com" `
+  --web-base-url "https://fit.aisoulfabrica.com" `
+  --status-token "<STATUS_ENDPOINT_TOKEN>"
+```
+
+Ожидаемый результат:
+
+- `readiness_status` = `ready`;
+- `failed_checks` пустой;
+- `/auth/sign-in` возвращает fail-closed `503`, пока production auth не подключён.
+
+Опционально, если нужно проверить запись публичной заявки в SQL:
+
+```powershell
+.venv\Scripts\python.exe scripts/staging_no_billing_smoke.py `
+  --api-base-url "https://api.fit.aisoulfabrica.com" `
+  --web-base-url "https://fit.aisoulfabrica.com" `
+  --status-token "<STATUS_ENDPOINT_TOKEN>" `
+  --include-demo-request
+```
 
 ## 11. Удалить временный архив
 

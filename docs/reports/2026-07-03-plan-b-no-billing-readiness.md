@@ -29,6 +29,7 @@ Plan B focused on work that can be completed before Google/Gemini billing is res
 - Added frontend acceptance guardrails that keep README route documentation aligned with the Next app tree, prevent `href="#"` placeholder links, and require active frontend forms to use real submit handlers.
 - Added `scripts/post_billing_acceptance_gate.py` and `docs/runbooks/post_billing_acceptance_gate.md` so the operator can run a local artifact gate and optional deployed `/ready` gate before paid acceptance.
 - Added `scripts/no_billing_acceptance_gate.py` and `docs/runbooks/no_billing_acceptance_gate.md` so pre-billing backend/frontend readiness can be checked with one local command.
+- Added `scripts/staging_no_billing_smoke.py` and deploy runbook instructions for safe deployed checks that avoid paid AI/provider calls.
 
 ## SQL Tables Added
 
@@ -75,6 +76,7 @@ Fresh local verification passed:
 - `python scripts/post_billing_acceptance_gate.py` -> returned `readiness_status=ready` for local artifact checks and skipped deployed `/ready` when no API URL was provided.
 - `pytest tests/test_no_billing_acceptance_gate.py -q` -> passed after adding the executable no-billing local gate.
 - `python scripts/no_billing_acceptance_gate.py` -> returned `readiness_status=ready`; it ran 49 targeted backend/frontend guardrail tests, post-billing artifact gate, architecture guardrail, `compileall`, web `typecheck`, web `lint`, and web `build`.
+- `pytest tests/test_staging_no_billing_smoke_script.py tests/test_deploy_runbook_no_billing_smoke.py -q` -> passed after adding the staging no-billing smoke script and deploy runbook coverage.
 
 ## Remaining Work After Billing/Auth Restoration
 
