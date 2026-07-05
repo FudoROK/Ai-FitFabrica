@@ -4,9 +4,11 @@ from pathlib import Path
 
 
 TARGET_FILES = [
+    "apps/web/src/app/(public)/about/page.tsx",
     "apps/web/src/app/(public)/business/page.tsx",
     "apps/web/src/app/(public)/capabilities/page.tsx",
     "apps/web/src/app/(public)/contacts/page.tsx",
+    "apps/web/src/app/(public)/features/page.tsx",
     "apps/web/src/app/(public)/for-you/page.tsx",
     "apps/web/src/app/(public)/how-it-works/page.tsx",
     "apps/web/src/app/(public)/page.tsx",

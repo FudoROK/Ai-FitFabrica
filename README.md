@@ -32,9 +32,11 @@ apps/web (Next.js, TypeScript)
 Public:
 
 - `/`
+- `/about`
 - `/for-you`
 - `/business`
 - `/capabilities`
+- `/features`
 - `/pricing`
 - `/how-it-works`
 - `/contact`
