@@ -65,6 +65,7 @@ def _command_matrix(*, include_frontend_build: bool, include_full_backend: bool)
                 "tests/test_public_request_routes.py",
                 "tests/test_public_frontend_routes.py",
                 "tests/test_no_billing_frontend_guardrails.py",
+                "tests/test_workspace_text_encoding.py",
                 "tests/test_frontend_route_documentation.py",
                 "tests/test_admin_readiness_page.py",
                 "tests/test_admin_business_catalog_page.py",

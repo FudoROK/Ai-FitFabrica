@@ -27,6 +27,7 @@ def test_no_billing_gate_command_matrix_covers_backend_frontend_and_readiness() 
     assert "web_build" in names
     assert "full_backend_pytest" not in names
     assert "tests/test_client_readiness_gate.py" in backend_command.command
+    assert "tests/test_workspace_text_encoding.py" in backend_command.command
     assert "tests/test_staging_no_billing_smoke_script.py" in backend_command.command
 
 

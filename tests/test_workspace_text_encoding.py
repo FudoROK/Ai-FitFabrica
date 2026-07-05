@@ -24,6 +24,7 @@ TARGET_FILES = [
     "apps/web/src/features/workspace/workspace-content-package-overview.tsx",
     "apps/web/src/features/workspace/workspace-credits-view.tsx",
     "apps/web/src/features/workspace/workspace-integrations-form.tsx",
+    "apps/web/src/features/workspace/workspace-locked-production-actions.tsx",
     "apps/web/src/features/workspace/workspace-product-card-overview.tsx",
     "apps/web/src/features/workspace/workspace-runtime.tsx",
     "apps/web/src/features/workspace/workspace-settings-overview.tsx",
@@ -41,6 +42,8 @@ MOJIBAKE_MARKERS = [
     "СЊ",
     "вЂ”",
 ]
+
+MOJIBAKE_MARKERS.extend(["Рџ", "РЎ", "РЅ", "Рє", "СЂ", "СЃ"])
 
 
 def test_frontend_ui_files_do_not_contain_mojibake_sequences() -> None:

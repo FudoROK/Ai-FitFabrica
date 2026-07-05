@@ -24,6 +24,7 @@ REQUIRED_ARTIFACTS = {
     "readiness_endpoint_tests": "tests/test_status_routes_health_runtime.py",
     "frontend_readiness_ui": "tests/test_admin_readiness_page.py",
     "frontend_acceptance_guardrails": "tests/test_no_billing_frontend_guardrails.py",
+    "frontend_text_encoding_guardrail": "tests/test_workspace_text_encoding.py",
     "route_documentation_guardrail": "tests/test_frontend_route_documentation.py",
     "try_on_real_activation_smoke": "scripts/try_on_real_activation_smoke.py",
     "try_on_http_worker_smoke": "scripts/try_on_http_worker_live_smoke.py",

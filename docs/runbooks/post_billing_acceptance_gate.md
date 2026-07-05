@@ -14,6 +14,7 @@ Expected:
 
 - `readiness_status` is `ready`;
 - `checks.local_artifacts.status` is `passed`;
+- `frontend_text_encoding_guardrail` is present in local artifacts;
 - `checks.ready_endpoint.status` may be `skipped` when no deployed API URL is provided.
 
 ## Deployed Readiness Gate

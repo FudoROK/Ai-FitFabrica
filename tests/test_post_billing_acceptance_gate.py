@@ -22,6 +22,7 @@ def test_required_artifact_checks_cover_post_billing_flows() -> None:
     assert checks["post_billing_gate_runbook"]["status"] == "passed"
     assert checks["readiness_endpoint_tests"]["status"] == "passed"
     assert checks["frontend_readiness_ui"]["status"] == "passed"
+    assert checks["frontend_text_encoding_guardrail"]["status"] == "passed"
     assert checks["try_on_real_activation_smoke"]["status"] == "passed"
     assert checks["business_catalog_staging_smoke"]["status"] == "passed"
     assert checks["billing_guardrails"]["status"] == "passed"

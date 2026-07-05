@@ -30,6 +30,7 @@ Run against deployed staging after backend and frontend deploy:
 - `no_billing_acceptance_gate.py --full-backend` returns `readiness_status=ready`.
 - `staging_no_billing_smoke.py` returns `readiness_status=ready` after deploy.
 - Frontend routes return HTTP `200` and render nonblank B2C/B2B pages.
+- Frontend UI text guardrail passes, so active client pages do not ship mojibake text.
 - Backend routes return structured success or intentional fail-closed errors.
 - No test path calls paid AI/provider workflows.
 - No frontend code calculates credits, billing, orchestration, retry, or AI decisions.
