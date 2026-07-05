@@ -105,7 +105,9 @@ Priority 2, enterprise polish:
 
 2026-07-05 update: the production infrastructure readiness gate has been implemented as `scripts/production_infrastructure_readiness_gate.py`, covered by tests, documented in `docs/runbooks/production_infrastructure_readiness_gate.md`, and integrated into `post_billing_acceptance_gate.py`.
 
-The next no-billing hardening block should now be a focused fallback-usage audit: production env must not silently use in-memory repositories, queues, storage, fake providers, or sandbox generation for customer workflows.
+2026-07-05 update: the focused runtime fallback-usage audit has been implemented as `scripts/production_fallback_usage_audit.py`, covered by tests, documented in `docs/runbooks/production_fallback_usage_audit.md`, and integrated into no-billing and post-billing acceptance gates.
+
+The next no-billing hardening block should now be npm audit evidence and owner-status documentation refresh, so pre-billing and post-billing operators use the current gate truth instead of older snapshots.
 
 ## Current Conclusion
 

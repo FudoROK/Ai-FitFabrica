@@ -76,6 +76,7 @@ def _command_matrix(*, include_frontend_build: bool, include_full_backend: bool)
                 "tests/test_auth_readiness_gate.py",
                 "tests/test_billing_readiness_gate.py",
                 "tests/test_client_readiness_gate.py",
+                "tests/test_production_fallback_usage_audit.py",
                 "tests/test_staging_no_billing_smoke_script.py",
                 "-q",
             ),
@@ -104,6 +105,11 @@ def _command_matrix(*, include_frontend_build: bool, include_full_backend: bool)
         GateCommand(
             name="architecture_guardrail",
             command=(python, "scripts/check_architecture.py"),
+            cwd=".",
+        ),
+        GateCommand(
+            name="production_fallback_usage_audit",
+            command=(python, "scripts/production_fallback_usage_audit.py", "--require-ready"),
             cwd=".",
         ),
         GateCommand(
