@@ -93,6 +93,26 @@ def test_load_settings_reads_admin_costs_flag(monkeypatch):
     assert settings.enable_admin_costs is True
 
 
+def test_load_settings_defaults_public_auth_to_disabled(monkeypatch):
+    _set_minimal_valid_vertex_env(monkeypatch)
+
+    settings = load_settings()
+
+    assert settings.auth_provider == "disabled"
+    assert settings.auth_session_cookie_name == "fitfabrica_session"
+
+
+def test_load_settings_reads_public_auth_activation_contract(monkeypatch):
+    _set_minimal_valid_vertex_env(monkeypatch)
+    monkeypatch.setenv("AUTH_PROVIDER", "firebase")
+    monkeypatch.setenv("AUTH_SESSION_COOKIE_NAME", "fitfabrica_auth")
+
+    settings = load_settings()
+
+    assert settings.auth_provider == "firebase"
+    assert settings.auth_session_cookie_name == "fitfabrica_auth"
+
+
 def test_load_settings_defaults_search_engine_discovery_to_disabled(monkeypatch):
     _set_minimal_valid_vertex_env(monkeypatch)
 

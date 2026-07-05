@@ -80,6 +80,11 @@ class AppSettingsMixin(BaseModel):
         validation_alias=AliasChoices("ALLOW_UNSAFE_ADMIN_HEADER_AUTH"),
     )
     status_endpoint_token: Optional[str] = Field(default=None, validation_alias=AliasChoices("STATUS_ENDPOINT_TOKEN"))
+    auth_provider: str = Field(default="disabled", validation_alias=AliasChoices("AUTH_PROVIDER"))
+    auth_session_cookie_name: str = Field(
+        default="fitfabrica_session",
+        validation_alias=AliasChoices("AUTH_SESSION_COOKIE_NAME"),
+    )
 
     @field_validator("gcp_project_id")
     @classmethod

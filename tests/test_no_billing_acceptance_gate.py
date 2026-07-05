@@ -16,6 +16,7 @@ def test_no_billing_gate_command_matrix_covers_backend_frontend_and_readiness() 
     backend_command = next(command for command in commands if command.name == "backend_no_billing_guardrails")
 
     assert "backend_no_billing_guardrails" in names
+    assert "auth_readiness_gate" in names
     assert "client_readiness_gate" in names
     assert "post_billing_artifact_gate" in names
     assert "architecture_guardrail" in names
