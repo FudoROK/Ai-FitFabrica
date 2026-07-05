@@ -9,6 +9,7 @@ Run locally from the repository root:
 ```powershell
 .venv\Scripts\python.exe scripts/client_readiness_gate.py
 .venv\Scripts\python.exe scripts/auth_readiness_gate.py
+.venv\Scripts\python.exe scripts/billing_readiness_gate.py
 .venv\Scripts\python.exe scripts/no_billing_acceptance_gate.py --full-backend
 ```
 
@@ -25,6 +26,7 @@ Run against deployed staging after backend and frontend deploy:
 
 - `client_readiness_gate` returns `readiness_status=ready` and no failed flow checks.
 - `auth_readiness_gate` returns `readiness_status=ready` with `AUTH_PROVIDER=disabled` and fail-closed sign-in behavior.
+- `billing_readiness_gate` returns `readiness_status=ready` with `BILLING_CORE_ENABLED=false` and backend-owned ledger behavior.
 - `no_billing_acceptance_gate.py --full-backend` returns `readiness_status=ready`.
 - `staging_no_billing_smoke.py` returns `readiness_status=ready` after deploy.
 - Frontend routes return HTTP `200` and render nonblank B2C/B2B pages.

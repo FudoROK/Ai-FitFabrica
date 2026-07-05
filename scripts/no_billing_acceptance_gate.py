@@ -73,6 +73,7 @@ def _command_matrix(*, include_frontend_build: bool, include_full_backend: bool)
                 "tests/test_post_billing_acceptance_gate.py",
                 "tests/test_no_billing_acceptance_gate.py",
                 "tests/test_auth_readiness_gate.py",
+                "tests/test_billing_readiness_gate.py",
                 "tests/test_client_readiness_gate.py",
                 "tests/test_staging_no_billing_smoke_script.py",
                 "-q",
@@ -92,6 +93,11 @@ def _command_matrix(*, include_frontend_build: bool, include_full_backend: bool)
         GateCommand(
             name="auth_readiness_gate",
             command=(python, "scripts/auth_readiness_gate.py"),
+            cwd=".",
+        ),
+        GateCommand(
+            name="billing_readiness_gate",
+            command=(python, "scripts/billing_readiness_gate.py"),
             cwd=".",
         ),
         GateCommand(
