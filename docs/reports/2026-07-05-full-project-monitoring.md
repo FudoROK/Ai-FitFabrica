@@ -89,11 +89,10 @@ Recommendation: do not refactor these randomly. Split only when touching a featu
 
 Priority 1, useful before billing:
 
-1. Add a production infrastructure readiness gate that explicitly blocks production-like envs when SQL, Redis, S3, auth, billing, provider, and admin tokens are incomplete.
-2. Add a focused audit guardrail for active runtime fallback usage: production env must not silently use in-memory repositories/queues/storage for customer workflows.
-3. Refresh `docs/04_OWNER_REMAINING_WORK.md` or replace it with an updated owner-facing status document based on current gates and test counts.
-4. Add npm audit evidence to the acceptance flow. Previous owner docs mention npm audit findings; current pre-billing gate does not record audit status.
-5. Add a small route/action audit script that enumerates active Next routes, verifies README/docs alignment, and rejects missing canonical project routes.
+1. Add a focused audit guardrail for active runtime fallback usage: production env must not silently use in-memory repositories/queues/storage for customer workflows.
+2. Refresh `docs/04_OWNER_REMAINING_WORK.md` or replace it with an updated owner-facing status document based on current gates and test counts.
+3. Add npm audit evidence to the acceptance flow. Previous owner docs mention npm audit findings; current pre-billing gate does not record audit status.
+4. Add a small route/action audit script that enumerates active Next routes, verifies README/docs alignment, and rejects missing canonical project routes.
 
 Priority 2, enterprise polish:
 
@@ -104,17 +103,9 @@ Priority 2, enterprise polish:
 
 ## Recommended Next Step
 
-Implement Priority 1 item 1: a production infrastructure readiness gate.
+2026-07-05 update: the production infrastructure readiness gate has been implemented as `scripts/production_infrastructure_readiness_gate.py`, covered by tests, documented in `docs/runbooks/production_infrastructure_readiness_gate.md`, and integrated into `post_billing_acceptance_gate.py`.
 
-This is the highest-value next no-billing task because it prevents a dangerous state after billing is enabled: the app looking ready while any production-critical adapter still falls back to local/in-memory/sandbox behavior.
-
-Expected scope:
-
-- new `scripts/production_infrastructure_readiness_gate.py`;
-- tests for fail-closed production checks;
-- integration into post-billing acceptance gate;
-- runbook update;
-- no changes to business behavior.
+The next no-billing hardening block should now be a focused fallback-usage audit: production env must not silently use in-memory repositories, queues, storage, fake providers, or sandbox generation for customer workflows.
 
 ## Current Conclusion
 

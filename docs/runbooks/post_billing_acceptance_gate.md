@@ -15,6 +15,7 @@ Expected:
 - `readiness_status` is `ready`;
 - `checks.local_artifacts.status` is `passed`;
 - `frontend_text_encoding_guardrail` is present in local artifacts;
+- `production_infrastructure_readiness_gate` is present in local artifacts;
 - `checks.ready_endpoint.status` may be `skipped` when no deployed API URL is provided.
 
 ## Deployed Readiness Gate
@@ -44,6 +45,7 @@ After the gate is ready, run the command list emitted in `next_commands`:
 .venv\Scripts\python.exe scripts\platform_foundation_smoke.py --require-ready
 .venv\Scripts\python.exe scripts\auth_readiness_gate.py
 .venv\Scripts\python.exe scripts\billing_readiness_gate.py
+.venv\Scripts\python.exe scripts\production_infrastructure_readiness_gate.py --require-production
 .venv\Scripts\python.exe scripts\business_catalog_search_index_readiness.py --require-db
 .venv\Scripts\python.exe scripts\try_on_real_activation_smoke.py --require-ready
 .venv\Scripts\python.exe scripts\business_catalog_staging_smoke.py

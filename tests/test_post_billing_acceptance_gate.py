@@ -19,6 +19,8 @@ def test_required_artifact_checks_cover_post_billing_flows() -> None:
     assert checks["auth_readiness_runbook"]["status"] == "passed"
     assert checks["billing_readiness_gate"]["status"] == "passed"
     assert checks["billing_readiness_runbook"]["status"] == "passed"
+    assert checks["production_infrastructure_readiness_gate"]["status"] == "passed"
+    assert checks["production_infrastructure_readiness_runbook"]["status"] == "passed"
     assert checks["post_billing_gate_runbook"]["status"] == "passed"
     assert checks["readiness_endpoint_tests"]["status"] == "passed"
     assert checks["frontend_readiness_ui"]["status"] == "passed"
@@ -61,3 +63,4 @@ def test_post_billing_gate_cli_runs_local_checks_without_network() -> None:
     assert report["gate"] == "post_billing_acceptance"
     assert report["readiness_status"] == "ready"
     assert report["checks"]["local_artifacts"]["status"] == "passed"
+    assert "python scripts/production_infrastructure_readiness_gate.py --require-production" in report["next_commands"]
