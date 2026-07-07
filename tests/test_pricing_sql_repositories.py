@@ -23,25 +23,28 @@ async def test_pricing_repository_persists_job_and_recommendation() -> None:
     session_factory = async_sessionmaker(engine, expire_on_commit=False)
     repository = SqlPricingRepository(session_factory=session_factory)
 
-    job = await repository.create_job(
-        request=PricingRequest(
-            product_id="product-1",
-            target_currency="RUB",
-            desired_margin_percent=30.0,
-        ),
-        now=_utc_now(),
-    )
-    recommendation = await repository.save_recommendation(
-        job_id=job.job_id,
-        recommendation=PricingRecommendation(
-            recommended_price=4490.0,
-            currency="RUB",
-            rationale="Positioned slightly below premium comparable cluster.",
-            market_min=3990.0,
-            market_avg=4590.0,
-            market_max=5990.0,
-        ),
-        now=_utc_now(),
-    )
+    try:
+        job = await repository.create_job(
+            request=PricingRequest(
+                product_id="product-1",
+                target_currency="RUB",
+                desired_margin_percent=30.0,
+            ),
+            now=_utc_now(),
+        )
+        recommendation = await repository.save_recommendation(
+            job_id=job.job_id,
+            recommendation=PricingRecommendation(
+                recommended_price=4490.0,
+                currency="RUB",
+                rationale="Positioned slightly below premium comparable cluster.",
+                market_min=3990.0,
+                market_avg=4590.0,
+                market_max=5990.0,
+            ),
+            now=_utc_now(),
+        )
 
-    assert recommendation.job_id == job.job_id
+        assert recommendation.job_id == job.job_id
+    finally:
+        await engine.dispose()

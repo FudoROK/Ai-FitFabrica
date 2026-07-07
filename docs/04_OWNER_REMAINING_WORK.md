@@ -24,7 +24,7 @@
 
 - `scripts/no_billing_acceptance_gate.py`: `readiness_status=ready`.
 - `scripts/no_billing_acceptance_gate.py --full-backend --skip-frontend-build`: `readiness_status=ready`.
-- Full backend suite: `1201 passed, 2 warnings`.
+- Full backend suite: `1202 passed, 1 warning`.
 - Frontend `typecheck`, `lint`, `build`: passed.
 - `scripts/client_readiness_gate.py`: B2C/B2B contours ready for no-billing testing.
 - `scripts/auth_readiness_gate.py`: auth fails closed until provider activation.
@@ -38,7 +38,6 @@
 Known non-blocking noise:
 
 - Authlib deprecation warning from dependency code.
-- Intermittent `RuntimeError: Event loop is closed` warning from `aiosqlite` thread cleanup after tests. It does not fail the suite, but it is a polish item.
 
 ## Что уже готово для B2C
 

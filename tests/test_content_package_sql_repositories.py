@@ -23,27 +23,30 @@ async def test_content_package_repository_persists_job_and_package_version() -> 
     session_factory = async_sessionmaker(engine, expire_on_commit=False)
     repository = SqlContentPackageRepository(session_factory=session_factory)
 
-    job = await repository.create_job(
-        request=ContentPackageRequest(
-            product_card_version_id="product_card_123_v1",
+    try:
+        job = await repository.create_job(
+            request=ContentPackageRequest(
+                product_card_version_id="product_card_123_v1",
+                package_name="marketplace-launch",
+                requested_channels=["wildberries", "instagram"],
+            ),
+            now=_utc_now(),
+        )
+        version = await repository.save_package_version(
+            job_id=job.job_id,
             package_name="marketplace-launch",
-            requested_channels=["wildberries", "instagram"],
-        ),
-        now=_utc_now(),
-    )
-    version = await repository.save_package_version(
-        job_id=job.job_id,
-        package_name="marketplace-launch",
-        assets=[
-            ContentPackageOption(asset_kind="caption", label="Instagram caption"),
-            ContentPackageOption(asset_kind="listing", label="Marketplace listing"),
-        ],
-        artifact_keys=[
-            "fitfabrica/tenants/public/content-package/job-1/caption.txt",
-            "fitfabrica/tenants/public/content-package/job-1/listing.json",
-        ],
-        now=_utc_now(),
-    )
+            assets=[
+                ContentPackageOption(asset_kind="caption", label="Instagram caption"),
+                ContentPackageOption(asset_kind="listing", label="Marketplace listing"),
+            ],
+            artifact_keys=[
+                "fitfabrica/tenants/public/content-package/job-1/caption.txt",
+                "fitfabrica/tenants/public/content-package/job-1/listing.json",
+            ],
+            now=_utc_now(),
+        )
 
-    assert version.job_id == job.job_id
-    assert len(version.assets) == 2
+        assert version.job_id == job.job_id
+        assert len(version.assets) == 2
+    finally:
+        await engine.dispose()
