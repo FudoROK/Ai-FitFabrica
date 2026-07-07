@@ -35,6 +35,7 @@ def test_no_billing_gate_command_matrix_covers_backend_frontend_and_readiness() 
     assert "tests/test_web_dependency_audit.py" in backend_command.command
     assert "tests/test_owner_status_docs.py" in backend_command.command
     assert "tests/test_async_sqlite_test_cleanup.py" in backend_command.command
+    assert "tests/test_pytest_warning_policy.py" in backend_command.command
 
 
 def test_no_billing_gate_can_include_full_backend_suite() -> None:
