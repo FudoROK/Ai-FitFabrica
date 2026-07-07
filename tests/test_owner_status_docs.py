@@ -23,7 +23,7 @@ def test_owner_status_doc_uses_current_readiness_baseline() -> None:
     text = _read(OWNER_DOC)
 
     assert "Дата актуализации: 2026-07-08" in text
-    assert "1203 passed" in text
+    assert "1205 passed" in text
     assert "scripts/no_billing_acceptance_gate.py --full-backend --skip-frontend-build" in text
     assert "scripts/web_dependency_audit.py --require-ready" in text
     assert "scripts/post_billing_acceptance_gate.py" in text
@@ -44,6 +44,7 @@ def test_owner_facing_docs_do_not_reference_stale_readiness_counts() -> None:
         "1198 passed",
         "1201 passed",
         "1202 passed",
+        "1203 passed",
         "грязным",
         "dirty working tree",
         "Дата актуализации: 2026-06-17",
@@ -59,4 +60,4 @@ def test_tests_description_lists_acceptance_gate_commands() -> None:
 
     assert "scripts/no_billing_acceptance_gate.py" in text
     assert "scripts/web_dependency_audit.py --require-ready" in text
-    assert "1203 passed" in text
+    assert "1205 passed" in text

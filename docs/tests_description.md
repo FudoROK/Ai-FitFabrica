@@ -100,7 +100,7 @@ Use this command set for repository verification:
 .venv\Scripts\python.exe scripts\web_dependency_audit.py --require-ready
 ```
 
-Latest full backend result on `2026-07-08`: `1203 passed`, `0 warnings`.
+Latest full backend result on `2026-07-08`: `1205 passed`, `0 warnings`.
 
 Current frontend verification is included in `scripts/no_billing_acceptance_gate.py`:
 

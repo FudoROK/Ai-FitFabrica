@@ -16,6 +16,8 @@ def _production_env(**overrides: str) -> dict[str, str]:
         "REDIS_URL": "redis://redis:6379/0",
         "OBJECT_STORAGE_BACKEND": "s3",
         "OBJECT_STORAGE_BUCKET_NAME": "fitfabrica-prod-media",
+        "OBJECT_STORAGE_ACCESS_KEY_ID": "prod-object-access-key",
+        "OBJECT_STORAGE_SECRET_ACCESS_KEY": "prod-object-secret-key",
         "OPERATIONS_QUEUE_BACKEND": "redis",
         "RATE_LIMIT_BACKEND": "redis",
         "RATE_LIMIT_FAIL_MODE": "closed",
@@ -124,3 +126,32 @@ def test_production_gate_cli_prints_machine_readable_report() -> None:
     assert result.returncode == 0
     payload = json.loads(result.stdout)
     assert payload["gate"] == "production_infrastructure_readiness"
+
+
+def test_post_billing_staging_env_template_uses_production_like_modes() -> None:
+    """Post-billing staging template should document live-mode runtime values."""
+    env = gate._parse_env_file(gate.PROJECT_ROOT / ".env.post-billing-staging.example")
+
+    assert env["AUTH_PROVIDER"] == "firebase"
+    assert env["BILLING_CORE_ENABLED"] == "true"
+    assert env["LLM_PROVIDER"] == "vertex"
+    assert env["LLM_GATEWAY_MODE"] == "live"
+    assert env["IMAGE_EDITING_PROVIDER"] == "google_genai"
+    assert env["TRY_ON_GENERATION_BACKEND"] == "vertex_virtual_try_on"
+    assert env["ENABLE_REAL_TRY_ON_GENERATION"] == "true"
+    assert env["TRY_ON_VERTEX_FAILURE_FALLBACK_BACKEND"] == "none"
+    assert env["ALLOW_UNSAFE_ADMIN_HEADER_AUTH"] == "false"
+    assert env["ALLOW_UNSAFE_TRY_ON_VERTEX_FALLBACK_IN_PRODUCTION"] == "false"
+
+
+def test_production_gate_blocks_placeholder_values_in_post_billing_template() -> None:
+    """The example file is not deployable until operator placeholders are replaced."""
+    env = gate._parse_env_file(gate.PROJECT_ROOT / ".env.post-billing-staging.example")
+
+    report = gate.run_gate(env=env, require_production=True)
+
+    assert report["readiness_status"] == "blocked"
+    assert "postgres_dsn" in report["failed_checks"]
+    assert "status_endpoint_token" in report["failed_checks"]
+    assert "admin_api_token" in report["failed_checks"]
+    assert "vertex_agent_resource" in report["failed_checks"]

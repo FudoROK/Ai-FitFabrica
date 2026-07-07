@@ -76,6 +76,7 @@ def _command_matrix(*, include_frontend_build: bool, include_full_backend: bool)
                 "tests/test_auth_readiness_gate.py",
                 "tests/test_billing_readiness_gate.py",
                 "tests/test_client_readiness_gate.py",
+                "tests/test_production_infrastructure_readiness_gate.py",
                 "tests/test_production_fallback_usage_audit.py",
                 "tests/test_web_dependency_audit.py",
                 "tests/test_owner_status_docs.py",

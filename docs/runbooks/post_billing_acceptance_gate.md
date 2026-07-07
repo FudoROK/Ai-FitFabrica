@@ -44,6 +44,7 @@ If the gate returns `blocked`, do not run paid Try-On, Product Card, Similar Sea
 After the gate is ready, run the command list emitted in `next_commands`:
 
 ```powershell
+.venv\Scripts\python.exe scripts\production_infrastructure_readiness_gate.py --env-file .env.post-billing-staging.local --require-production
 .venv\Scripts\python.exe scripts\platform_foundation_smoke.py --require-ready
 .venv\Scripts\python.exe scripts\auth_readiness_gate.py
 .venv\Scripts\python.exe scripts\billing_readiness_gate.py

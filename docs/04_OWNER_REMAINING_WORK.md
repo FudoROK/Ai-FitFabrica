@@ -24,7 +24,7 @@
 
 - `scripts/no_billing_acceptance_gate.py`: `readiness_status=ready`.
 - `scripts/no_billing_acceptance_gate.py --full-backend --skip-frontend-build`: `readiness_status=ready`.
-- Full backend suite: `1203 passed, 0 warnings`.
+- Full backend suite: `1205 passed, 0 warnings`.
 - Frontend `typecheck`, `lint`, `build`: passed.
 - `scripts/client_readiness_gate.py`: B2C/B2B contours ready for no-billing testing.
 - `scripts/auth_readiness_gate.py`: auth fails closed until provider activation.

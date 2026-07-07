@@ -14,12 +14,21 @@ For checking a prepared env file:
   --require-production
 ```
 
+For post-billing staging, check the filled local override:
+
+```powershell
+.venv\Scripts\python.exe scripts\production_infrastructure_readiness_gate.py `
+  --env-file ".env.post-billing-staging.local" `
+  --require-production
+```
+
 Expected for production-like environments:
 
 - `POSTGRES_DSN` is configured;
 - `REDIS_URL` is configured;
 - `OBJECT_STORAGE_BACKEND=s3`;
 - `OBJECT_STORAGE_BUCKET_NAME` is configured;
+- `OBJECT_STORAGE_ACCESS_KEY_ID` and `OBJECT_STORAGE_SECRET_ACCESS_KEY` are real non-placeholder values;
 - `OPERATIONS_QUEUE_BACKEND=redis`;
 - `RATE_LIMIT_BACKEND=redis`;
 - `RATE_LIMIT_FAIL_MODE=closed`;

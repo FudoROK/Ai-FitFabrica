@@ -33,6 +33,8 @@ REQUIRED_NON_EMPTY = {
     "postgres_dsn": "POSTGRES_DSN",
     "redis_url": "REDIS_URL",
     "object_storage_bucket_name": "OBJECT_STORAGE_BUCKET_NAME",
+    "object_storage_access_key_id": "OBJECT_STORAGE_ACCESS_KEY_ID",
+    "object_storage_secret_access_key": "OBJECT_STORAGE_SECRET_ACCESS_KEY",
     "auth_provider": "AUTH_PROVIDER",
     "vertex_project": "VERTEX_PROJECT",
     "vertex_location": "VERTEX_LOCATION",
@@ -50,6 +52,9 @@ DISALLOWED_VALUES = {
     "status_endpoint_token": ("", "placeholder", "replace-with-staging-status-token", "your-health-check-api-key"),
     "admin_api_token": ("", "placeholder", "replace-with-internal-admin-token", "your-internal-admin-api-token"),
     "vertex_project": ("", "placeholder", "your-vertex-project-id"),
+    "vertex_agent_resource": ("", "placeholder", "replace-with", "your-"),
+    "object_storage_access_key_id": ("", "placeholder", "replace-with", "your-"),
+    "object_storage_secret_access_key": ("", "placeholder", "replace-with", "your-"),
 }
 
 
@@ -116,6 +121,8 @@ def _non_empty_check(*, name: str, env_key: str, value: str | None) -> dict[str,
     normalized = _normalized(value)
     if name == "auth_provider" and normalized in {"disabled", "none", "stub", "fake"}:
         return {"status": "failed", "env_key": env_key, "value": value or "", "reason": "auth_provider_disabled"}
+    if _contains_placeholder(normalized):
+        return {"status": "failed", "env_key": env_key, "value": value or "", "reason": "placeholder_value"}
     return {
         "status": "passed" if normalized else "failed",
         "env_key": env_key,
@@ -154,6 +161,10 @@ def _is_disallowed_value(*, value: str, marker: str) -> bool:
     if marker == "":
         return value == ""
     return marker in value
+
+
+def _contains_placeholder(value: str) -> bool:
+    return any(marker in value for marker in ("replace-with", "placeholder", "your-"))
 
 
 def _parse_env_file(path: Path) -> dict[str, str]:

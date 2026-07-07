@@ -31,6 +31,7 @@ def test_no_billing_gate_command_matrix_covers_backend_frontend_and_readiness() 
     assert "tests/test_client_readiness_gate.py" in backend_command.command
     assert "tests/test_workspace_text_encoding.py" in backend_command.command
     assert "tests/test_staging_no_billing_smoke_script.py" in backend_command.command
+    assert "tests/test_production_infrastructure_readiness_gate.py" in backend_command.command
     assert "tests/test_production_fallback_usage_audit.py" in backend_command.command
     assert "tests/test_web_dependency_audit.py" in backend_command.command
     assert "tests/test_owner_status_docs.py" in backend_command.command
