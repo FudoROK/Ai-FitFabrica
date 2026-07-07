@@ -78,6 +78,7 @@ def _command_matrix(*, include_frontend_build: bool, include_full_backend: bool)
                 "tests/test_client_readiness_gate.py",
                 "tests/test_production_fallback_usage_audit.py",
                 "tests/test_web_dependency_audit.py",
+                "tests/test_owner_status_docs.py",
                 "tests/test_staging_no_billing_smoke_script.py",
                 "-q",
             ),

@@ -1,6 +1,6 @@
 # AI FitFabrica Documentation Index
 
-Дата актуализации: 2026-06-17
+Дата актуализации: 2026-07-08
 
 Эта папка содержит canonical-документацию проекта. Если документ противоречит коду, приоритет имеет код и актуальные тесты, но именно эти файлы являются стартовой точкой для Codex, разработчика или инвестора.
 
@@ -10,7 +10,7 @@
 2. [01_ACTION_LOG_CHECKLIST.md](01_ACTION_LOG_CHECKLIST.md) - журнал действий и чеклист этапов, чтобы новая сессия видела ход работ.
 3. [02_TECHNICAL_PROJECT_MAP.md](02_TECHNICAL_PROJECT_MAP.md) - техническое описание проекта, дерево папок и ответственность ключевых файлов.
 4. [03_AGENT_SYSTEM_GUIDE.md](03_AGENT_SYSTEM_GUIDE.md) - единый документ по агентам, контрактам, взаимодействию с backend и рекомендациям по моделям.
-5. [04_OWNER_REMAINING_WORK.md](04_OWNER_REMAINING_WORK.md) - короткий документ для владельца проекта: что осталось сделать и в каком порядке.
+5. [04_OWNER_REMAINING_WORK.md](04_OWNER_REMAINING_WORK.md) - текущий owner-facing статус: что готово для pre-billing, что заблокировано внешним billing/auth/provider access, и какие команды запускать после включения billing.
 
 ## Финансы и investor materials
 
@@ -26,6 +26,10 @@
 - [runbooks/deploy_backend_and_frontend_ru.md](runbooks/deploy_backend_and_frontend_ru.md) - команды деплоя backend/frontend.
 - [reports/](reports/) - acceptance/review reports.
 - [reports/2026-06-17-try-on-local-readiness-report.md](reports/2026-06-17-try-on-local-readiness-report.md) - readiness report перед VM/staging live acceptance для Try-On цепочки.
+- [reports/2026-07-05-full-project-monitoring.md](reports/2026-07-05-full-project-monitoring.md) - полный мониторинг проекта перед billing activation.
+- [runbooks/no_billing_acceptance_gate.md](runbooks/no_billing_acceptance_gate.md) - локальная acceptance-команда без paid provider calls.
+- [runbooks/post_billing_acceptance_gate.md](runbooks/post_billing_acceptance_gate.md) - порядок post-billing live acceptance после восстановления внешних систем.
+- [runbooks/web_dependency_audit.md](runbooks/web_dependency_audit.md) - npm dependency audit evidence для frontend.
 - [superpowers/](superpowers/) - исторические specs/plans. Они полезны для traceability, но не являются главным источником истины после появления canonical-документов выше.
 
 ## Documentation rules

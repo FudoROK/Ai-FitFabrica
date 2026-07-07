@@ -1,285 +1,162 @@
-# AI FitFabrica - Что осталось сделать
+# AI FitFabrica - что осталось сделать
 
-Дата актуализации: 2026-06-17
+Дата актуализации: 2026-07-08
 
-Это короткий документ для владельца проекта. Он отвечает на вопрос: что делать дальше по проекту, без технического шума.
+Это короткий документ для владельца проекта. Он отвечает на вопрос: что сейчас реально готово, что нельзя проверить без включенного биллинга/provider access, и что делать сразу после восстановления billing.
 
 ## Главный статус
 
-Проект уже имеет рабочий backend/frontend baseline, подключённый первый production-agent baseline и начальную экономику credits/costs.
+Проект локально подготовлен к pre-billing клиентскому тестированию. Backend и frontend больше не находятся в состоянии "сырого прототипа": основные B2C/B2B контуры имеют реальные routes, typed API contracts, backend-owned persistence, fail-closed auth/billing behavior, readiness gates и acceptance-команды.
 
-Но проект ещё не готов к массовому production-запуску, потому что нужно пройти agent-by-agent acceptance и довести generation/quality/repair pipeline.
+Проект еще не считается готовым к paid production запуску, потому что внешние системы не включены:
 
-## 2026-07-02 Update: Pre-Billing Readiness
+- production auth provider;
+- billing/payment provider;
+- Google/Gemini/Vertex provider access;
+- approved live marketplace/search sources;
+- deployed staging live acceptance после включения внешних систем.
 
-Локальная предбиллинговая готовность для следующего paid testing этапа подтверждена:
+До включения биллинга цель простая: не добавлять хаотично новые фичи, а держать проект чистым, проверяемым и готовым к спокойному post-billing acceptance.
 
-- backend architecture guardrail прошёл;
-- backend/scripts compileall прошёл;
-- полный backend pytest прошёл: `1129 passed`;
-- frontend `npm ci`, `lint`, `typecheck`, `build` прошли;
-- `npm ci` показал 5 audit findings (`1 low`, `4 moderate`), автоматический `npm audit fix --force` не запускался;
-- рабочее дерево остаётся грязным и требует осознанного решения, какие изменения входят в deploy baseline.
+## Текущая проверенная картина
 
-Главный следующий блокер: восстановить Google/Gemini/Vertex billing/provider access. После этого нужно запускать paid provider smoke checks, затем Try-On HTTP/worker acceptance, B2B live category validation и Similar Search garment-photo acceptance.
+Последний локальный baseline:
 
-## Самый правильный следующий шаг
+- `scripts/no_billing_acceptance_gate.py`: `readiness_status=ready`.
+- `scripts/no_billing_acceptance_gate.py --full-backend --skip-frontend-build`: `readiness_status=ready`.
+- Full backend suite: `1201 passed, 2 warnings`.
+- Frontend `typecheck`, `lint`, `build`: passed.
+- `scripts/client_readiness_gate.py`: B2C/B2B contours ready for no-billing testing.
+- `scripts/auth_readiness_gate.py`: auth fails closed until provider activation.
+- `scripts/billing_readiness_gate.py`: billing core is backend-owned and disabled before activation.
+- `scripts/production_infrastructure_readiness_gate.py`: production env cannot silently use sandbox/in-memory infrastructure.
+- `scripts/production_fallback_usage_audit.py`: runtime fallback usage is reviewed and guarded.
+- `scripts/web_dependency_audit.py --require-ready`: ready; current npm audit has `0 high`, `0 critical`, `1 low`, `4 moderate`.
+- `scripts/post_billing_acceptance_gate.py`: local artifacts ready; deployed `/ready` check is skipped until an API URL/token are provided.
+- Git baseline is clean: рабочее дерево чистое after the latest pushed commits.
 
-### 1. Garment Identity Agent
+Known non-blocking noise:
 
-Status update 2026-06-28:
+- Authlib deprecation warning from dependency code.
+- Intermittent `RuntimeError: Event loop is closed` warning from `aiosqlite` thread cleanup after tests. It does not fail the suite, but it is a polish item.
 
-- Local contract/policy hardening is done.
-- Backend now blocks no-garment, ambiguous multiple garments, tight crop, insufficient workflow coverage, high occlusion, low confidence and high uncertainty before generation.
-- Next remaining action: run the real garment image dataset on VM/staging and record expected vs actual live acceptance.
+## Что уже готово для B2C
 
-Почему следующий именно он:
+### Public entry
 
-- он нужен и для Try-On, и для Product Card;
-- без него нельзя надёжно понимать одежду;
-- он влияет на качество генерации, карточек, поиска похожих товаров и pricing;
-- его ошибки дешевле поймать до generation.
+- Public routes exist: `/`, `/for-you`, `/business`, `/features`, `/pricing`, `/how-it-works`, `/about`, `/contact`, `/privacy`, `/login`.
+- Contact/demo requests persist through backend SQL.
+- Sign-in fails closed while production auth is disabled.
+- Frontend does not fake OAuth/session success.
 
-Что нужно сделать:
+### Try-On
 
-- собрать тестовый dataset одежды;
-- проверить распознавание типа, цвета, кроя, рукавов, воротника, пуговиц, карманов, принта/лого, текстуры;
-- добавить policy для low-confidence/ambiguous garments;
-- провести live acceptance;
-- обновить docs/action log.
+- Workspace routes exist for creating and viewing Try-On jobs.
+- Backend owns job creation, validation, SQL persistence, lifecycle, quality/repair contracts and result state.
+- No browser code calls AI providers directly.
+- Before billing, sandbox/no-paid contour is testable.
+- After billing, live generation, paid quality verification, repair and credit charging must be accepted on staging.
 
-## После Garment Identity
+### Similar Search
 
-### 2. Material / Texture Agent
+- `/workspace/similar-search` has real request/photo search UI.
+- Backend owns garment-photo request, search/ranking, local catalog fallback and click event persistence.
+- Hidden scraping is not enabled.
+- After billing/provider/source activation, live marketplace/search-source coverage must be accepted.
 
-Status update 2026-06-17:
+### Outfit Builder
 
-- Local honesty policy is done.
-- Backend now blocks empty material analysis, missing evidence, low confidence, high uncertainty and invalid trusted-composition claims.
-- Next remaining action: run live material/texture acceptance after Garment Identity live acceptance.
+- Route and backend request/status contract exist.
+- Frontend has loading/error/empty/success handling.
+- Live stylist/provider output remains blocked until provider activation.
 
-Главное правило: агент не должен выдумывать точный состав ткани. Он может писать только визуальную оценку, если нет label/source.
+## Что уже готово для B2B
 
-### 3. Try-On Instruction Agent
+### Business Catalog
 
-Status update 2026-06-17:
+- Merchant/product/catalog import contours exist.
+- Product images, submit-to-review, admin approve/reject/archive and SQL persistence are implemented.
+- Discovery candidates have durable SQL persistence and review statuses.
+- Category validation and admin review are guarded.
+- Live AI category validation remains blocked until provider billing/access is restored.
 
-- Local policy is done.
-- Backend now blocks instructions that disable face/body/pose preservation, omit garment focus points, omit generation exclusions, omit evidence, have low confidence or high uncertainty.
-- Adapter still passes only structured Human/Garment/Material snapshots, not source images.
-- Next remaining action: live instruction acceptance after upstream visual agents are accepted.
+### Product Card
 
-Проверить, что он не получает исходные фото, а работает только со structured facts:
+- Backend job creation, SQL persistence and mandatory garment-analysis contract exist.
+- Frontend actions call backend instead of presenting fake final output.
+- Live AI copy/image acceptance remains post-billing work.
 
-- human analysis;
-- garment analysis;
-- material/texture analysis.
+### Content Package
 
-### 4. Quality Verifier Agent
+- Backend job contract, SQL persistence and artifact metadata exist.
+- Frontend action wiring and states exist.
+- Live provider output and charging remain post-billing work.
 
-Status update 2026-06-17:
+### Pricing
 
-- Local backend quality policy is done.
-- Dedicated AgentInvocationService-based Quality Verifier adapter is integrated into Try-On runtime.
-- Selected wear-control live acceptance passed on VM/staging with `8/8` matched and zero false pass/repair/reject.
-- Next remaining action: keep expanding visual golden fixtures as real paid Try-On failures appear.
+- Backend-owned pricing job workflow exists.
+- Frontend displays backend DTOs only.
+- Live comparable-source coverage and charged pricing workflows remain post-billing work.
 
-Это обязательный production gate. Пользователь не должен видеть явно сломанный результат.
+### Admin Review
 
-### 5. Repair Agent и image editing
+- Admin readiness, business catalog, taxonomy and business-account pages exist.
+- Backend admin routes fail closed and require configured access.
+- Final production admin sign-in model still depends on auth activation.
 
-Status update 2026-06-28:
+## Что делать сразу после включения billing/provider access
 
-- Local repair policy is done.
-- Backend allows repair only for local repairable defects and blocks unsafe repair before editing.
-- Dedicated AgentInvocationService-based Repair Agent planner is integrated before provider image-edit repair.
-- Provider-runtime image edit now receives Repair Agent approved region instructions.
-- Workflow already runs second Quality Verifier after repair.
-- Next remaining action: run VM/staging live acceptance for the full Repair Agent planner -> image edit -> second Quality Verifier path.
+Run these from the repository root after env is configured:
 
-Нужно разделить:
+```powershell
+.venv\Scripts\python.exe scripts\post_billing_acceptance_gate.py `
+  --api-base-url "https://api.fit.aisoulfabrica.com" `
+  --status-token "<STATUS_ENDPOINT_TOKEN>" `
+  --require-ready
 
-- repair_instruction через Gemini;
-- repair_image_generation/image_edit через визуальную модель;
-- second_quality_verifier после repair.
+.venv\Scripts\python.exe scripts\platform_foundation_smoke.py --require-ready
+.venv\Scripts\python.exe scripts\auth_readiness_gate.py
+.venv\Scripts\python.exe scripts\billing_readiness_gate.py
+.venv\Scripts\python.exe scripts\production_infrastructure_readiness_gate.py --require-production
+.venv\Scripts\python.exe scripts\production_fallback_usage_audit.py --require-ready
+.venv\Scripts\python.exe scripts\web_dependency_audit.py --require-ready
+.venv\Scripts\python.exe scripts\business_catalog_search_index_readiness.py --require-db
+.venv\Scripts\python.exe scripts\try_on_real_activation_smoke.py --require-ready
+.venv\Scripts\python.exe scripts\business_catalog_staging_smoke.py
+```
 
-## Что делать с VM
+Then copy:
 
-VM включать только когда нужен live backend/staging прогон.
+```text
+docs/reports/templates/post_billing_live_acceptance_template.md
+```
 
-Перед включением VM читать:
+to:
 
-- `docs/reports/2026-06-17-try-on-local-readiness-report.md`
+```text
+docs/reports/YYYY-MM-DD-post-billing-live-acceptance.md
+```
 
-Для обычной разработки:
-
-- docs;
-- tests;
-- contracts;
-- frontend code;
-- backend unit tests;
-
-VM не нужна.
-
-## Что делать с инвесторами
-
-Уже есть PDF:
-
-- `output/pdf/ai_fitfabrica_investor_unit_economics_ru.pdf`
-
-Перед показом инвесторам желательно:
-
-- вручную перечитать PDF;
-- добавить реальные screenshots/demo, если нужно;
-- после 20-50 прогонов обновить цифры в recalibration report.
+and record live results there.
 
 ## Что нельзя делать сейчас
 
-- Не подключать все агенты хаотично сразу.
-- Не открывать admin cost endpoints без admin auth.
-- Не включать скрытый scraping marketplace.
-- Не списывать credits за pre-generation/system failures.
-- Не давать frontend прямой доступ к AI provider.
-- Не выбирать дорогую модель для всех агентов без model routing.
+- Не включать real customer production до post-billing acceptance.
+- Не давать frontend прямой доступ к AI providers.
+- Не считать credits на frontend.
+- Не включать скрытый scraping marketplace/Instagram.
+- Не обходить backend quality verifier/repair/retry decisions.
+- Не добавлять новые in-memory/fake runtime fallbacks без review.
+- Не запускать `npm audit fix --force` без отдельного review, потому что это может изменить dependency baseline.
 
-## Приоритеты на ближайшие этапы
+## Следующий полезный no-billing блок
 
-1. Garment Identity acceptance.
-2. Material / Texture honesty acceptance.
-3. Quality Verifier baseline.
-4. Model routing config.
-5. Real Try-On generation pipeline.
-6. Repair/Image Edit pipeline.
-7. Marketplace connector plan.
-8. Recalibration after real runs.
-
-## 2026-06-23 Update: Garment Wear Controls
-
-New enterprise plan added:
-
-- `docs/superpowers/plans/2026-06-23-garment-wear-controls-taxonomy-admin-plan.md`
-- `docs/superpowers/plans/2026-06-23-wear-controls-taxonomy-admin-v2-implementation-plan.md` is the current execution-ready v2 plan and supersedes the first draft for implementation order.
-
-Updated near-term order:
-
-1. Garment Identity live acceptance.
-2. Garment Wear Controls taxonomy foundation: controlled garment types, allowed wear modes, unknown-type candidates, and future `/admin/taxonomy` review.
-3. Material / Texture honesty acceptance.
-4. Try-On Instruction integration with selected wear control.
-5. Quality Verifier baseline including wear-control match checks.
-6. Model routing config.
-7. Repair/Image Edit pipeline including safe wear-control corrections.
-8. Marketplace connector plan.
-9. Recalibration after real runs.
+1. Убрать test warning `Event loop is closed`, чтобы full backend suite был не только passing, но и без шумных thread warnings.
+2. Обновить более глубокие технические документы (`00_PROJECT_MASTER_PLAN.md`, `02_TECHNICAL_PROJECT_MAP.md`, `03_AGENT_SYSTEM_GUIDE.md`) только если они мешают onboarding. Сейчас owner truth уже находится в этом документе и readiness runbooks.
+3. Декомпозировать самые большие runtime/frontend файлы только при работе в соответствующей области, не делать случайный большой refactor перед billing.
 
 ## Простыми словами
 
-Сейчас проект надо не расширять вширь, а укреплять по слоям:
+Сейчас проект не нужно расширять вширь. Его нужно держать в чистом состоянии до включения биллинга.
 
-1. каждый агент отдельно;
-2. потом связка workflow;
-3. потом качество результата;
-4. потом экономика;
-5. потом production/demo/investors.
-## Масштабирование и отказоустойчивость
-
-Перед крупными B2B-клиентами, поиском по маркетплейсам/Instagram и массовым подключением агентов нужно добавить отдельный reliability gate.
-
-Что нужно сделать:
-
-- Разделить нагрузку по владельцам бизнеса: обычные клиенты на общей инфраструктуре, крупные клиенты в hot-account mode.
-- Заложить возможность отдельной очереди, storage prefix, rate-limit bucket и при необходимости отдельной БД для большого клиента.
-- Добавить idempotency, чтобы повторная загрузка фото, CSV import или submit не создавали дубли.
-- Добавить backpressure: если система перегружена, backend честно говорит “подождите”, а не ломается.
-- Добавить controlled failure tests: падение storage, SQL, Redis/queue, AI provider, worker.
-- Chaos Monkey в production пока не включать. Сначала только контролируемые тесты и staging chaos-smoke.
-
-Простыми словами: мы заранее готовим проект к росту, но не усложняем его раньше времени.
-## 2026-06-29 Update: B2B Catalog Foundation
-
-What is now done:
-
-- Business users can own a catalog foundation: merchant profile, products, offers, product images, CSV import, and submit-to-review.
-- Admin review exists for product approval/rejection before products can be projected into future search.
-- Search projection is safe by default: only `active` + `approved` products with valid offers are eligible.
-- Tenant reliability foundation exists: `standard` and `large` tiers, advisory backend recommendations, and manual admin assignment.
-- Retry safety exists for important mutations through `Idempotency-Key`: CSV import, product image upload, and submit-to-review.
-- Controlled failure tests exist for storage failure, metadata persistence failure, and import row-error persistence failure.
-- Backpressure exists before expensive work: tier-based CSV size/row limits and image-count limits.
-- Frontend explains upload limits on CSV import and product photo upload screens.
-
-What still remains:
-
-- Populate the staging catalog with realistic approved products before judging Similar Search quality.
-- Run a manual website Similar Search test against realistic catalog data after catalog population.
-- Add real production admin auth/audit hardening before exposing admin routes outside internal use.
-- Add queue/worker-backed hourly and concurrent import limits after real import workers are introduced.
-- Design marketplace, Instagram, Kaspi, Wildberries, and partner-feed connectors only through legal/approved data sources.
-- Define marketplace connector costs, no-result search costs, parser/proxy costs, and geo-ranking rules before enabling Similar/Cheaper Search.
-- Keep automatic tier promotion disabled; admin should continue to approve `standard`/`large` tier changes manually.
-
-VM note:
-
-- VM is not needed for local docs, unit tests, lint, typecheck, or build.
-- VM is needed only for deployed/staging smoke, real SQL/object-storage upload smoke, or paid AI/provider checks.
-
-## 2026-06-29 Update: Similar Search Location Priority
-
-Decision:
-
-- Similar/Cheaper Search prioritizes the customer's location first.
-- Search order is: same city, same country with delivery to the city, same country, delivery available, then remote offers.
-- Price and visual/text similarity are still important, but they do not beat a practical local result when the local result is relevant.
-
-Current implementation status:
-
-- Backend contracts now define approved source types for future marketplace and Instagram connectors.
-- Local approved B2B catalog products project as `local_catalog`.
-- Ranking can explain whether a result matched by same city, same country, delivery, or remote source.
-
-What remains:
-
-- Design legal Kaspi/Wildberries/Instagram connector adapters.
-- Add click/lead tracking and cost ledger for free search monetization.
-- Expand catalog density and connector coverage beyond the current local B2B catalog.
-
-## 2026-06-29 Update: Similar Search Garment Photo Workflow
-
-Done:
-
-- `/workspace/similar-search` is no longer a placeholder. It now has a real upload form for garment photo search.
-- Backend endpoint `POST /api/similar-search/garment-photo` accepts a garment image, validates it, stores it through backend object storage, runs Garment Identity through backend runtime, and searches with a typed garment profile.
-- Similar Search now has a local B2B catalog fallback when the vector index has no hits. It returns only approved active catalog products with sellable offers.
-- Location-first ranking is preserved: same city, country, delivery, then remote.
-- Basic search remains free for the user by product strategy; premium Try-On, deep external search, and B2B analytics stay separate monetization layers.
-
-Still remaining:
-
-- Design legal approved connectors for Kaspi, Wildberries, Instagram Business, partner feeds, and official APIs.
-- Add click/lead tracking and cost ledger for free search monetization.
-- Run browser-level website Similar Search acceptance after the next frontend deploy, using the already loaded realistic catalog.
-
-Staging acceptance update:
-
-- Real garment-photo Similar Search now runs through Gemini multimodal agent runtime.
-- Backend upload endpoint returned HTTP `200` on a realistic shirt image.
-- Results preserve location fields and primary product image URLs.
-- Smoke catalog records were archived; current results come from realistic approved local catalog products.
-- Immediate remaining product limitation: result quality is only as good as approved catalog density and future legal connectors.
-
-Search indexing update:
-
-- Done: backend indexing pipeline for approved B2B catalog products is implemented locally.
-- Done: approved catalog records can be embedded and written into the Qdrant `products` namespace through backend ports/adapters.
-- Done: manual reindex command is available: `.venv\Scripts\python.exe scripts/reindex_business_catalog_search.py --limit 1000`.
-- Done: approved products now have search index lifecycle status: `not_indexed`, `pending`, `indexed`, `failed`.
-- Done: approving a product marks it `pending` for search indexing; successful reindex marks it `indexed`; indexing error marks it `failed`.
-- Done: admin can filter products by search index status and retry failed indexing from the admin catalog UI.
-- Done: approving or retrying a product now automatically puts a `business_catalog_search_index` job into the backend operations queue.
-- Done: worker runtime now has a `business_catalog_search_index` handler that indexes the approved product and updates its lifecycle status.
-- Done: deploy readiness script now checks B2B search-index migration, DB schema, worker handler, and indexing workflow before staging is accepted.
-- Done: staging backend/frontend deployment passed after search-index lifecycle changes.
-- Done: staging manual reindex and worker indexing passed for approved products.
-- Done: realistic test catalog was loaded, approved, indexed, and used by live Similar Search.
-- Remaining: browser-level website acceptance and future connector expansion.
-- VM: not needed until staging deploy, staging reindex, or live website smoke.
+Когда billing/provider access восстановлен, мы не начинаем "доделывать проект с нуля"; мы запускаем подготовленные gates, live acceptance и фиксируем только реальные проблемы, которые проявятся на платных provider flows.

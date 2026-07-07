@@ -94,14 +94,21 @@ These checks ensure the current Next.js application remains consistent and produ
 
 Use this command set for repository verification:
 
-```bash
-pytest -q
-cd apps/web && npm run lint
-cd apps/web && npm run typecheck
-cd apps/web && npm run build
+```powershell
+.venv\Scripts\python.exe scripts\no_billing_acceptance_gate.py
+.venv\Scripts\python.exe scripts\no_billing_acceptance_gate.py --full-backend --skip-frontend-build
+.venv\Scripts\python.exe scripts\web_dependency_audit.py --require-ready
 ```
 
-Latest full backend result on `2026-06-16`: `665 passed`.
+Latest full backend result on `2026-07-08`: `1201 passed`, `2 warnings`.
+
+Current frontend verification is included in `scripts/no_billing_acceptance_gate.py`:
+
+- `npm run typecheck`
+- `npm run lint`
+- `npm run build`
+
+Current web dependency evidence is included in `scripts/web_dependency_audit.py --require-ready`. The gate blocks high/critical npm findings and records low/moderate findings as evidence.
 
 Latest Human Identity hardening result on `2026-06-16`: targeted Human Identity policy, adapter, and workflow checks passed with `37 passed`; architecture guardrails passed; staging API/worker images were rebuilt and policy matrix verification is documented in `docs/reports/2026-06-16-human-identity-policy-hardening-report.md`.
 
