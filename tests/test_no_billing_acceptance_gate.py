@@ -22,6 +22,7 @@ def test_no_billing_gate_command_matrix_covers_backend_frontend_and_readiness() 
     assert "post_billing_artifact_gate" in names
     assert "architecture_guardrail" in names
     assert "production_fallback_usage_audit" in names
+    assert "web_dependency_audit" in names
     assert "python_compileall" in names
     assert "web_typecheck" in names
     assert "web_lint" in names
@@ -31,6 +32,7 @@ def test_no_billing_gate_command_matrix_covers_backend_frontend_and_readiness() 
     assert "tests/test_workspace_text_encoding.py" in backend_command.command
     assert "tests/test_staging_no_billing_smoke_script.py" in backend_command.command
     assert "tests/test_production_fallback_usage_audit.py" in backend_command.command
+    assert "tests/test_web_dependency_audit.py" in backend_command.command
 
 
 def test_no_billing_gate_can_include_full_backend_suite() -> None:

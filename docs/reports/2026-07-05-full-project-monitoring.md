@@ -107,7 +107,9 @@ Priority 2, enterprise polish:
 
 2026-07-05 update: the focused runtime fallback-usage audit has been implemented as `scripts/production_fallback_usage_audit.py`, covered by tests, documented in `docs/runbooks/production_fallback_usage_audit.md`, and integrated into no-billing and post-billing acceptance gates.
 
-The next no-billing hardening block should now be npm audit evidence and owner-status documentation refresh, so pre-billing and post-billing operators use the current gate truth instead of older snapshots.
+2026-07-08 update: web dependency audit evidence has been implemented as `scripts/web_dependency_audit.py`, covered by tests, documented in `docs/runbooks/web_dependency_audit.md`, and integrated into no-billing and post-billing acceptance gates. Current npm audit has no high or critical findings; low/moderate findings are reported as evidence.
+
+The next no-billing hardening block should now be owner-status documentation refresh, so pre-billing and post-billing operators use the current gate truth instead of older snapshots.
 
 ## Current Conclusion
 
