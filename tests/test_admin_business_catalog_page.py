@@ -2,12 +2,13 @@
 
 from pathlib import Path
 
+from tests.admin_business_catalog_sources import admin_business_catalog_feature_source
 from tests.frontend_api_sources import api_client_source
 
 
 def test_admin_business_catalog_page_exists_and_uses_typed_actions() -> None:
     page_source = Path("apps/web/src/app/(admin)/admin/business-catalog/page.tsx").read_text(encoding="utf-8")
-    feature_source = Path("apps/web/src/features/admin/business-catalog-review.tsx").read_text(encoding="utf-8")
+    feature_source = admin_business_catalog_feature_source()
     client_source = api_client_source()
     contracts_source = Path("apps/web/src/lib/api/business-catalog-contracts.ts").read_text(encoding="utf-8")
 
