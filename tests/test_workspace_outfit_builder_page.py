@@ -2,11 +2,13 @@
 
 from pathlib import Path
 
+from tests.frontend_api_sources import api_client_source
+
 
 def test_workspace_outfit_builder_page_uses_backend_brief_and_request_contracts() -> None:
     page_source = Path("apps/web/src/app/(workspace)/workspace/outfit-builder/page.tsx").read_text(encoding="utf-8")
     feature_source = Path("apps/web/src/features/workspace/workspace-outfit-builder-overview.tsx").read_text(encoding="utf-8")
-    client_source = Path("apps/web/src/lib/api/client.ts").read_text(encoding="utf-8")
+    client_source = api_client_source()
     contracts_source = Path("apps/web/src/lib/api/contracts.ts").read_text(encoding="utf-8")
 
     assert "WorkspaceOutfitBuilderOverview" in page_source

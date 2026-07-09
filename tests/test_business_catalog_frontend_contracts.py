@@ -1,8 +1,9 @@
 from pathlib import Path
 
+from tests.frontend_api_sources import api_client_source
+
 
 CONTRACTS = Path("apps/web/src/lib/api/business-catalog-contracts.ts")
-CLIENT = Path("apps/web/src/lib/api/client.ts")
 
 
 def test_business_catalog_frontend_contracts_are_typed() -> None:
@@ -25,7 +26,7 @@ def test_business_catalog_frontend_contracts_are_typed() -> None:
 
 
 def test_business_catalog_frontend_client_exposes_real_backend_methods() -> None:
-    source = CLIENT.read_text(encoding="utf-8")
+    source = api_client_source()
 
     for method_name in (
         "getBusinessMerchant",

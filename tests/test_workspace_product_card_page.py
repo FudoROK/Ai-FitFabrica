@@ -2,12 +2,14 @@
 
 from pathlib import Path
 
+from tests.frontend_api_sources import api_client_source
+
 
 def test_workspace_product_card_page_uses_runtime_capability_gates() -> None:
     page_source = Path("apps/web/src/app/(workspace)/workspace/product-card/page.tsx").read_text(encoding="utf-8")
     feature_source = Path("apps/web/src/features/workspace/workspace-product-card-overview.tsx").read_text(encoding="utf-8")
     workflow_source = Path("apps/web/src/features/workspace/product-card-workflow.tsx").read_text(encoding="utf-8")
-    client_source = Path("apps/web/src/lib/api/client.ts").read_text(encoding="utf-8")
+    client_source = api_client_source()
 
     assert "WorkspaceProductCardOverview" in page_source
     assert "useWorkspaceRuntime" in feature_source

@@ -2,11 +2,13 @@
 
 from pathlib import Path
 
+from tests.frontend_api_sources import api_client_source
+
 
 def test_try_on_workspace_uses_backend_driven_wear_control_picker() -> None:
     workflow_source = Path("apps/web/src/features/workspace/try-on-workflow.tsx").read_text(encoding="utf-8")
     picker_source = Path("apps/web/src/features/workspace/garment-wear-control-picker.tsx").read_text(encoding="utf-8")
-    client_source = Path("apps/web/src/lib/api/client.ts").read_text(encoding="utf-8")
+    client_source = api_client_source()
     contracts_source = Path("apps/web/src/lib/api/contracts.ts").read_text(encoding="utf-8")
 
     assert "GarmentWearControlPicker" in workflow_source

@@ -2,11 +2,13 @@
 
 from pathlib import Path
 
+from tests.frontend_api_sources import api_client_source
+
 
 def test_admin_business_accounts_page_exists_and_uses_typed_tier_actions() -> None:
     page_source = Path("apps/web/src/app/(admin)/admin/business-accounts/page.tsx").read_text(encoding="utf-8")
     feature_source = Path("apps/web/src/features/admin/business-accounts.tsx").read_text(encoding="utf-8")
-    client_source = Path("apps/web/src/lib/api/client.ts").read_text(encoding="utf-8")
+    client_source = api_client_source()
     contracts_source = Path("apps/web/src/lib/api/business-catalog-contracts.ts").read_text(encoding="utf-8")
 
     assert "AdminBusinessAccounts" in page_source

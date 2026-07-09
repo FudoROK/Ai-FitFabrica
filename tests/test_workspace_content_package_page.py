@@ -2,6 +2,8 @@
 
 from pathlib import Path
 
+from tests.frontend_api_sources import api_client_source
+
 
 def test_workspace_content_package_page_uses_runtime_capability_gates() -> None:
     page_source = Path("apps/web/src/app/(workspace)/workspace/content-package/page.tsx").read_text(encoding="utf-8")
@@ -9,7 +11,7 @@ def test_workspace_content_package_page_uses_runtime_capability_gates() -> None:
     hook_source = Path("apps/web/src/features/workspace/use-workspace-capability-verdict.ts").read_text(encoding="utf-8")
     summary_panel_source = Path("apps/web/src/features/workspace/workspace-capability-summary-panel.tsx").read_text(encoding="utf-8")
     primitives_source = Path("apps/web/src/features/workspace/workspace-section-primitives.tsx").read_text(encoding="utf-8")
-    client_source = Path("apps/web/src/lib/api/client.ts").read_text(encoding="utf-8")
+    client_source = api_client_source()
 
     assert "WorkspaceContentPackageOverview" in page_source
     assert "useWorkspaceRuntime" in feature_source

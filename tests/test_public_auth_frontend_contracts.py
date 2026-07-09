@@ -2,10 +2,12 @@
 
 from pathlib import Path
 
+from tests.frontend_api_sources import api_client_source
+
 
 def test_frontend_auth_contracts_and_client_methods_exist() -> None:
     contracts_source = Path("apps/web/src/lib/api/contracts.ts").read_text(encoding="utf-8")
-    client_source = Path("apps/web/src/lib/api/client.ts").read_text(encoding="utf-8")
+    client_source = api_client_source()
 
     assert "export type AuthSessionResponse" in contracts_source
     assert "authenticated: boolean" in contracts_source
