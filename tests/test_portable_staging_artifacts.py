@@ -46,6 +46,7 @@ def test_portable_staging_runbook_exists() -> None:
         "docker compose -f docker-compose.portable-staging.yml",
         "alembic upgrade head",
         "MinIO",
+        "portable_infrastructure_preflight.py --require-ready",
         "platform_foundation_smoke.py --env-file .env.portable-staging.local --require-ready",
     ]
 

@@ -21,25 +21,34 @@ Google Cloud, Yandex Cloud, and a plain VPS are treated only as infrastructure h
 
 1. Create `.env.portable-staging.local` from `.env.portable-staging.example`.
 2. Fill secrets and staging-specific values.
-3. Start the contour:
+3. Verify that Docker, hardware virtualization, and the compose file are ready:
+
+```powershell
+python scripts/portable_infrastructure_preflight.py --require-ready
+```
+
+If the result reports `hardware_virtualization_unavailable`, enable CPU virtualization
+in BIOS/UEFI and the Windows virtualization/WSL components before continuing.
+
+4. Start the contour:
 
 ```powershell
 docker compose -f docker-compose.portable-staging.yml --env-file .env.portable-staging.local up --build -d
 ```
 
-4. Apply migrations:
+5. Apply migrations:
 
 ```powershell
 docker compose -f docker-compose.portable-staging.yml --env-file .env.portable-staging.local exec api alembic upgrade head
 ```
 
-5. Check health:
+6. Check health:
 
 ```powershell
 curl.exe http://127.0.0.1:8080/health -H "X-Status-Token: <STATUS_ENDPOINT_TOKEN>"
 ```
 
-6. Check portable deployment readiness from the env file:
+7. Check portable deployment readiness from the env file:
 
 ```powershell
 python scripts/platform_foundation_smoke.py --env-file .env.portable-staging.local --require-ready
